@@ -13,16 +13,15 @@ public class Matchmaker extends Thread {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         while (!this.isInterrupted()) {
-            List<Player> players = playerQueue.getPlayers();
-            if (players != null) {
-                System.out.println("Player Queue Size: " + players.size());
+            if (playerQueue.enoughPlayersForAGame()) {
+                List<Player> players = playerQueue.getPlayers();
                 Game game = new Game(players.getFirst(), players.getLast());
             } else {
                 try {
                     System.out.println("Waiting for players to start");
-                    wait(500);
+                    wait();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
