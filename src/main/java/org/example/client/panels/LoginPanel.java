@@ -1,4 +1,4 @@
-package org.example.Client.panels;
+package org.example.client.panels;
 
 public class LoginPanel {
 

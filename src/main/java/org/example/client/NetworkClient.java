@@ -1,4 +1,4 @@
-package org.example.Client;
+package org.example.client;
 
 public class NetworkClient {
 }
