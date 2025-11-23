@@ -9,9 +9,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ServerListener extends Thread {
-    private int port;
-    private PlayerQueue playerQueue;
-    private Matchmaker matchmaker;
+    private final int port;
+    private final PlayerQueue playerQueue;
+    private final Matchmaker matchmaker;
 
     public ServerListener(int port, PlayerQueue playerQueue, Matchmaker matchmaker) {
         this.port = port;
