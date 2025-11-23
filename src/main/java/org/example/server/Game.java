@@ -1,5 +1,7 @@
 package org.example.server;
 
+import org.example.Player;
+
 public class Game implements Runnable {
 
     private final Player player1;
@@ -14,4 +16,17 @@ public class Game implements Runnable {
     public void run() {
         // TODO: implement game flow
     }
+
+    private void initGame() {}
+    private void promptForCategory(){}
+    private void promptCategoryChoice(){}
+    private void sendQuestions(){}
+    private void receiveAnswers(){}
+    private void endRound(){}
+    private void sendRoundSummary(){}
+    private void endGame(){}
+    private void sendGameSummary(){}
+
+
+
 }
