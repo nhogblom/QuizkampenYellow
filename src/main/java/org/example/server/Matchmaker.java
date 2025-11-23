@@ -5,7 +5,7 @@ import org.example.Player;
 import java.util.List;
 
 public class Matchmaker extends Thread {
-    private PlayerQueue playerQueue;
+    private final PlayerQueue playerQueue;
 
     public Matchmaker(PlayerQueue playerQueue) {
         this.playerQueue = playerQueue;
