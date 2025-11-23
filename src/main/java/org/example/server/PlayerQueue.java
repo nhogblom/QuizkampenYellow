@@ -4,10 +4,8 @@ import org.example.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
-
 public class PlayerQueue {
-    private List<Player> playerQueue = new ArrayList<>();
+    private final List<Player> playerQueue = new ArrayList<>();
 
     public void add(Player player) {
         playerQueue.add(player);
