@@ -17,7 +17,7 @@ public class Matchmaker extends Thread {
         while (!this.isInterrupted()) {
             System.out.println("Waiting for players to start");
             List<Player> players = playerQueue.getPlayersForAGame();
-            Game game = new Game(players.getFirst(),players.getFirst());
+            Game game = new Game(players.getFirst(),players.getLast());
             System.out.println("Game started");
         }
     }
