@@ -1,9 +1,9 @@
 package org.example.server;
-
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Properties;
+import java.io.FileReader;
+import java.net.InetAddress;
+
 
 public class GameConfig {
     private InetAddress ip;
@@ -74,10 +74,4 @@ public class GameConfig {
     }
 }
 
-/*
 
-TODO Läser quiz.properties och lagrar:
- - antalFrågorPerRond
- - antalRonderPerSpel
-
- */
