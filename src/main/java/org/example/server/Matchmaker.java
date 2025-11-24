@@ -18,6 +18,8 @@ public class Matchmaker extends Thread {
             System.out.println("Waiting for players to start");
             List<Player> players = playerQueue.getPlayersForAGame();
             Game game = new Game(players.getFirst(),players.getLast());
+            Thread t = new Thread(game);
+            t.start();
             System.out.println("Game started");
         }
     }
