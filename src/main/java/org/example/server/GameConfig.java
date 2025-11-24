@@ -3,7 +3,6 @@ package org.example.server;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.Properties;
 
 public class GameConfig {
