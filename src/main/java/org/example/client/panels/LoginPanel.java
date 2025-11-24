@@ -1,7 +1,10 @@
 package org.example.client.panels;
 
-public class LoginPanel {
+import javax.swing.*;
+import java.awt.*;
 
-    // TODO Login screen, användaren promtas  för användarnamn & spelläge
+public class LoginPanel extends JFrame {
 
 }
+
+// TODO Login screen, användaren promtas  för användarnamn & spelläge
