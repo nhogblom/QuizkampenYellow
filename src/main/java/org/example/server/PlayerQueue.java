@@ -4,25 +4,27 @@ import org.example.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class PlayerQueue {
     private final List<Player> playerQueue = new ArrayList<>();
 
-    public void add(Player player) {
+    public synchronized void add(Player player) {
         playerQueue.add(player);
+        notifyAll();
     }
 
-    public boolean enoughPlayersForAGame(){
+    public synchronized boolean enoughPlayersForAGame() {
         return !playerQueue.isEmpty() && playerQueue.size() >= 2;
     }
 
-    public List<Player> getPlayers() {
+    public synchronized List<Player> getPlayersForAGame() {
         List<Player> players = new ArrayList<>();
-        if (playerQueue != null && playerQueue.size() >= 2){
-            players.add(playerQueue.removeFirst());
-            players.add(playerQueue.removeFirst());
-            return players;
-        }else{
-            return null;
+        while (true) {
+            if (enoughPlayersForAGame()) {
+                players.add(playerQueue.removeFirst());
+                players.add(playerQueue.removeFirst());
+                return players;
+            }
         }
     }
 

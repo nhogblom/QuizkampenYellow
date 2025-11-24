@@ -30,8 +30,6 @@ public class ServerListener extends Thread {
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 Player player = new Player(socket, objectInputStream, objectOutputStream);
                 playerQueue.add(player);
-                // wake matchmaker.
-                matchmaker.notifyAll();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

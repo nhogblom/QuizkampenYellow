@@ -13,21 +13,15 @@ public class Matchmaker extends Thread {
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
         while (!this.isInterrupted()) {
-            if (playerQueue.enoughPlayersForAGame()) {
-                List<Player> players = playerQueue.getPlayers();
-                Game game = new Game(players.getFirst(), players.getLast());
-            } else {
-                try {
-                    System.out.println("Waiting for players to start");
-                    wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            System.out.println("Waiting for players to start");
+            List<Player> players = playerQueue.getPlayersForAGame();
+            Game game = new Game(players.getFirst(),players.getFirst());
+            System.out.println("Game started");
         }
     }
 }
+
 
 // TODO Separat tråd som väcks när ny spelare läggs i kö. Plockar ut de två som väntat längst och startar ett spel.
