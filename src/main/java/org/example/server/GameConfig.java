@@ -29,49 +29,20 @@ public class GameConfig {
         return ip;
     }
 
-    public void setIp(InetAddress ip) {
-        this.ip = ip;
-    }
-
     public int getPort() {
         return port;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
 
     public int getTotalQuestionsPerRound() {
         return totalQuestionsPerRound;
     }
 
-    public void setTotalQuestionsPerRound(int totalQuestionsPerRound) {
-        this.totalQuestionsPerRound = totalQuestionsPerRound;
-    }
 
     public int getTotalRoundsPerGame() {
         return totalRoundsPerGame;
     }
 
-    public void setTotalRoundsPerGame(int totalRoundsPerGame) {
-        this.totalRoundsPerGame = totalRoundsPerGame;
-    }
-
-    public String getPathToProperties() {
-        return pathToProperties;
-    }
-
-    public void setPathToProperties(String pathToProperties) {
-        this.pathToProperties = pathToProperties;
-    }
-
-    public Properties getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
 }
 
 
