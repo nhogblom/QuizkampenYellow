@@ -3,15 +3,27 @@ package org.example.server;
 import org.example.Player;
 
 /**
- * Game Engine (MVP version)
- * This class controls the entire flow of one quiz match between two players.
- * It runs in its own thread (because Game implements Runnable).
+ * Game controls the entire match between two players.
+ * It runs in its own thread via Runnable.
  *
- * For MVP:
- * - We use player.send(...) and player.receive() directly.
- * - We send simple Strings instead of Message classes (until they exist).
- * - The structure is ready for later upgrades: categories, questions, scoring, etc.
+ * MVP Version:
+ *  - Uses player.send(...) and player.receive() directly.
+ *  - Sends simple String messages (will be replaced by Message classes later).
+ *  - Handles rounds, score counting, and final game summary.
+ *  - Future versions will consume messages from PlayerListener's queue.
+ *
+ * Game Flow (MVP):
+ *  1. initGame()
+ *  2. For each round:
+ *     - promptForCategory()
+ *     - promptCategoryChoice()
+ *     - sendQuestions()
+ *     - receiveAnswers()
+ *     - sendRoundSummary()
+ *  3. endGame()
+ *  4. sendGameSummary()
  */
+
 public class Game implements Runnable {
 
     private final Player player1;
