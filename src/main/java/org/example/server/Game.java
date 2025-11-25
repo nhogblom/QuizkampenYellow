@@ -93,6 +93,16 @@ public class Game implements Runnable {
     }
 
     /**
+     * Placeholder for future message queue integration.
+     * For MVP we still read directly from player.receive(),
+     * but later this will take messages from Player's queue.
+     */
+    private Object nextMessage(Player player) {
+        return player.receive();  // MVP fallback
+    }
+
+
+    /**
      * This will later choose who selects the category.
      * MVP: only prints on console.
      */
