@@ -1,9 +1,9 @@
 package org.example.server;
-
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Properties;
+import java.io.FileReader;
+import java.net.InetAddress;
+
 
 public class GameConfig {
     private InetAddress ip;
@@ -29,55 +29,20 @@ public class GameConfig {
         return ip;
     }
 
-    public void setIp(InetAddress ip) {
-        this.ip = ip;
-    }
-
     public int getPort() {
         return port;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
 
     public int getTotalQuestionsPerRound() {
         return totalQuestionsPerRound;
     }
 
-    public void setTotalQuestionsPerRound(int totalQuestionsPerRound) {
-        this.totalQuestionsPerRound = totalQuestionsPerRound;
-    }
 
     public int getTotalRoundsPerGame() {
         return totalRoundsPerGame;
     }
 
-    public void setTotalRoundsPerGame(int totalRoundsPerGame) {
-        this.totalRoundsPerGame = totalRoundsPerGame;
-    }
-
-    public String getPathToProperties() {
-        return pathToProperties;
-    }
-
-    public void setPathToProperties(String pathToProperties) {
-        this.pathToProperties = pathToProperties;
-    }
-
-    public Properties getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
 }
 
-/*
 
-TODO Läser quiz.properties och lagrar:
- - antalFrågorPerRond
- - antalRonderPerSpel
-
- */
