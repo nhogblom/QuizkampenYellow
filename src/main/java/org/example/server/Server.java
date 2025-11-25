@@ -8,7 +8,7 @@ public class Server {
         // Creates matchmaker that runs within its own thread.
         Matchmaker matchmaker = new Matchmaker(playerQueue);
         // creates serverListener takes care of new connections.
-        ServerListener serverListener = new ServerListener(gameConfig.getPort(), playerQueue, matchmaker);
+        ServerListener serverListener = new ServerListener(gameConfig.getPort(), playerQueue);
     }
 
     void main() {
