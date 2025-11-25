@@ -1,8 +1,6 @@
 package org.example.server;
 
 import org.example.Player;
-
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -29,8 +27,8 @@ public class ServerListener extends Thread {
                 Player player = new Player(socket, objectInputStream, objectOutputStream);
                 playerQueue.add(player);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            System.out.println("ServerListener Error: " + e.getMessage());
         }
     }
 }
