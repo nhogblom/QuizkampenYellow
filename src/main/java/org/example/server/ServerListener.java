@@ -11,12 +11,10 @@ import java.net.Socket;
 public class ServerListener extends Thread {
     private final int port;
     private final PlayerQueue playerQueue;
-    private final Matchmaker matchmaker;
 
-    public ServerListener(int port, PlayerQueue playerQueue, Matchmaker matchmaker) {
+    public ServerListener(int port, PlayerQueue playerQueue) {
         this.port = port;
         this.playerQueue = playerQueue;
-        this.matchmaker = matchmaker;
         this.start();
     }
 
