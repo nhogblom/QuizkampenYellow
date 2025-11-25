@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
+
+    private JTextField usernameField;
+
     public MainWindow() {
         super("");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,11 +35,12 @@ public class MainWindow extends JFrame {
         add(usernameSubtitle);
 
         //textfield for username
-        JTextField usernameField = new JTextField("");
+        usernameField = new JTextField("");
         usernameField.setFont(new java.awt.Font("Arial", Font.BOLD, 36));
         usernameField.setBounds(100, 250, 400, 43);
         usernameField.setHorizontalAlignment(SwingConstants.CENTER);
         usernameField.setForeground(Color.BLACK);
+
         add(usernameField);
 
         //start button
@@ -48,11 +52,11 @@ public class MainWindow extends JFrame {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
+                String username = usernameField.getText();
                 WaitingPanel waiting = new WaitingPanel();
+
                 waiting.setLocationRelativeTo(MainWindow.this);
-
                 MainWindow.this.dispose();
-
                 waiting.setVisible(true);
             }
         });
