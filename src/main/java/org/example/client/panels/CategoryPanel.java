@@ -54,6 +54,6 @@ public class CategoryPanel extends JFrame {
         add(cat3);
     }
 
-
+    //
     //  todo spelare promtas att göra ett val av spelkategori~
 }

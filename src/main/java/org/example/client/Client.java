@@ -14,6 +14,7 @@ public class Client {
                 new MainWindow().setVisible(true);
                 //new CategoryPanel().setVisible(true);
                 //new WaitingPanel().setVisible(true);
+                //
             }
         });
     }

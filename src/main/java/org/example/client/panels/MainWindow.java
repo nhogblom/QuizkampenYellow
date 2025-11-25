@@ -1,6 +1,7 @@
 package org.example.client.panels;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class MainWindow extends JFrame {
     public MainWindow() {
@@ -44,7 +45,19 @@ public class MainWindow extends JFrame {
         startButton.setBounds(100, 350, 400, 43);
         startButton.setForeground(Color.BLACK);
         startButton.setBackground(Constants.LIGHT_GREEN);
-        startButton.addActionListener(e -> new WaitingPanel());
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                WaitingPanel waiting = new WaitingPanel();
+                waiting.setLocationRelativeTo(MainWindow.this);
+
+                MainWindow.this.dispose();
+
+                waiting.setVisible(true);
+            }
+        });
+
+
         add(startButton);
 
         //exit button
@@ -53,7 +66,16 @@ public class MainWindow extends JFrame {
         exitButton.setBounds(100, 450, 400, 43);
         exitButton.setForeground(Color.BLACK);
         exitButton.setBackground(Constants.LIGHT_RED);
+
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                dispose();
+            }
+        });
+
         add(exitButton);
+
 
     }
 }

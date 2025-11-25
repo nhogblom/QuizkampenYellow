@@ -32,6 +32,6 @@ public class WaitingPanel extends JFrame {
         title.setHorizontalAlignment(SwingConstants.CENTER);
         getContentPane().add(title);
     }
-
+    //
     // TODO användaren får info om att  anslutningen är etableradd och att motspelare inväntas.
 }

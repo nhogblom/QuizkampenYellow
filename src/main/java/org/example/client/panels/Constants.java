@@ -10,3 +10,5 @@ public class Constants {
     public static final Color LIGHT_RED = new Color(255, 170, 170);
     public static final Color LIGHT_YELLOW = new Color(255, 255, 170);
 }
+
+//
