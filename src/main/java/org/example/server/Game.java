@@ -177,25 +177,36 @@ public class Game implements Runnable {
     }
 
     /**
-     * End-game logic: who won?
+     * Determines the winner based on total scores.
+     * (MVP version: only console output)
      */
-    private void endGame() throws Exception {
+    private void endGame() {
         System.out.println("endGame() called");
 
-        // TODO (later):
-        // - Determine winner based on total scores
+        if (scorePlayer1 > scorePlayer2) {
+            System.out.println("Winner: " + safeUsername(player1));
+        } else if (scorePlayer2 > scorePlayer1) {
+            System.out.println("Winner: " + safeUsername(player2));
+        } else {
+            System.out.println("The game ended in a tie.");
+        }
     }
+
 
     /**
-     * Sends final game results to players.
+     * Sends a simple final summary to both players (MVP).
      */
-    private void sendGameSummary() throws Exception {
+    private void sendGameSummary() {
         System.out.println("sendGameSummary() called");
 
-        // TODO (later):
-        // - player1.send(...)
-        // - player2.send(...)
+        // MVP: plain text messages
+        player1.send("GAME_SUMMARY: Your score = " + scorePlayer1 +
+                ", Opponent score = " + scorePlayer2);
+
+        player2.send("GAME_SUMMARY: Your score = " + scorePlayer2 +
+                ", Opponent score = " + scorePlayer1);
     }
+
 
     /**
      * method to avoid null usernames in logs.
