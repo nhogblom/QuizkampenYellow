@@ -8,7 +8,7 @@ import org.example.Player;
  *
  * MVP Version:
  *  - Uses player.send(...) and player.receive() directly.
- *  - Sends simple String messages (will be replaced by Message classes later).
+ *  - Sends String messages (will be replaced by Message classes later).
  *  - Handles rounds, score counting, and final game summary.
  *  - Future versions will consume messages from PlayerListener's queue.
  *
@@ -30,7 +30,7 @@ public class Game implements Runnable {
     private final Player player2;
     private final GameConfig config;
 
-    // Basic score tracking for MVP
+    // score tracking for MVP
     private int scorePlayer1 = 0;
     private int scorePlayer2 = 0;
 
@@ -41,7 +41,7 @@ public class Game implements Runnable {
     }
 
     /**
-     * This is the main game loop.
+     * the main game loop.
      * It runs automatically when Matchmaker starts a new Game thread.
      */
     @Override
@@ -92,21 +92,21 @@ public class Game implements Runnable {
     /**
      * MVP version:
      * - Reset scores
-     * - Send a simple "match started" message to both players
+     * - Send a "match started" message to both players
      */
     private void initGame() throws Exception {
         scorePlayer1 = 0;
         scorePlayer2 = 0;
         System.out.println("initGame() called");
 
-        // MVP: we use simple Strings (later replaced with MatchFoundMessage)
+        // MVP: we use Strings (later replaced with MatchFoundMessage)
         player1.send("MATCH_STARTED: You are playing against " + safeUsername(player2));
         player2.send("MATCH_STARTED: You are playing against " + safeUsername(player1));
     }
 
     /**
      * Placeholder for future message queue integration.
-     * For MVP we still read directly from player.receive(),
+     * For MVP we read directly from player.receive(),
      * but later this will take messages from Player's queue.
      */
     private Object nextMessage(Player player) {
@@ -129,7 +129,6 @@ public class Game implements Runnable {
 
     /**
      * Player sends back category choice to server.
-     * MVP: no real logic yet.
      */
     private void promptCategoryChoice(int round) throws Exception {
         System.out.println("promptCategoryChoice() called for round " + round);
@@ -149,13 +148,12 @@ public class Game implements Runnable {
 
         // TODO (later):
         // - Get questions from QuestionRepository
-        // - For MVP, send simple Strings like:
-        //   player1.send("QUESTION: What is 2+2?;A:3;B:4;C:5;D:6")
+        // - For MVP, send Strings like:
+        //   player1.send("QUESTION: What is this...")
     }
 
     /**
      * Receives answers from both players.
-     * MVP: no real implementation yet.
      */
     private void receiveAnswers(int round) throws Exception {
         System.out.println("receiveAnswers() called for round " + round);
@@ -190,7 +188,7 @@ public class Game implements Runnable {
 
     /**
      * Determines the winner based on total scores.
-     * (MVP version: only console output)
+     * MVP version: only console output
      */
     private void endGame() {
         System.out.println("endGame() called");
@@ -206,12 +204,12 @@ public class Game implements Runnable {
 
 
     /**
-     * Sends a simple final summary to both players (MVP).
+     * Sends a final summary to both players (MVP).
      */
     private void sendGameSummary() {
         System.out.println("sendGameSummary() called");
 
-        // MVP: plain text messages
+        // MVP:  text messages
         player1.send("GAME_SUMMARY: Your score = " + scorePlayer1 +
                 ", Opponent score = " + scorePlayer2);
 
