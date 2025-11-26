@@ -8,9 +8,8 @@ import org.example.Player;
  *
  * MVP Version:
  *  - Uses player.send(...) and player.receive() directly.
- *  - Sends String messages (will be replaced by Message classes later).
+ *  - Sends String messages.
  *  - Handles rounds, score counting, and final game summary.
- *  - Future versions will consume messages from PlayerListener's queue.
  *
  * Game Flow (MVP):
  *  1. initGame()
@@ -19,11 +18,14 @@ import org.example.Player;
  *     - promptCategoryChoice()
  *     - sendQuestions()
  *     - receiveAnswers()
+ *     - endRound()
  *     - sendRoundSummary()
  *  3. endGame()
  *  4. sendGameSummary()
+ *
+ * NOTE: QuestionRepository / QuizQuestion are NOT used yet.
+ *       All questions are simple placeholder strings.
  */
-
 public class Game implements Runnable {
 
     private final Player player1;
@@ -41,7 +43,7 @@ public class Game implements Runnable {
     }
 
     /**
-     * the main game loop.
+     * The main game loop.
      * It runs automatically when Matchmaker starts a new Game thread.
      */
     @Override
@@ -60,17 +62,14 @@ public class Game implements Runnable {
             for (int round = 1; round <= config.getTotalRoundsPerGame(); round++) {
                 System.out.println("=== Round " + round + " ===");
 
-                // Step 2.1: Ask player to choose category (later)
+                // Step 2.1: Ask player to choose category (placeholder)
                 promptForCategory(round);
 
-                // Step 2.2: Receive category choice from client (later)
+                // Step 2.2: Receive category choice from client (placeholder)
                 promptCategoryChoice(round);
 
-                // Step 2.3: Send questions to both players
-                sendQuestions(round);
-
-                // Step 2.4: Receive their answers
-                receiveAnswers(round);
+                // Step 2.3 & 2.4: Send questions and receive answers
+                playRound(round);
 
                 // Step 2.5: Process round result
                 endRound(round);
@@ -99,76 +98,132 @@ public class Game implements Runnable {
         scorePlayer2 = 0;
         System.out.println("initGame() called");
 
-        // MVP: we use Strings (later replaced with MatchFoundMessage)
         player1.send("MATCH_STARTED: You are playing against " + safeUsername(player2));
         player2.send("MATCH_STARTED: You are playing against " + safeUsername(player1));
     }
 
     /**
-     * Placeholder for future message queue integration.
-     * For MVP we read directly from player.receive(),
-     * but later this will take messages from Player's queue.
+     * Helper to get the next message from a player.
+     * MVP: directly read from the socket.
+     * Later: can be changed to use Player's internal queue.
      */
     private Object nextMessage(Player player) {
         return player.receive();  // MVP fallback
     }
 
-
     /**
      * This will later choose who selects the category.
-     * MVP: only prints on console.
+     * MVP: only prints on console and sends info text.
      */
     private void promptForCategory(int round) throws Exception {
         System.out.println("promptForCategory() called for round " + round);
 
-        // TODO (later):
-        // - Decide which player chooses category
-        // - Send a prompt message to that player
-        // - Example preview: player1.send("CHOOSE_CATEGORY")
+        // MVP placeholder: just inform both players whose turn it would be.
+
+        Player chooser = (round % 2 == 1) ? player1 : player2;
+
+        chooser.send("CHOOSE_CATEGORY: It is your turn to choose a category for round " + round);
+        getOpponent(chooser).send("INFO: Waiting for opponent to choose a category for round " + round);
     }
 
     /**
      * Player sends back category choice to server.
+     * MVP:  read a single String and log it.
      */
     private void promptCategoryChoice(int round) throws Exception {
         System.out.println("promptCategoryChoice() called for round " + round);
 
-        // TODO (later):
-        // - Object response = player.receive();
-        // - Cast it to String or a future CategoryChoiceMessage
-        // - Save it in a variable like currentCategory
+        Player chooser = (round % 2 == 1) ? player1 : player2;
+
+        Object response = nextMessage(chooser);
+        String chosenCategory = (response instanceof String) ? (String) response : "UNKNOWN";
+
+        System.out.println("Round " + round + " chosen category by "
+                + safeUsername(chooser) + ": " + chosenCategory);
+
+        // Inform both players which category was chosen (even if it's just a placeholder).
+        player1.send("CATEGORY_CHOSEN: " + chosenCategory);
+        player2.send("CATEGORY_CHOSEN: " + chosenCategory);
     }
 
     /**
-     * Sends a number of questions to both players.
-     * MVP: just console logs.
+     * Plays a whole round:
+     * - For each question:
+     *   - send question text to both
+     *   - receive answers
+     *   - update scores
      */
-    private void sendQuestions(int round) throws Exception {
-        System.out.println("sendQuestions() called for round " + round);
+    private void playRound(int round) throws Exception {
+        int questionsPerRound = config.getTotalQuestionsPerRound();
 
-        // TODO (later):
-        // - Get questions from QuestionRepository
-        // - For MVP, send Strings like:
-        //   player1.send("QUESTION: What is this...")
+        for (int qIndex = 1; qIndex <= questionsPerRound; qIndex++) {
+            sendQuestion(round, qIndex);
+            receiveAndScoreAnswers(round, qIndex);
+        }
     }
 
     /**
-     * Receives answers from both players.
+     * Sends a single placeholder question to both players.
+     * Later I replace this with real questions from QuestionRepository.
      */
-    private void receiveAnswers(int round) throws Exception {
-        System.out.println("receiveAnswers() called for round " + round);
+    private void sendQuestion(int round, int questionNumber) throws Exception {
+        System.out.println("sendQuestion() called for round " + round
+                + ", question " + questionNumber);
 
-        // TODO (later):
-        // - Use player.receive() for both players
-        // - Convert to chosen answer
-        // - Compare with correct answer
-        // - Update scorePlayer1 / scorePlayer2
+        String questionText = "QUESTION R" + round + "Q" + questionNumber + ": "
+                + "This is a placeholder question. Answer with '1', '2', '3', or '4'. "
+                + "Correct answer is '1' in MVP.";
+
+        player1.send(questionText);
+        player2.send(questionText);
+    }
+
+    /**
+     * Receives answers from both players for a single question and updates scores.
+     * MVP rule: if the player answers exactly "1" → +1 point.
+     */
+    private void receiveAndScoreAnswers(int round, int questionNumber) throws Exception {
+        System.out.println("receiveAndScoreAnswers() called for round " + round
+                + ", question " + questionNumber);
+
+        // Receive
+        String answerP1 = readStringAnswer(player1);
+        String answerP2 = readStringAnswer(player2);
+
+        // MVP scoring: "1" is always the correct answer.
+        boolean p1Correct = "1".equals(answerP1);
+        boolean p2Correct = "1".equals(answerP2);
+
+        if (p1Correct) {
+            scorePlayer1++;
+        }
+        if (p2Correct) {
+            scorePlayer2++;
+        }
+
+        // Inform players about correctness of this question
+        player1.send("QUESTION_RESULT R" + round + "Q" + questionNumber + ": "
+                + (p1Correct ? "CORRECT" : "WRONG"));
+        player2.send("QUESTION_RESULT R" + round + "Q" + questionNumber + ": "
+                + (p2Correct ? "CORRECT" : "WRONG"));
+
+        System.out.println("Answers for R" + round + "Q" + questionNumber
+                + " -> " + safeUsername(player1) + ": " + answerP1 + " (" + (p1Correct ? "correct" : "wrong") + "), "
+                + safeUsername(player2) + ": " + answerP2 + " (" + (p2Correct ? "correct" : "wrong") + ")");
+    }
+
+    private String readStringAnswer(Player player) {
+        Object o = nextMessage(player);
+        if (o instanceof String s) {
+            return s;
+        }
+        return "";
     }
 
     /**
      * Calculates end of round statistics.
      */
-    private void endRound(int round) throws Exception {
+    private void endRound(int round) {
         System.out.println("endRound() called for round " + round);
         System.out.println("Current scores after round " + round + ": "
                 + safeUsername(player1) + "=" + scorePlayer1 + ", "
@@ -181,14 +236,17 @@ public class Game implements Runnable {
     private void sendRoundSummary(int round) throws Exception {
         System.out.println("sendRoundSummary() called for round " + round);
 
-        // TODO (later):
-        // player1.send("ROUND_SUMMARY: p1=" + scorePlayer1 + ", p2=" + scorePlayer2);
-        // player2.send("ROUND_SUMMARY: p1=" + scorePlayer1 + ", p2=" + scorePlayer2);
+        String summary = "ROUND_SUMMARY R" + round + ": "
+                + safeUsername(player1) + "=" + scorePlayer1 + ", "
+                + safeUsername(player2) + "=" + scorePlayer2;
+
+        player1.send(summary);
+        player2.send(summary);
     }
 
     /**
      * Determines the winner based on total scores.
-     * MVP version: only console output
+     * MVP version: only console output.
      */
     private void endGame() {
         System.out.println("endGame() called");
@@ -202,21 +260,18 @@ public class Game implements Runnable {
         }
     }
 
-
     /**
      * Sends a final summary to both players (MVP).
      */
     private void sendGameSummary() {
         System.out.println("sendGameSummary() called");
 
-        // MVP:  text messages
         player1.send("GAME_SUMMARY: Your score = " + scorePlayer1 +
                 ", Opponent score = " + scorePlayer2);
 
         player2.send("GAME_SUMMARY: Your score = " + scorePlayer2 +
                 ", Opponent score = " + scorePlayer1);
     }
-
 
     /**
      * method to avoid null usernames in logs.
@@ -225,5 +280,9 @@ public class Game implements Runnable {
         return player != null && player.getUsername() != null
                 ? player.getUsername()
                 : "Unknown";
+    }
+
+    private Player getOpponent(Player player) {
+        return player == player1 ? player2 : player1;
     }
 }
