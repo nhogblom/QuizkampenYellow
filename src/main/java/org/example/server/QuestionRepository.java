@@ -2,22 +2,22 @@ package org.example.server;
 import java.util.*;
 
 public class QuestionRepository {
-    private Map<String, List<QuizQuestion>> categoryQuestions = new Hashmap<>();
-    private Random random = new random;
+    private Map<String, List<QuizQuestion>> categoryQuestions = new HashMap<>();
+    private Random random = new Random();
 
     public QuestionRepository() {
         loadHardcodedQuestions();
     }
 
     public List<QuizCategory> getCategories() {
-        return categoryQuestions.keySet();
-        .stream()
+        return categoryQuestions.keySet()
+                .stream()
                 .map(QuizCategory::new)
                 .toList();
     }
 
     public List<QuizQuestion> getRandomQuestions(String categoryName, int count) {
-        List<QuizQuestion> questions == categoryQuestions.get(categoryName);
+        List<QuizQuestion> questions = categoryQuestions.get(categoryName);
         if(questions == null || questions.isEmpty()) {
             return Collections.emptyList();
         }
