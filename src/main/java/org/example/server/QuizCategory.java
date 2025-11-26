@@ -3,7 +3,7 @@ package org.example.server;
 public class QuizCategory {
     private String name;
 
-    public QuizCategory() {
+    public QuizCategory(String name) {
         this.name = name;
     }
     public String getName() {

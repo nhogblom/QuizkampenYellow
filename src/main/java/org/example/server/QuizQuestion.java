@@ -7,7 +7,7 @@ public class QuizQuestion {
     private List<String> answers;
     private int correctAnswerIndex;
 
-    public QuizQuestion() {
+    public QuizQuestion(String question, List<String> answers, int correctAnswerIndex) {
         this.question = question;
         this.answers = answers;
         this.correctAnswerIndex = correctAnswerIndex;
