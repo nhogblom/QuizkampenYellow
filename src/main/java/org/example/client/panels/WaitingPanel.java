@@ -5,7 +5,11 @@ import java.awt.*;
 
 public class WaitingPanel extends JFrame{
 
-    public WaitingPanel() {
+    private String username;
+
+    public WaitingPanel(String username) {
+
+        this.username = username;
         super("");
         setSize(600, 800);
         setLayout(null);

@@ -11,8 +11,8 @@ public class Client {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                //new MainWindow().setVisible(true);
-                new QuestionPanel().setVisible(true);
+                new MainWindow().setVisible(true);
+                //new QuestionPanel().setVisible(true);
             }
         });
     }
