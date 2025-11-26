@@ -1,5 +1,7 @@
 package org.example.server;
 
+import java.util.List;
+
 public class QuizQuestion {
     // TODO Representerar en enda quizfråga med frågetext, fyra svarsalternativ, rätt svar och kategori.
 
