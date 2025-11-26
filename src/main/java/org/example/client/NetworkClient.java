@@ -1,62 +1,112 @@
 package org.example.client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
 public class NetworkClient {
 
-    private Socket socket;
-    private BufferedReader reader;
-    private PrintWriter writer;
+        private Socket socket;
+        private ObjectOutputStream objectWriter;
+        private ObjectInputStream objectReader;
 
-    private static final String SERVER_IP = "127.0.0.1";
-    private static final int SERVER_PORT = 12345;
+        private static final String SERVER_IP = "127.0.0.1";
+        private static final int SERVER_PORT = 12346;
 
-    public void connect() {
-        try {
-            socket = new Socket(SERVER_IP, SERVER_PORT);
+        private final String playerName;
 
-            writer = new PrintWriter(socket.getOutputStream(), true);
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println("Connected to server: " + SERVER_IP + ":" + SERVER_PORT);
-
-            // Starta lyssnarthread
-            new Thread(this::listen).start();
-
-        } catch (Exception e) {
-            System.out.println("Connection failed");
-            e.printStackTrace();
+        public NetworkClient(String playerName) {
+            this.playerName = playerName;
         }
-    }
 
-    private void listen() {
-        String line;
-        try {
-            while ((line = reader.readLine()) != null) {
-                System.out.println("Server: " + line);
+        //Koppla upp mot server
+        public void connect() {
+            try {
+                socket = new Socket(SERVER_IP, SERVER_PORT);
+
+                objectWriter= new ObjectOutputStream(socket.getOutputStream());
+                objectReader = new ObjectInputStream(socket.getInputStream());
+
+                System.out.println("Connected to server: " + SERVER_IP + ":" + SERVER_PORT);
+
+                // Starta lyssnarthread
+                new Thread(this::listen).start();
+
+            } catch (Exception e) {
+                System.out.println("Connection failed");
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+
+        //Lyssna på meddelande från server
+        private void listen() {
+            try {
+                while (true) {
+                    Message msg = (Message) objectReader.readObject();
+
+                    switch (msg.getType()) {
+                        case QUESTION:
+                            handleQuestion((Question) msg.getPayload());
+                            break;
+                        case ROUND_RESULT:
+                            System.out.println("Round result received: " + msg.getPayload());
+                            break;
+                        case GAME_RESULT:
+                            System.out.println("Game result received: " + msg.getPayload());
+                            break;
+                        case CHAT:
+                            System.out.println("Chat message: " + msg.getPayload());
+                            break;
+                        default:
+                            System.out.println("Unknown message type: " + msg.getType());
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Connection closed or error in listen()");
+                e.printStackTrace();
+            }
+
+        }
+
+        // Hantera fråga: visa och skicka svar
+        private void handleQuestion(Question question) {
+            System.out.println("Question: " + question.getQuestionText());
+            String[] options = question.getOptions();
+            for (int i = 0; i < options.length; i++) {
+                System.out.println((i + 1) + ": " + options[i]);
+            }
+
+            // OBS, Tillfälligt demo
+            int chosenOption = 0;
+            Answer answer = new Answer(playerName, chosenOption);
+
+            sendMessage(new Message(MyMessageTypes.ANSWER, answer));
+            System.out.println("Answer sent: option " + chosenOption);
+        }
+
+        public void sendMessage(Message msg) {
+            try {
+                objectWriter.writeObject(msg);
+                objectWriter.flush();
+            } catch (IOException e) {
+                System.out.println("Failed to send message: ");
+                e.printStackTrace();
+            }
+        }
+
+        public void disconnect() {
+            try {
+                if (objectReader != null) objectReader.close();
+                if (objectWriter != null) objectWriter.close();
+                if (socket != null) socket.close();
+                System.out.println("Disconnected from server");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //test klient
+        public static void main(String[] args) {
+            NetworkClient client = new NetworkClient("Player1");
+            client.connect();
         }
     }
-
-    public void sendMessage(String msg) {
-        if (writer != null) {
-            writer.println(msg);
-        }
-    }
-
-    public void disconnect() {
-        try {
-            if (reader != null) reader.close();
-            if (writer != null) writer.close();
-            if (socket != null) socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-}
