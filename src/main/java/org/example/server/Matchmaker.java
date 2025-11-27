@@ -1,7 +1,5 @@
 package org.example.server;
 
-import org.example.Player;
-
 import java.util.List;
 
 public class Matchmaker extends Thread {

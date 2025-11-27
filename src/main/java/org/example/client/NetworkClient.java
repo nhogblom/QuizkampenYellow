@@ -1,7 +1,5 @@
 package org.example.client;
 
-import org.example.Player;
-
 import java.io.*;
 import java.net.Socket;
 
