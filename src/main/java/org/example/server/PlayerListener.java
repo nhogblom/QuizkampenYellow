@@ -29,6 +29,7 @@ public class PlayerListener extends Thread {
             } catch (Exception e) {
                 System.out.println("Fel inträffade i inkommande dataström för spelare" + player.getUsername() + "\n" + e.getMessage());
                 this.interrupt();
+                break;
             }
         }
     }

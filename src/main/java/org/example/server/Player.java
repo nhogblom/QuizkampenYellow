@@ -36,7 +36,9 @@ public class Player {
         try {
             return objectInputStream.readObject();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("IOException");
+            e.printStackTrace();
+            return null;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
