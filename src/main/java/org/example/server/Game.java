@@ -1,7 +1,5 @@
 package org.example.server;
 
-import org.example.Player;
-
 /**
  * Game controls the entire match between two players.
  * It runs in its own thread via Runnable.
