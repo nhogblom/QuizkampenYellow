@@ -1,7 +1,11 @@
 package org.example.client.panels;
+import org.example.Player;
+import org.example.server.PlayerQueue;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 
 public class MainWindow extends JFrame {
 
@@ -53,7 +57,7 @@ public class MainWindow extends JFrame {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 String username = usernameField.getText();
-                WaitingPanel waiting = new WaitingPanel();
+                WaitingPanel waiting = new WaitingPanel(username);
 
                 waiting.setLocationRelativeTo(MainWindow.this);
                 MainWindow.this.dispose();
