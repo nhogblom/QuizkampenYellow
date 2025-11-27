@@ -15,7 +15,7 @@ public class Matchmaker extends Thread {
     @Override
     public void run() {
         while (!this.isInterrupted()) {
-            System.out.println("Waiting for players to start");
+            System.out.println("Matchmaker: Waiting for players to start");
             List<Player> players = playerQueue.getPlayersForAGame();
             Game game = new Game(players.getFirst(),players.getLast());
             Thread t = new Thread(game);
