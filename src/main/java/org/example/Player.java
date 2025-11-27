@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Player {
@@ -15,7 +15,7 @@ public class Player {
     private Socket socket;
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
-    private List<Object> incommingGamePackets = new ArrayList<>();
+    private List<Object> incomingGamePackets = new LinkedList<>();
     private Chat chat = new Chat();
 
     public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
@@ -25,25 +25,29 @@ public class Player {
 
 
         new Thread(() -> {
-            while (true) {
-                try {
-                    Object incomming = objectInputStream.readObject();
-                    if (incomming instanceof String s) {
-                        incommingGamePackets.add(s);
-                    } else if (incomming instanceof ChatMessage cm) {
-                        chat.broadcast(cm);
+                while (true) {
+                    try {
+                        Object incoming = objectInputStream.readObject();
+                        if (incoming instanceof String s) {
+                            incomingGamePackets.add(s);
+                        } else if (incoming instanceof ChatMessage cm) {
+                            chat.broadcast(cm);
+                        } else if (incoming instanceof Player) {
+
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Fel inträffade i inkommande dataström för spelare" + username + "\n" + e.getMessage());
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    System.out.println("Fel inträffade i inkommande dataström för spelare" + username + "\n" + e.getMessage());
                 }
-            }
+
         }).start();
     }
 
-    public Object getGamePacket() {
-        if (!incommingGamePackets.isEmpty()) {
-        return incommingGamePackets.removeFirst();
-        }else{
+    public synchronized Object getGamePacket() {
+        if (!incomingGamePackets.isEmpty()) {
+            return incomingGamePackets.removeFirst();
+        } else {
             return null;
         }
     }
@@ -99,12 +103,12 @@ public class Player {
         this.objectOutputStream = objectOutputStream;
     }
 
-    public List<Object> getIncommingGamePackets() {
-        return incommingGamePackets;
+    public List<Object> getIncomingGamePackets() {
+        return incomingGamePackets;
     }
 
-    public void setIncommingGamePackets(List<Object> incommingGamePackets) {
-        this.incommingGamePackets = incommingGamePackets;
+    public void setIncomingGamePackets(List<Object> incomingGamePackets) {
+        this.incomingGamePackets = incomingGamePackets;
     }
 
     public Chat getChat() {
