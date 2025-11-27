@@ -1,7 +1,4 @@
-package org.example;
-
-import org.example.server.Chat;
-import org.example.server.ChatMessage;
+package org.example.server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -23,26 +20,9 @@ public class Player {
         this.objectInputStream = objectInputStream;
         this.objectOutputStream = objectOutputStream;
 
-
-        new Thread(() -> {
-                while (true) {
-                    try {
-                        Object incoming = objectInputStream.readObject();
-                        if (incoming instanceof String s) {
-                            incomingGamePackets.add(s);
-                        } else if (incoming instanceof ChatMessage cm) {
-                            chat.broadcast(cm);
-                        } else if (incoming instanceof Player) {
-
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Fel inträffade i inkommande dataström för spelare" + username + "\n" + e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-
-        }).start();
+        PlayerListener playerListener = new PlayerListener(this,incomingGamePackets);
     }
+
 
     public synchronized Object getGamePacket() {
         if (!incomingGamePackets.isEmpty()) {
@@ -56,7 +36,9 @@ public class Player {
         try {
             return objectInputStream.readObject();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("IOException");
+            e.printStackTrace();
+            return null;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
