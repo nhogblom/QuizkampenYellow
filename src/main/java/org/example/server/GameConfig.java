@@ -3,6 +3,9 @@ package org.example.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -25,16 +28,27 @@ public class GameConfig {
     // Internal storage for the properties file
     private final Properties properties = new Properties();
 
+
+
     public GameConfig() {
-        try (InputStream in = GameConfig.class
-                .getClassLoader()
-                .getResourceAsStream("Game.properties")) {
+        InputStream in = null;
+        try {
+            // 1) Försök först via classpath (det "rätta" sättet)
+            in = GameConfig.class.getResourceAsStream("/Game.properties");
+            System.out.println("Class URL: " + GameConfig.class.getResource("/Game.properties"));
 
-            // If this happens → the file is in the wrong folder
+            // 2) Om den är null → fallback till filsystemet (så det funkar i IntelliJ)
             if (in == null) {
-                throw new RuntimeException("Game.properties not found on classpath");
-            }
+                Path path = Paths.get("src", "main", "resources", "Game.properties");
+                System.out.println("Classpath misslyckades, testar: " + path.toAbsolutePath());
 
+                if (Files.exists(path)) {
+                    in = Files.newInputStream(path);
+                } else {
+                    throw new RuntimeException("Game.properties not found on classpath or at "
+                            + path.toAbsolutePath());
+                }
+            }
             // Load the file content
             properties.load(in);
 
