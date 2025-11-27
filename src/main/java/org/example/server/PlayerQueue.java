@@ -18,12 +18,18 @@ public class PlayerQueue {
     }
 
     public synchronized List<Player> getPlayersForAGame() {
+        System.out.println("getPlayersForAGame called");
         List<Player> players = new ArrayList<>();
         while (true) {
             if (enoughPlayersForAGame()) {
                 players.add(playerQueue.removeFirst());
                 players.add(playerQueue.removeFirst());
                 return players;
+            }
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
