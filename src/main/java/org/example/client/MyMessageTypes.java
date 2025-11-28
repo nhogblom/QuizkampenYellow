@@ -7,6 +7,7 @@ public enum MyMessageTypes {
         GAME_RESULT,    // Server → Klient: slutresultat
         CATEGORY_CHOICE,// Klient → Server: valt kategori
         GIVE_UP,        // Klient → Server: spelaren ger upp
-        CHAT            // Klient ↔ Server: chatmeddelande
+        CHAT,            // Klient ↔ Server: chatmeddelande
+        DEVELOPMENTMSG  // used during development
 
 }
