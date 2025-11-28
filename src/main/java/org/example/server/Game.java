@@ -1,5 +1,8 @@
 package org.example.server;
 
+import org.example.client.Message;
+import org.example.client.MyMessageTypes;
+
 /**
  * Game controls the entire match between two players.
  * It runs in its own thread via Runnable.
@@ -120,7 +123,7 @@ public class Game implements Runnable {
 
         Player chooser = (round % 2 == 1) ? player1 : player2;
 
-        chooser.send("CHOOSE_CATEGORY: It is your turn to choose a category for round " + round);
+        chooser.send(new Message(MyMessageTypes.DEVELOPMENTMSG,"CHOOSE_CATEGORY: It is your turn to choose a category for round " + round));
         getOpponent(chooser).send("INFO: Waiting for opponent to choose a category for round " + round);
     }
 
@@ -140,8 +143,8 @@ public class Game implements Runnable {
                 + safeUsername(chooser) + ": " + chosenCategory);
 
         // Inform both players which category was chosen (even if it's just a placeholder).
-        player1.send("CATEGORY_CHOSEN: " + chosenCategory);
-        player2.send("CATEGORY_CHOSEN: " + chosenCategory);
+        player1.send(new Message(MyMessageTypes.DEVELOPMENTMSG,"CATEGORY_CHOSEN: " + chosenCategory));
+        player2.send(new Message(MyMessageTypes.DEVELOPMENTMSG,"CATEGORY_CHOSEN: " + chosenCategory));
     }
 
     /**
@@ -172,8 +175,8 @@ public class Game implements Runnable {
                 + "This is a placeholder question. Answer with '1', '2', '3', or '4'. "
                 + "Correct answer is '1' in MVP.";
 
-        player1.send(questionText);
-        player2.send(questionText);
+        player1.send(new Message(MyMessageTypes.DEVELOPMENTMSG,questionText));
+        player2.send(new Message(MyMessageTypes.DEVELOPMENTMSG,questionText));
     }
 
     /**
@@ -200,10 +203,10 @@ public class Game implements Runnable {
         }
 
         // Inform players about correctness of this question
-        player1.send("QUESTION_RESULT R" + round + "Q" + questionNumber + ": "
-                + (p1Correct ? "CORRECT" : "WRONG"));
-        player2.send("QUESTION_RESULT R" + round + "Q" + questionNumber + ": "
-                + (p2Correct ? "CORRECT" : "WRONG"));
+        player1.send(new Message(MyMessageTypes.DEVELOPMENTMSG,"QUESTION_RESULT R" + round + "Q" + questionNumber + ": "
+                + (p1Correct ? "CORRECT" : "WRONG")));
+        player2.send(new Message(MyMessageTypes.DEVELOPMENTMSG,"QUESTION_RESULT R" + round + "Q" + questionNumber + ": "
+                + (p2Correct ? "CORRECT" : "WRONG")));
 
         System.out.println("Answers for R" + round + "Q" + questionNumber
                 + " -> " + safeUsername(player1) + ": " + answerP1 + " (" + (p1Correct ? "correct" : "wrong") + "), "
@@ -238,8 +241,8 @@ public class Game implements Runnable {
                 + safeUsername(player1) + "=" + scorePlayer1 + ", "
                 + safeUsername(player2) + "=" + scorePlayer2;
 
-        player1.send(summary);
-        player2.send(summary);
+        player1.send(new Message(MyMessageTypes.DEVELOPMENTMSG,summary));
+        player2.send(new Message(MyMessageTypes.DEVELOPMENTMSG,summary));
     }
 
     /**
@@ -264,11 +267,11 @@ public class Game implements Runnable {
     private void sendGameSummary() {
         System.out.println("sendGameSummary() called");
 
-        player1.send("GAME_SUMMARY: Your score = " + scorePlayer1 +
-                ", Opponent score = " + scorePlayer2);
+        player1.send(new Message(MyMessageTypes.DEVELOPMENTMSG,"GAME_SUMMARY: Your score = " + scorePlayer1 +
+                ", Opponent score = " + scorePlayer2));
 
-        player2.send("GAME_SUMMARY: Your score = " + scorePlayer2 +
-                ", Opponent score = " + scorePlayer1);
+        player2.send(new Message(MyMessageTypes.DEVELOPMENTMSG,"GAME_SUMMARY: Your score = " + scorePlayer2 +
+                ", Opponent score = " + scorePlayer1));
     }
 
     /**
