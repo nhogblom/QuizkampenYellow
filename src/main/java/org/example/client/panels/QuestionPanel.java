@@ -1,5 +1,7 @@
 package org.example.client.panels;
 
+import org.example.client.Flag;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,9 +10,11 @@ public class QuestionPanel extends JFrame {
     private String question;
     private String option1, option2, option3, option4;
     private boolean correct1, correct2, correct3;
+    private Flag moveToNextUI;
 
 
-    public QuestionPanel() {
+    public QuestionPanel(Flag moveToNextUI) {
+        this.moveToNextUI = moveToNextUI;
         super("");
         setSize(600, 800);
         setLayout(null);
