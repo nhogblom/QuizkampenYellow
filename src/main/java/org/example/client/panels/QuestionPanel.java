@@ -61,6 +61,13 @@ public class QuestionPanel extends JFrame {
         opt4.setForeground(Color.BLACK);
         opt4.setBackground(Color.WHITE);
         add(opt4);
+
+        JButton giveUp = new JButton("GIVE UP");
+        giveUp.setFont(new java.awt.Font("Arial", Font.BOLD, 14));
+        giveUp.setBounds(250, 15, 100, 25);
+        giveUp.setForeground(Color.BLACK);
+        giveUp.setBackground(Color.RED);
+        add(giveUp);
     }
 
     private void addAnswerBoxes() {
