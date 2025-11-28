@@ -6,19 +6,30 @@ import java.awt.*;
 import org.example.client.ClientBackpack;
 import org.example.Question;
 
-
 /**
- * QuestionPanel now receives a listener so it can notify NetworkClient when a button is clicked.
- * It no longer receives a Flag. WaitingPanel will pass the correct listener.
+ * QuestionPanel
+ *
+ * This panel displays a single quiz question + 4 answer buttons.
+ *
+ * IMPORTANT DESIGN CHANGES:
+ * - The panel no longer handles networking or Flags.
+ * - Instead, it receives a **QuestionAnsweredListener**
+ * - When the user clicks an answer button, this panel notifies NetworkClient
+ *   by calling listener.onAnswerSelected(optionIndex).
+ *
+ * - NetworkClient is responsible for sending the answer to the server.
+ * - WaitingPanel creates this panel and provides the listener implementation.
+ *
+ * This keeps GUI and networking cleanly separated.
  */
 public class QuestionPanel extends JFrame {
 
-    // Listener for sending answers back to NetworkClient
+    /** Listener  provided by WaitingPanel → forwarded to NetworkClient */
     private final QuestionAnsweredListener listener;
     private ClientBackpack backpack;
 
 
-    // GUI components
+    /** GUI components updated  when new questions arrive */
     private JButton questionButton;
     private JButton optionButton1;
     private JButton optionButton2;
@@ -38,23 +49,28 @@ public class QuestionPanel extends JFrame {
         getContentPane().setBackground(Constants.DARK_BLUE);
         addGuiComponents();
     }
+
+    /**
+     * NetworkClient calls this method whenever a new question is received.
+     * This is the connection between the networking layer and the GUI layer.
+     */
     public void updateQuestion(Question q) {
         updateQuestion(q.getQuestionText(), q.getOptions());
     }
 
-
+    /** Creates and places all GUI components */
     private void addGuiComponents() {
 
-        // Question text area
+        // Main question box
         questionButton = new JButton("QUESTION");
         questionButton.setFont(new Font("Arial", Font.BOLD, 16));
         questionButton.setBounds(100, 140, 400, 200);
-        questionButton.setEnabled(false);
+        questionButton.setEnabled(false);  // purely visual, not clickable
         add(questionButton);
 
         // Option 1
         optionButton1 = makeOptionButton(100, 380);
-        optionButton1.addActionListener(e -> listener.onAnswerSelected(0));
+        optionButton1.addActionListener(e -> listener.onAnswerSelected(0)); // notify listener
         add(optionButton1);
 
         // Option 2
@@ -73,6 +89,7 @@ public class QuestionPanel extends JFrame {
         add(optionButton4);
     }
 
+    /** Helper for styling of all answer buttons */
     private JButton makeOptionButton(int x, int y) {
         JButton b = new JButton("option");
         b.setFont(new Font("Arial", Font.BOLD, 16));
@@ -82,7 +99,10 @@ public class QuestionPanel extends JFrame {
         return b;
     }
 
-    /** Update GUI when NetworkClient receives a question */
+    /**
+     * Update the text on all GUI components when a new question arrives.
+     * This is called from NetworkClient → handleQuestion().
+     */
     public void updateQuestion(String question, String[] options) {
         questionButton.setText(question);
         optionButton1.setText(options[0]);
@@ -91,7 +111,14 @@ public class QuestionPanel extends JFrame {
         optionButton4.setText(options[3]);
     }
 
-    /** Listener interface */
+    /**
+     * Listener interface
+     * Implemented in WaitingPanel like:
+     *
+     *      optionIndex -> client.sendAnswer(optionIndex)
+     *
+     * This keeps QuestionPanel completely GUI-only.
+     */
     public interface QuestionAnsweredListener {
         void onAnswerSelected(int optionIndex);
     }
