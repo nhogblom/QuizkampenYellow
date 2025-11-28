@@ -1,6 +1,6 @@
 package org.example.client.panels;
 
-import org.example.client.Flag;
+import org.example.client.ClientBackpack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,9 +9,9 @@ import java.awt.event.ActionListener;
 public class MainWindow extends JFrame {
 
     private JTextField usernameField;
-    private Flag moveToNextUI;
+    private ClientBackpack moveToNextUI;
 
-    public MainWindow(Flag moveToNextUI) {
+    public MainWindow(ClientBackpack moveToNextUI) {
         this.moveToNextUI = moveToNextUI;
         super("");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

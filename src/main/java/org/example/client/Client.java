@@ -5,7 +5,7 @@ import org.example.client.panels.MainWindow;
 import javax.swing.*;
 
 public class Client {
-    private Flag moveToNextUI = new Flag();
+    private ClientBackpack moveToNextUI = new ClientBackpack();
 
     public Client() {
         SwingUtilities.invokeLater(new Runnable() {

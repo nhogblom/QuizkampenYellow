@@ -15,9 +15,9 @@ public class NetworkClient {
     private final int SERVER_PORT;
     private final String playerName;
     JFrame activeJframe;
-    private Flag moveToNextUI;
+    private ClientBackpack moveToNextUI;
 
-    public NetworkClient(String playerName,JFrame activeJframe, Flag moveToNextUI) {
+    public NetworkClient(String playerName,JFrame activeJframe, ClientBackpack moveToNextUI) {
         GameConfig gameConfig = new GameConfig();
         this.activeJframe = activeJframe;
         this.moveToNextUI = moveToNextUI;
@@ -64,7 +64,7 @@ public class NetworkClient {
 
                     switch (msg.getType()) {
                         case MATCH_STARTED:
-                            moveToNextUI.setFlag(true);
+                            moveToNextUI.setGoToNextScreen(true);
                             break; // <-- IMPORTANT
 
                         case QUESTION:
@@ -84,7 +84,7 @@ public class NetworkClient {
                             break;
 
                         case DEVELOPMENTMSG:
-                            moveToNextUI.setFlag(true);
+                            moveToNextUI.setGoToNextScreen(true);
                             System.out.println(moveToNextUI);
                             System.out.println("Development message received: " + msg.getPayload());
                             break;

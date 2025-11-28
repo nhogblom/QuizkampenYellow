@@ -1,6 +1,6 @@
 package org.example.client.panels;
 
-import org.example.client.Flag;
+import org.example.client.ClientBackpack;
 import org.example.client.NetworkClient;
 
 import javax.swing.*;
@@ -10,10 +10,10 @@ public class WaitingPanel extends JFrame {
 
     private JLabel connectingLabel;
     private final String username;
-    private final Flag moveToNextUI;
+    private final ClientBackpack moveToNextUI;
     private NetworkClient client;
 
-    public WaitingPanel(String username, Flag moveToNextUI) {
+    public WaitingPanel(String username, ClientBackpack moveToNextUI) {
         super("Quizkampen - Waiting");
 
         this.username = username;
@@ -41,7 +41,7 @@ public class WaitingPanel extends JFrame {
 
     private void waitForServerStartSignal() {
         new Thread(() -> {
-            while (!moveToNextUI.isFlag()) {
+            while (!moveToNextUI.isGoToNextScreen()) {
                 try { Thread.sleep(100); }
                 catch (InterruptedException ignored) {}
             }
@@ -57,7 +57,7 @@ public class WaitingPanel extends JFrame {
                 this.dispose();
                 questionPanel.setVisible(true);
 
-                moveToNextUI.setFlag(false);
+                moveToNextUI.setGoToNextScreen(false);
             });
 
         }).start();
