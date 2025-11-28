@@ -1,5 +1,7 @@
 package org.example.client.panels;
 
+import org.example.client.Flag;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -7,8 +9,10 @@ import java.awt.event.ActionListener;
 public class MainWindow extends JFrame {
 
     private JTextField usernameField;
+    private Flag moveToNextUI;
 
-    public MainWindow() {
+    public MainWindow(Flag moveToNextUI) {
+        this.moveToNextUI = moveToNextUI;
         super("");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 800);
@@ -57,7 +61,7 @@ public class MainWindow extends JFrame {
                 if (username.equals("") || username.isEmpty()) {
                     JOptionPane.showMessageDialog(MainWindow.this, "Please enter a username!");
                 } else {
-                    WaitingPanel waiting = new WaitingPanel(username);
+                    WaitingPanel waiting = new WaitingPanel(username,moveToNextUI);
                     waiting.setLocationRelativeTo(MainWindow.this);
                     MainWindow.this.dispose();
                     waiting.setVisible(true);
