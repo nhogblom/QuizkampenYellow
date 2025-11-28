@@ -54,11 +54,15 @@ public class MainWindow extends JFrame {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 String username = usernameField.getText();
-                WaitingPanel waiting = new WaitingPanel(username);
+                if (username.equals("") || username.isEmpty()) {
+                    JOptionPane.showMessageDialog(MainWindow.this, "Please enter a username!");
+                } else {
+                    WaitingPanel waiting = new WaitingPanel(username);
+                    waiting.setLocationRelativeTo(MainWindow.this);
+                    MainWindow.this.dispose();
+                    waiting.setVisible(true);
+                }
 
-                waiting.setLocationRelativeTo(MainWindow.this);
-                MainWindow.this.dispose();
-                waiting.setVisible(true);
             }
         });
 
