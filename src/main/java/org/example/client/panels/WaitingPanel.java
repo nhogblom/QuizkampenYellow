@@ -9,12 +9,13 @@ import java.awt.*;
 public class WaitingPanel extends JFrame {
 
     private JLabel connectingLabel;
-
-    private String username;
-    private Flag moveToNextUI;
+    private final String username;
+    private final Flag moveToNextUI;
+    private NetworkClient client;
 
     public WaitingPanel(String username, Flag moveToNextUI) {
-        super(""); // MUST be first line in constructor
+        super("Quizkampen - Waiting");
+
         this.username = username;
         this.moveToNextUI = moveToNextUI;
 
@@ -27,32 +28,38 @@ public class WaitingPanel extends JFrame {
 
         addGuiComponents();
 
-        // connection is established to server.
-        NetworkClient client = new NetworkClient(username, this, moveToNextUI);
+        // Create client + connect
+        this.client = new NetworkClient(username, this, moveToNextUI);
         if (client.connect()) {
-            connectingLabel.setText("Connected to " + username);
+            connectingLabel.setText("Connected as " + username);
         } else {
             connectingLabel.setText("Connection failed");
         }
 
-        moveOnToNextUI();
+        waitForServerStartSignal();
     }
 
-    public void moveOnToNextUI() {
+    private void waitForServerStartSignal() {
         new Thread(() -> {
             while (!moveToNextUI.isFlag()) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                try { Thread.sleep(100); }
+                catch (InterruptedException ignored) {}
             }
-            // out of the waiting loop, move onto next UI screen
-            QuestionPanel questionPanel = new QuestionPanel(moveToNextUI);
-            questionPanel.setLocationRelativeTo(this);
-            this.dispose();
-            questionPanel.setVisible(true);
-            this.moveToNextUI.setFlag(false);
+
+            SwingUtilities.invokeLater(() -> {
+                // Build QuestionPanel with listener
+                QuestionPanel questionPanel = new QuestionPanel(
+                        optionIndex -> client.sendAnswer(optionIndex)
+                );
+
+                client.setActiveJframe(questionPanel);
+
+                this.dispose();
+                questionPanel.setVisible(true);
+
+                moveToNextUI.setFlag(false);
+            });
+
         }).start();
     }
 
@@ -61,13 +68,12 @@ public class WaitingPanel extends JFrame {
         connectingLabel.setFont(new Font("Arial", Font.BOLD, 36));
         connectingLabel.setBounds(100, 50, 400, 43);
         connectingLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        getContentPane().add(connectingLabel);
+        add(connectingLabel);
 
         JLabel title = new JLabel("Waiting for opponent...");
         title.setFont(new Font("Arial", Font.BOLD, 36));
         title.setBounds(100, 300, 400, 43);
         title.setHorizontalAlignment(SwingConstants.CENTER);
-        getContentPane().add(title);
+        add(title);
     }
-    // TODO användaren får info om att anslutningen är etablerad och att motspelare inväntas.
 }
