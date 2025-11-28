@@ -14,6 +14,7 @@ public class WaitingPanel extends JFrame {
 
     public WaitingPanel(String username, Flag moveToNextUI) {
         this.username = username;
+        this.moveToNextUI = moveToNextUI;
         super("");
         setSize(600, 800);
         setLayout(null);
@@ -37,14 +38,17 @@ public class WaitingPanel extends JFrame {
         new Thread(() -> {
             while (!moveToNextUI.isFlag()) {
                 try {
-                    Thread.sleep(2000);
-                    System.out.println(moveToNextUI);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            connectingLabel.setText("MATCH STARTAD!");
-
+            // out of the waiting loop, move onto next UI screen
+            QuestionPanel questionPanel = new QuestionPanel(moveToNextUI);
+            questionPanel.setLocationRelativeTo(this);
+            this.dispose();
+            questionPanel.setVisible(true);
+            this.moveToNextUI.setFlag(false);
         }).start();
     }
 
