@@ -60,6 +60,8 @@ public class NetworkClient {
                         case CHAT:
                             System.out.println("Chat message: " + msg.getPayload());
                             break;
+                        case DEVELOPMENTMSG:
+                            System.out.println("Development message received: " + msg.getPayload());
                         default:
                             System.out.println("Unknown message type: " + msg.getType());
                     }
