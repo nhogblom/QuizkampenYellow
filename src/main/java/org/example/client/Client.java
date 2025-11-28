@@ -21,14 +21,14 @@ public class Client {
         });
 
 
-        NetworkClient client = new NetworkClient();
+        NetworkClient client = new NetworkClient("Det här är ett namn");
         client.connect();
 
         try (BufferedReader console = new BufferedReader(new InputStreamReader(System.in))) {
             String input;
             while ((input = console.readLine()) != null) {
                 if (input.equalsIgnoreCase("exit")) break;
-                client.sendMessage(input);
+                client.sendMessage(new Message(MyMessageTypes.CHAT,input));
             }
         } catch (IOException e) {
             e.printStackTrace();
