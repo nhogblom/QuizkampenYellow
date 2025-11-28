@@ -2,6 +2,7 @@ package org.example.client;
 
 import org.example.server.GameConfig;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 
@@ -13,17 +14,29 @@ public class NetworkClient {
     private final String SERVER_IP;
     private final int SERVER_PORT;
     private final String playerName;
+    JFrame activeJframe;
+    private Flag moveToNextUI;
 
-    public NetworkClient(String playerName) {
+    public NetworkClient(String playerName,JFrame activeJframe, Flag moveToNextUI) {
         GameConfig gameConfig = new GameConfig();
+        this.activeJframe = activeJframe;
+        this.moveToNextUI = moveToNextUI;
         SERVER_IP = gameConfig.getIpAsString();
         SERVER_PORT = gameConfig.getPort();
 
         this.playerName = playerName;
         }
 
-        //Koppla upp mot server
-        public void connect() {
+    public JFrame getActiveJframe() {
+        return activeJframe;
+    }
+
+    public void setActiveJframe(JFrame activeJframe) {
+        this.activeJframe = activeJframe;
+    }
+
+    //Koppla upp mot server
+        public boolean connect() {
             try {
                 socket = new Socket(SERVER_IP, SERVER_PORT);
 
@@ -34,10 +47,12 @@ public class NetworkClient {
 
                 // Starta lyssnarthread
                 new Thread(this::listen).start();
+                return true;
 
             } catch (Exception e) {
                 System.out.println("Connection failed");
                 e.printStackTrace();
+                return false;
             }
         }
 
@@ -48,6 +63,8 @@ public class NetworkClient {
                     Message msg = (Message) objectReader.readObject();
 
                     switch (msg.getType()) {
+                        case MATCH_STARTED:
+                            moveToNextUI.setFlag(true);
                         case QUESTION:
                             handleQuestion((Question) msg.getPayload());
                             break;
@@ -61,6 +78,8 @@ public class NetworkClient {
                             System.out.println("Chat message: " + msg.getPayload());
                             break;
                         case DEVELOPMENTMSG:
+                            moveToNextUI.setFlag(true);
+                            System.out.println(moveToNextUI);
                             System.out.println("Development message received: " + msg.getPayload());
                             break;
                         default:
@@ -112,8 +131,8 @@ public class NetworkClient {
         }
 
         //test klient
-        public static void main(String[] args) {
-            NetworkClient client = new NetworkClient("Player1");
-            client.connect();
-        }
+//        public static void main(String[] args) {
+//            NetworkClient client = new NetworkClient("Player1",null);
+//            client.connect();
+//        }
     }
