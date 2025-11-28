@@ -11,25 +11,20 @@ import org.example.Question;
  *
  * This panel displays a single quiz question + 4 answer buttons.
  *
- * IMPORTANT DESIGN CHANGES:
- * - The panel no longer handles networking or Flags.
- * - Instead, it receives a **QuestionAnsweredListener**
- * - When the user clicks an answer button, this panel notifies NetworkClient
- *   by calling listener.onAnswerSelected(optionIndex).
- *
- * - NetworkClient is responsible for sending the answer to the server.
- * - WaitingPanel creates this panel and provides the listener implementation.
- *
- * This keeps GUI and networking cleanly separated.
+ * DESIGN:
+ * - GUI-only: no networking, no socket logic.
+ * - Communicates via QuestionAnsweredListener, provided from outside
+ *   (WaitingPanel -> NetworkClient).
+ * - Uses ClientBackpack only as shared context (stores a reference and
+ *   registers itself, so NetworkClient can call updateQuestion(...)).
  */
 public class QuestionPanel extends JFrame {
 
-    /** Listener  provided by WaitingPanel → forwarded to NetworkClient */
+    /** Listener provided by WaitingPanel - forwarded to NetworkClient */
     private final QuestionAnsweredListener listener;
-    private ClientBackpack backpack;
+    private final ClientBackpack backpack;
 
-
-    /** GUI components updated  when new questions arrive */
+    /** GUI components updated when new questions arrive */
     private JButton questionButton;
     private JButton optionButton1;
     private JButton optionButton2;
@@ -40,13 +35,18 @@ public class QuestionPanel extends JFrame {
         super("Quizkampen - Question");
         this.listener = listener;
         this.backpack = backpack;
+
+        // Register this panel in the shared state so NetworkClient can find it
         backpack.setQuestionPanel(this);
+        backpack.setActiveJframe(this);
+
         setSize(600, 800);
         setLayout(null);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         getContentPane().setBackground(Constants.DARK_BLUE);
+
         addGuiComponents();
     }
 
@@ -55,6 +55,10 @@ public class QuestionPanel extends JFrame {
      * This is the connection between the networking layer and the GUI layer.
      */
     public void updateQuestion(Question q) {
+        if (q == null) {
+            System.out.println("WARNING: updateQuestion called with null Question");
+            return;
+        }
         updateQuestion(q.getQuestionText(), q.getOptions());
     }
 
@@ -101,9 +105,14 @@ public class QuestionPanel extends JFrame {
 
     /**
      * Update the text on all GUI components when a new question arrives.
-     * This is called from NetworkClient → handleQuestion().
+     * This is called from NetworkClient - handleQuestion().
      */
     public void updateQuestion(String question, String[] options) {
+        if (question == null || options == null || options.length < 4) {
+            System.out.println("WARNING: invalid question/options in updateQuestion");
+            return;
+        }
+
         questionButton.setText(question);
         optionButton1.setText(options[0]);
         optionButton2.setText(options[1]);
