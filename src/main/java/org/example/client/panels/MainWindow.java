@@ -1,4 +1,5 @@
 package org.example.client.panels;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -53,7 +54,7 @@ public class MainWindow extends JFrame {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 String username = usernameField.getText();
-                WaitingPanel waiting = new WaitingPanel();
+                WaitingPanel waiting = new WaitingPanel(username);
 
                 waiting.setLocationRelativeTo(MainWindow.this);
                 MainWindow.this.dispose();

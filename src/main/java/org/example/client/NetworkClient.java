@@ -5,12 +5,12 @@ import java.net.Socket;
 
 public class NetworkClient {
 
-        private Socket socket;
-        private ObjectOutputStream objectWriter;
-        private ObjectInputStream objectReader;
+    private Socket socket;
+    private ObjectInputStream objectReader;
+    private ObjectOutputStream objectWriter;
 
-        private static final String SERVER_IP = "127.0.0.1";
-        private static final int SERVER_PORT = 12346;
+    private static final String SERVER_IP = "127.0.0.1";
+    private static final int SERVER_PORT = 55554;
 
         private final String playerName;
 

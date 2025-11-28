@@ -1,13 +1,10 @@
-package org.example;
-
-import org.example.server.Chat;
-import org.example.server.ChatMessage;
+package org.example.server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Player {
@@ -15,7 +12,7 @@ public class Player {
     private Socket socket;
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
-    private List<Object> incommingGamePackets = new ArrayList<>();
+    private List<Object> incomingGamePackets = new LinkedList<>();
     private Chat chat = new Chat();
 
     public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
@@ -23,27 +20,14 @@ public class Player {
         this.objectInputStream = objectInputStream;
         this.objectOutputStream = objectOutputStream;
 
-
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Object incomming = objectInputStream.readObject();
-                    if (incomming instanceof String s) {
-                        incommingGamePackets.add(s);
-                    } else if (incomming instanceof ChatMessage cm) {
-                        chat.broadcast(cm);
-                    }
-                } catch (Exception e) {
-                    System.out.println("Fel inträffade i inkommande dataström för spelare" + username + "\n" + e.getMessage());
-                }
-            }
-        }).start();
+        PlayerListener playerListener = new PlayerListener(this,incomingGamePackets);
     }
 
-    public Object getGamePacket() {
-        if (!incommingGamePackets.isEmpty()) {
-        return incommingGamePackets.removeFirst();
-        }else{
+
+    public synchronized Object getGamePacket() {
+        if (!incomingGamePackets.isEmpty()) {
+            return incomingGamePackets.removeFirst();
+        } else {
             return null;
         }
     }
@@ -52,7 +36,9 @@ public class Player {
         try {
             return objectInputStream.readObject();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("IOException");
+            e.printStackTrace();
+            return null;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -99,12 +85,12 @@ public class Player {
         this.objectOutputStream = objectOutputStream;
     }
 
-    public List<Object> getIncommingGamePackets() {
-        return incommingGamePackets;
+    public List<Object> getIncomingGamePackets() {
+        return incomingGamePackets;
     }
 
-    public void setIncommingGamePackets(List<Object> incommingGamePackets) {
-        this.incommingGamePackets = incommingGamePackets;
+    public void setIncomingGamePackets(List<Object> incomingGamePackets) {
+        this.incomingGamePackets = incomingGamePackets;
     }
 
     public Chat getChat() {
