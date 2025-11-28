@@ -99,8 +99,8 @@ public class Game implements Runnable {
         scorePlayer2 = 0;
         System.out.println("initGame() called");
 
-        player1.send("MATCH_STARTED: You are playing against " + safeUsername(player2));
-        player2.send("MATCH_STARTED: You are playing against " + safeUsername(player1));
+        player1.send(new Message(MyMessageTypes.DEVELOPMENTMSG,"MATCH_STARTED: You are playing against " + safeUsername(player2)));
+        player2.send(new Message(MyMessageTypes.DEVELOPMENTMSG,"MATCH_STARTED: You are playing against " + safeUsername(player1)));
     }
 
     /**
@@ -124,7 +124,7 @@ public class Game implements Runnable {
         Player chooser = (round % 2 == 1) ? player1 : player2;
 
         chooser.send(new Message(MyMessageTypes.DEVELOPMENTMSG,"CHOOSE_CATEGORY: It is your turn to choose a category for round " + round));
-        getOpponent(chooser).send("INFO: Waiting for opponent to choose a category for round " + round);
+        getOpponent(chooser).send(new Message(MyMessageTypes.DEVELOPMENTMSG,"INFO: Waiting for opponent to choose a category for round " + round));
     }
 
     /**
