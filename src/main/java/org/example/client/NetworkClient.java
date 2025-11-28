@@ -41,6 +41,7 @@ public class NetworkClient {
                 System.out.println("Connected to server: " + SERVER_IP + ":" + SERVER_PORT);
 
                 // Starta lyssnarthread
+                sendMessage(new Message(MyMessageTypes.USERNAME,backpack.getUsername()));
                 new Thread(this::listen).start();
                 return true;
 
@@ -60,6 +61,8 @@ public class NetworkClient {
                     switch (msg.getType()) {
                         case MATCH_STARTED:
                             backpack.setGoToNextScreen(true);
+                            backpack.setOpponentUsername((String)msg.getPayload());
+                            System.out.println("Match started, you are playing against "+(backpack.getOpponentUsername()));
                             break; // <-- IMPORTANT
 
                         case QUESTION:
