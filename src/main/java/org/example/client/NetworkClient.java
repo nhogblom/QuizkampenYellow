@@ -2,7 +2,6 @@ package org.example.client;
 
 import org.example.server.GameConfig;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 
@@ -14,26 +13,18 @@ public class NetworkClient {
     private final String SERVER_IP;
     private final int SERVER_PORT;
     private final String playerName;
-    JFrame activeJframe;
-    private ClientBackpack moveToNextUI;
+    private ClientBackpack backpack;
 
-    public NetworkClient(String playerName,JFrame activeJframe, ClientBackpack moveToNextUI) {
+    public NetworkClient(String playerName, ClientBackpack backpack) {
         GameConfig gameConfig = new GameConfig();
-        this.activeJframe = activeJframe;
-        this.moveToNextUI = moveToNextUI;
+        this.backpack = backpack;
+        backpack.setNetworkClient(this);
         SERVER_IP = gameConfig.getIpAsString();
         SERVER_PORT = gameConfig.getPort();
-
         this.playerName = playerName;
         }
 
-    public JFrame getActiveJframe() {
-        return activeJframe;
-    }
 
-    public void setActiveJframe(JFrame activeJframe) {
-        this.activeJframe = activeJframe;
-    }
 
     //Koppla upp mot server
         public boolean connect() {
@@ -64,7 +55,7 @@ public class NetworkClient {
 
                     switch (msg.getType()) {
                         case MATCH_STARTED:
-                            moveToNextUI.setGoToNextScreen(true);
+                            backpack.setGoToNextScreen(true);
                             break; // <-- IMPORTANT
 
                         case QUESTION:
@@ -84,8 +75,8 @@ public class NetworkClient {
                             break;
 
                         case DEVELOPMENTMSG:
-                            moveToNextUI.setGoToNextScreen(true);
-                            System.out.println(moveToNextUI);
+                            backpack.setGoToNextScreen(true);
+                            System.out.println(backpack);
                             System.out.println("Development message received: " + msg.getPayload());
                             break;
 
@@ -106,7 +97,7 @@ public class NetworkClient {
             System.out.println("Received question from server: " + question.getQuestionText());
 
             // Get the active JFrame and check if it's a QuestionPanel
-            if (activeJframe instanceof org.example.client.panels.QuestionPanel qp) {
+            if (backpack.getActiveJframe() instanceof org.example.client.panels.QuestionPanel qp) {
                 qp.updateQuestion(question);
             } else {
                 System.out.println("WARNING: active frame is not a QuestionPanel");

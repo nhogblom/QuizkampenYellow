@@ -9,15 +9,13 @@ import java.awt.*;
 public class WaitingPanel extends JFrame {
 
     private JLabel connectingLabel;
-    private final String username;
-    private final ClientBackpack moveToNextUI;
-    private NetworkClient client;
+    private final ClientBackpack backpack;
+    private final NetworkClient client;
 
-    public WaitingPanel(String username, ClientBackpack moveToNextUI) {
+    public WaitingPanel(ClientBackpack backpack) {
         super("Quizkampen - Waiting");
 
-        this.username = username;
-        this.moveToNextUI = moveToNextUI;
+        this.backpack = backpack;
 
         setSize(600, 800);
         setLayout(null);
@@ -29,9 +27,10 @@ public class WaitingPanel extends JFrame {
         addGuiComponents();
 
         // Create client + connect
-        this.client = new NetworkClient(username, this, moveToNextUI);
+        backpack.setActiveJframe(this);
+        this.client = new NetworkClient(backpack.getUsername(), backpack);
         if (client.connect()) {
-            connectingLabel.setText("Connected as " + username);
+            connectingLabel.setText("Connected as " + backpack.getUsername());
         } else {
             connectingLabel.setText("Connection failed");
         }
@@ -41,23 +40,24 @@ public class WaitingPanel extends JFrame {
 
     private void waitForServerStartSignal() {
         new Thread(() -> {
-            while (!moveToNextUI.isGoToNextScreen()) {
-                try { Thread.sleep(100); }
-                catch (InterruptedException ignored) {}
+            while (!backpack.isGoToNextScreen()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+                }
             }
 
             SwingUtilities.invokeLater(() -> {
                 // Build QuestionPanel with listener
-                QuestionPanel questionPanel = new QuestionPanel(
-                        optionIndex -> client.sendAnswer(optionIndex)
-                );
 
-                client.setActiveJframe(questionPanel);
+                QuestionPanel questionPanel = new QuestionPanel(backpack,optionIndex -> client.sendAnswer(optionIndex));
+
+                backpack.setActiveJframe(questionPanel);
 
                 this.dispose();
                 questionPanel.setVisible(true);
 
-                moveToNextUI.setGoToNextScreen(false);
+                backpack.setGoToNextScreen(false);
             });
 
         }).start();

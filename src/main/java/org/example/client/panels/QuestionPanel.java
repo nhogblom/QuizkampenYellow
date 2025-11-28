@@ -2,6 +2,8 @@ package org.example.client.panels;
 
 import javax.swing.*;
 import java.awt.*;
+
+import org.example.client.ClientBackpack;
 import org.example.client.Question;
 
 
@@ -13,6 +15,7 @@ public class QuestionPanel extends JFrame {
 
     // Listener for sending answers back to NetworkClient
     private final QuestionAnsweredListener listener;
+    private ClientBackpack backpack;
 
     // GUI components
     private JButton questionButton;
@@ -21,9 +24,10 @@ public class QuestionPanel extends JFrame {
     private JButton optionButton3;
     private JButton optionButton4;
 
-    public QuestionPanel(QuestionAnsweredListener listener) {
+    public QuestionPanel(ClientBackpack backpack, QuestionAnsweredListener listener) {
         super("Quizkampen - Question");
         this.listener = listener;
+        this.backpack = backpack;
 
         setSize(600, 800);
         setLayout(null);
