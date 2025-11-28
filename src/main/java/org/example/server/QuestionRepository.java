@@ -2,61 +2,85 @@ package org.example.server;
 import java.util.*;
 
 public class QuestionRepository {
-    private Map<String, List<QuizQuestion>> categoryQuestions = new HashMap<>();
+    private List<String> categories = new ArrayList<>();
+    private List<QuizQuestion> sportQuestions = new ArrayList<>();
+    private List<QuizQuestion> historyQuestions = new ArrayList<>();
+    private List<QuizQuestion> filmQuestions = new ArrayList<>();
     private Random random = new Random();
 
     public QuestionRepository() {
         loadHardcodedQuestions();
     }
 
-    public List<QuizCategory> getCategories() {
-        return categoryQuestions.keySet()
-                .stream()
-                .map(QuizCategory::new)
-                .toList();
+    public List<String> getCategories() {
+        return categories;
     }
 
-    public List<QuizQuestion> getRandomQuestions(String categoryName, int count) {
-        List<QuizQuestion> questions = categoryQuestions.get(categoryName);
-        if(questions == null || questions.isEmpty()) {
-            return Collections.emptyList();
+    public List<QuizQuestion> getRandomQuestions(String category, int count) {
+        List<QuizQuestion> source;
+        String key = category.trim().toLowerCase();
+
+        switch(key) {
+            case "sport":
+                source = sportQuestions;
+                break;
+            case "history":
+                source = historyQuestions;
+                break;
+            case "film & tv":
+                source = filmQuestions;
+                break;
+            default:
+                return Collections.emptyList();
         }
-        if(count > questions.size()) {
-            count = questions.size();
+
+
+        List<QuizQuestion> copy = new ArrayList<>(source);
+        Collections.shuffle(copy);
+
+        if (count > copy.size()) {
+            count = copy.size();
         }
-        Collections.shuffle(questions, random);
-        return new ArrayList<>(questions.subList(0, count));
+        return new ArrayList<>(copy.subList(0, count));
     }
 
-    private void loadHardcodedQuestions() {
-        // Sport
-        categoryQuestions.put("Sport", new ArrayList<>(List.of(
-                new QuizQuestion("Hur många spelare har ett fotbollslag på planen?",
-                        List.of("9", "10", "11", "12"), "11"),
-                new QuizQuestion("Vad kallas det när man gör tre mål?",
-                        List.of("Hat-trick", "Triple", "Three-Goal", "Combo"), "Hat-trick"),
-                new QuizQuestion("Vilken sport spelas i Wimbledon?",
-                        List.of("Tennis", "Basket", "Rugby", "Golf"), "Tennis")
-        )));
-        // Historia
-        categoryQuestions.put("Historia", new ArrayList<>(List.of(
-                new QuizQuestion("När startade andra världskriget?",
-                        List.of("1914", "1939", "1945", "1960"), "1939"),
-                new QuizQuestion("Vilket land byggde pyramiderna?",
-                        List.of("Indien", "Persien", "Egypten", "Kina"), "Egypten"),
-                new QuizQuestion("Vem var drottning i England under 1800-talet?",
-                        List.of("Victoria", "Elizabeth I", "Anne", "Mary"), "Victoria")
-        )));
-        // FILM och TV
-        categoryQuestions.put("Film & TV", new ArrayList<>(List.of(
-                new QuizQuestion("Vem spelade Jack i Titanic?",
-                        List.of("Leonardo DiCaprio", "Brad Pitt", "Tom Cruise", "Keanu Reeves"), "Leonardo DiCaprio"),
-                new QuizQuestion("Vilken superhjälte är 'The Dark Knight'?",
-                        List.of("Superman", "Batman", "Spiderman", "Iron Man"), "Batman"),
-                new QuizQuestion("Vilken filmserie innehåller Voldemort?",
-                        List.of("Star Wars", "Harry Potter", "Sagan om Ringen", "Narnia"), "Harry Potter")
-        )));
+        private void loadHardcodedQuestions () {
+            // Sport
+            categories.add("Sport");
+            categories.add("History");
+            categories.add("Film & TV");
 
-    }
+            sportQuestions.add(new QuizQuestion(
+                    "How many players does a football team have on the field?",
+                    List.of("9", "10", "11", "12"), "11"));
+            sportQuestions.add(new QuizQuestion(
+                    "What is it called when a player scores 3 goals?",
+                    List.of("Hat-trick", "Tripple", "Three-Goal", "Combo"), "Hat-trick"));
+            sportQuestions.add(new QuizQuestion(
+                    "Which sport is played in Wimbledon?",
+                    List.of("Tennis", "Basket", "Rugby", "Golf"), "Tennis"));
+
+
+            historyQuestions.add(new QuizQuestion(
+                    "When did World war 2 start?",
+                    List.of("1914", "1939", "1945", "1960"), "1939"));
+            historyQuestions.add(new QuizQuestion(
+                    "Which country built the pyramids?",
+                    List.of("India", "Persia", "Egypt", "China"), "Egypt"));
+            historyQuestions.add(new QuizQuestion(
+                    "Who was the queen of England in 19th century",
+                    List.of("Victoria", "Elizabeth I", "Anne", "Mary"), "Victoria"));
+
+            filmQuestions.add(new QuizQuestion(
+                    "Who played Jack in Titanic?",
+                    List.of("Leonardo DiCaprio", "Brad Pitt", "Tom Cruise", "Keanu Reeves"), "Leonardo DiCaprio"));
+            filmQuestions.add(new QuizQuestion(
+                    "Which superhero is the Dark Knight?",
+                    List.of("Superman", "Batman", "Spiderman", "Iron Man"), "Batman"));
+            filmQuestions.add(new QuizQuestion(
+                    "Which movie series has the character Voldemort?",
+                    List.of("Star Wars", "Harry Potter", "Lord of the rings", "Narnia"), "Harry Potter"));
+        }
+
 }
 
