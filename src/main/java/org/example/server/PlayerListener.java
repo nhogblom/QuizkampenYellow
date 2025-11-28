@@ -1,16 +1,17 @@
 package org.example.server;
 
+import org.example.Message;
+
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 public class PlayerListener extends Thread {
     private final Player player;
-    private final List<Object> incomingGamePackets;
+    private final List<Message> incomingMessages;
 
-    public PlayerListener(Player player, List<Object> incomingGamePackets) {
+    public PlayerListener(Player player, List<Message> incomingMessages) {
         this.player = player;
-        this.incomingGamePackets = incomingGamePackets;
+        this.incomingMessages = incomingMessages;
         this.start();
     }
 
@@ -18,11 +19,10 @@ public class PlayerListener extends Thread {
     public void run() {
         while (true) {
             try {
-                Object incoming = player.getObjectInputStream().readObject();
-                if (incoming instanceof String s) {
-                    player.getIncomingGamePackets().add(s);
-                } else if (incoming instanceof ChatMessage cm) {
-                    ;
+                Object incoming = player.receive();
+                if (incoming instanceof Message msg) {
+                    incomingMessages.add(msg);
+                    notifyAll();
                 } else if (incoming instanceof Player) {
 
                 }
@@ -34,23 +34,29 @@ public class PlayerListener extends Thread {
         }
     }
 
-    public synchronized Object getGamePacket() {
-        if (!incomingGamePackets.isEmpty()) {
-            return incomingGamePackets.removeFirst();
+    public synchronized Message getGamePacket() {
+        while (true) {
+        if (!incomingMessages.isEmpty()) {
+            return incomingMessages.removeFirst();
         } else {
-            return null;
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
         }
     }
 
-    public Object receive() {
-        try {
-            return player.getObjectInputStream().readObject();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public Message receive() {
+//        try {
+//            return (Message) player.getObjectInputStream().readObject();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     public void send(Object object) {
         try {

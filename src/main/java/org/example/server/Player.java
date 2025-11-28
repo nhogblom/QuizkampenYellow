@@ -1,5 +1,7 @@
 package org.example.server;
 
+import org.example.Message;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,27 +14,35 @@ public class Player {
     private Socket socket;
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
-    private List<Object> incomingGamePackets = new LinkedList<>();
+    private List<Message> incomingMessages = new LinkedList<>();
     private Chat chat = new Chat();
+    PlayerListener playerListener;
 
     public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
         this.socket = socket;
         this.objectInputStream = objectInputStream;
         this.objectOutputStream = objectOutputStream;
 
-        PlayerListener playerListener = new PlayerListener(this,incomingGamePackets);
+         playerListener = new PlayerListener(this,incomingMessages);
     }
 
+    public PlayerListener getPlayerListener() {
+        return playerListener;
+    }
 
-    public synchronized Object getGamePacket() {
-        if (!incomingGamePackets.isEmpty()) {
-            return incomingGamePackets.removeFirst();
+    public void setPlayerListener(PlayerListener playerListener) {
+        this.playerListener = playerListener;
+    }
+
+    public synchronized Message getMessage() {
+        if (!incomingMessages.isEmpty()) {
+            return incomingMessages.removeFirst();
         } else {
             return null;
         }
     }
 
-    public Object receive() {
+    public  Object receive() {
         try {
             return objectInputStream.readObject();
         } catch (IOException e) {
@@ -44,7 +54,7 @@ public class Player {
         }
     }
 
-    public void send(Object object) {
+    public void send(Message object) {
         try {
             objectOutputStream.writeObject(object);
         } catch (IOException e) {
@@ -85,12 +95,12 @@ public class Player {
         this.objectOutputStream = objectOutputStream;
     }
 
-    public List<Object> getIncomingGamePackets() {
-        return incomingGamePackets;
+    public List<Message> getIncomingGamePackets() {
+        return incomingMessages;
     }
 
-    public void setIncomingGamePackets(List<Object> incomingGamePackets) {
-        this.incomingGamePackets = incomingGamePackets;
+    public void setIncomingGamePackets(List<Message> incomingGamePackets) {
+        this.incomingMessages = incomingGamePackets;
     }
 
     public Chat getChat() {

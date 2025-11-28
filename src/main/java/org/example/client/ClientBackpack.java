@@ -7,6 +7,7 @@ import javax.swing.*;
 
 public class ClientBackpack {
     private String username;
+    private String opponentUsername;
     private boolean goToNextScreen;
     private JFrame activeJframe;
     private NetworkClient networkClient;
@@ -48,6 +49,13 @@ public class ClientBackpack {
         this.activeJframe = activeJframe;
     }
 
+    public String getOpponentUsername() {
+        return opponentUsername;
+    }
+
+    public void setOpponentUsername(String opponentUsername) {
+        this.opponentUsername = opponentUsername;
+    }
 
     public void setNetworkClient(NetworkClient networkClient) {
         this.networkClient = networkClient;
