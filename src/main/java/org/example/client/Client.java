@@ -5,13 +5,13 @@ import org.example.client.panels.MainWindow;
 import javax.swing.*;
 
 public class Client {
-    private ClientBackpack moveToNextUI = new ClientBackpack();
+    private ClientBackpack backpack = new ClientBackpack();
 
     public Client() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new MainWindow(moveToNextUI).setVisible(true);
+                new MainWindow(backpack).setVisible(true);
             }
         });
     }
