@@ -30,10 +30,10 @@ public class ClientBackpack {
 
     public void setGoToNextScreen(boolean goToNextScreen) {
         this.goToNextScreen = goToNextScreen;
-
     }
 
     public void setUsername(String text) {
+        this.username = text;
     }
 
     public String getUsername() {
@@ -48,10 +48,9 @@ public class ClientBackpack {
         this.activeJframe = activeJframe;
     }
 
-    public void setQuestionAnsweredListener(Object o) {
-    }
 
     public void setNetworkClient(NetworkClient networkClient) {
+        this.networkClient = networkClient;
     }
 
     public NetworkClient getNetworkClient() {
