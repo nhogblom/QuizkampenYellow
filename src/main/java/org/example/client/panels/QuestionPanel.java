@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import org.example.client.ClientBackpack;
-import org.example.client.Question;
+import org.example.Question;
 
 
 /**

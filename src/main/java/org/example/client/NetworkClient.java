@@ -1,6 +1,10 @@
 package org.example.client;
 
-import org.example.server.GameConfig;
+import org.example.Answer;
+import org.example.Message;
+import org.example.MyMessageTypes;
+import org.example.Question;
+import org.example.GameConfig;
 
 import java.io.*;
 import java.net.Socket;

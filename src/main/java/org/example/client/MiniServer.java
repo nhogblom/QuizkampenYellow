@@ -1,5 +1,10 @@
 package org.example.client;
 
+import org.example.Answer;
+import org.example.Message;
+import org.example.MyMessageTypes;
+import org.example.Question;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
