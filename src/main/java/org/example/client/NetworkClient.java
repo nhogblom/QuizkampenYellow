@@ -76,14 +76,12 @@ public class NetworkClient {
 
                         case DEVELOPMENTMSG:
                             backpack.setGoToNextScreen(true);
-                            System.out.println(backpack);
                             System.out.println("Development message received: " + msg.getPayload());
                             break;
 
                         default:
                             System.out.println("Unknown message type: " + msg.getType());
                     }
-
                 }
             } catch (Exception e) {
                 System.out.println("Connection closed or error in listen()");

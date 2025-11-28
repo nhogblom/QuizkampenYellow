@@ -30,7 +30,7 @@ public class WaitingPanel extends JFrame {
         backpack.setActiveJframe(this);
         this.client = new NetworkClient(backpack.getUsername(), backpack);
         if (client.connect()) {
-            connectingLabel.setText("Connected as " + backpack.getUsername());
+            connectingLabel.setText("Connected as " + backpack.getUsername()+" waiting for opponent.");
         } else {
             connectingLabel.setText("Connection failed");
         }

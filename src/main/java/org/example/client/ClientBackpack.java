@@ -10,6 +10,15 @@ public class ClientBackpack {
     private boolean goToNextScreen;
     private JFrame activeJframe;
     private NetworkClient networkClient;
+    private QuestionPanel questionPanel;
+
+    public QuestionPanel getQuestionPanel() {
+        return questionPanel;
+    }
+
+    public void setQuestionPanel(QuestionPanel questionPanel) {
+        this.questionPanel = questionPanel;
+    }
 
     public ClientBackpack() {
         this.goToNextScreen = false;

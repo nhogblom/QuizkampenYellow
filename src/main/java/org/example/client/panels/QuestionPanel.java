@@ -17,6 +17,7 @@ public class QuestionPanel extends JFrame {
     private final QuestionAnsweredListener listener;
     private ClientBackpack backpack;
 
+
     // GUI components
     private JButton questionButton;
     private JButton optionButton1;
@@ -28,14 +29,13 @@ public class QuestionPanel extends JFrame {
         super("Quizkampen - Question");
         this.listener = listener;
         this.backpack = backpack;
-
+        backpack.setQuestionPanel(this);
         setSize(600, 800);
         setLayout(null);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         getContentPane().setBackground(Constants.DARK_BLUE);
-
         addGuiComponents();
     }
     public void updateQuestion(Question q) {
