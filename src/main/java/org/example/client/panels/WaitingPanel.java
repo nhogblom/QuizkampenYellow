@@ -7,15 +7,17 @@ import javax.swing.*;
 import java.awt.*;
 
 public class WaitingPanel extends JFrame {
+
     private JLabel connectingLabel;
 
     private String username;
     private Flag moveToNextUI;
 
     public WaitingPanel(String username, Flag moveToNextUI) {
+        super(""); // MUST be first line in constructor
         this.username = username;
         this.moveToNextUI = moveToNextUI;
-        super("");
+
         setSize(600, 800);
         setLayout(null);
         setLocationRelativeTo(null);
@@ -29,9 +31,11 @@ public class WaitingPanel extends JFrame {
         NetworkClient client = new NetworkClient(username, this, moveToNextUI);
         if (client.connect()) {
             connectingLabel.setText("Connected to " + username);
+        } else {
+            connectingLabel.setText("Connection failed");
         }
-        moveOnToNextUI();
 
+        moveOnToNextUI();
     }
 
     public void moveOnToNextUI() {
@@ -54,16 +58,16 @@ public class WaitingPanel extends JFrame {
 
     private void addGuiComponents() {
         connectingLabel = new JLabel("");
-        connectingLabel.setFont(new java.awt.Font("Arial", Font.BOLD, 36));
+        connectingLabel.setFont(new Font("Arial", Font.BOLD, 36));
         connectingLabel.setBounds(100, 50, 400, 43);
         connectingLabel.setHorizontalAlignment(SwingConstants.CENTER);
         getContentPane().add(connectingLabel);
+
         JLabel title = new JLabel("Waiting for opponent...");
-        title.setFont(new java.awt.Font("Arial", Font.BOLD, 36));
+        title.setFont(new Font("Arial", Font.BOLD, 36));
         title.setBounds(100, 300, 400, 43);
         title.setHorizontalAlignment(SwingConstants.CENTER);
         getContentPane().add(title);
     }
-    //
-    // TODO användaren får info om att  anslutningen är etablerad och att motspelare inväntas.
+    // TODO användaren får info om att anslutningen är etablerad och att motspelare inväntas.
 }
