@@ -1,5 +1,7 @@
 package org.example.server;
 
+import org.example.GameConfig;
+
 public class Server {
 
     public Server() {

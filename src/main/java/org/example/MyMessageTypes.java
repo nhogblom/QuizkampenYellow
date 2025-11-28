@@ -1,4 +1,4 @@
-package org.example.client;
+package org.example;
 
 public enum MyMessageTypes {
     MATCH_STARTED,

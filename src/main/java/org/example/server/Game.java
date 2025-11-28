@@ -1,7 +1,8 @@
 package org.example.server;
 
-import org.example.client.Message;
-import org.example.client.MyMessageTypes;
+import org.example.GameConfig;
+import org.example.Message;
+import org.example.MyMessageTypes;
 
 /**
  * Game controls the entire match between two players.
