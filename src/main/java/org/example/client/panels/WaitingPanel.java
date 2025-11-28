@@ -6,6 +6,27 @@ import org.example.client.NetworkClient;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * WaitingPanel is the first screen shown after the user enters a username.
+ *
+ * Responsibilities:
+ * 1. Establish a connection to the server through NetworkClient.
+ * 2. Display connection status to the user while waiting for a match to start.
+ * 3. Listen for a server signal (MATCH_STARTED or DEVELOPMENTMSG)
+ * 4. When the server says “match started”, WaitingPanel:
+ *      - Creates a QuestionPanel and passes in a listener so the UI can
+ *        send chosen answers back to the server through NetworkClient.
+ *      - Switches the active UI frame inside NetworkClient so incoming questions
+ *        update the correct panel.
+ *      - Closes itself and shows the QuestionPanel.
+ *
+ *
+ * NOTE TO TEAM:
+ * - moveToNextUI acts as a shared flag updated by NetworkClient when the server
+ *   sends MATCH_STARTED. When true, WaitingPanel moves to the next screen.
+ * - QuestionPanel now requires a listener (QuestionAnsweredListener) so it remains
+ */
+
 public class WaitingPanel extends JFrame {
 
     private JLabel connectingLabel;
