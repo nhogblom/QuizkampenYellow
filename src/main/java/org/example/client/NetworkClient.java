@@ -1,5 +1,7 @@
 package org.example.client;
 
+import org.example.server.GameConfig;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -8,9 +10,15 @@ public class NetworkClient {
     private Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
+    private final String SERVER_IP;
+    private final int SERVER_PORT;
 
-    private static final String SERVER_IP = "127.0.0.1";
-    private static final int SERVER_PORT = 55554;
+
+    public NetworkClient() {
+        GameConfig gameConfig = new GameConfig();
+        SERVER_IP = gameConfig.getIpAsString();
+        SERVER_PORT = gameConfig.getPort();
+    }
 
     public void connect() {
         try {
