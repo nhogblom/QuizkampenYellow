@@ -62,6 +62,7 @@ public class NetworkClient {
                             break;
                         case DEVELOPMENTMSG:
                             System.out.println("Development message received: " + msg.getPayload());
+                            break;
                         default:
                             System.out.println("Unknown message type: " + msg.getType());
                     }
