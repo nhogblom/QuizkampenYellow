@@ -9,10 +9,10 @@ import java.awt.event.ActionListener;
 public class MainWindow extends JFrame {
 
     private JTextField usernameField;
-    private ClientBackpack moveToNextUI;
+    private final ClientBackpack backpack;
 
-    public MainWindow(ClientBackpack moveToNextUI) {
-        this.moveToNextUI = moveToNextUI;
+    public MainWindow(ClientBackpack backpack) {
+        this.backpack = backpack;
         super("");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 800);
@@ -57,11 +57,11 @@ public class MainWindow extends JFrame {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                String username = usernameField.getText();
-                if (username.equals("") || username.isEmpty()) {
+                backpack.setUsername(usernameField.getText());
+                if (backpack.getUsername().equals("") || backpack.getUsername().isEmpty()) {
                     JOptionPane.showMessageDialog(MainWindow.this, "Please enter a username!");
                 } else {
-                    WaitingPanel waiting = new WaitingPanel(username,moveToNextUI);
+                    WaitingPanel waiting = new WaitingPanel(backpack);
                     waiting.setLocationRelativeTo(MainWindow.this);
                     MainWindow.this.dispose();
                     waiting.setVisible(true);

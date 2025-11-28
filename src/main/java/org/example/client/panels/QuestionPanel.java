@@ -2,6 +2,8 @@ package org.example.client.panels;
 
 import javax.swing.*;
 import java.awt.*;
+
+import org.example.client.ClientBackpack;
 import org.example.client.Question;
 
 /**
@@ -24,6 +26,8 @@ public class QuestionPanel extends JFrame {
 
     /** Listener  provided by WaitingPanel → forwarded to NetworkClient */
     private final QuestionAnsweredListener listener;
+    private ClientBackpack backpack;
+
 
     /** GUI components updated  when new questions arrive */
     private JButton questionButton;
@@ -32,22 +36,17 @@ public class QuestionPanel extends JFrame {
     private JButton optionButton3;
     private JButton optionButton4;
 
-    /**
-     * Constructor
-     * WaitingPanel will create this panel and pass in a listener.
-     * The listener tells NetworkClient which option the player selected.
-     */
-    public QuestionPanel(QuestionAnsweredListener listener) {
+    public QuestionPanel(ClientBackpack backpack, QuestionAnsweredListener listener) {
         super("Quizkampen - Question");
         this.listener = listener;
-
+        this.backpack = backpack;
+        backpack.setQuestionPanel(this);
         setSize(600, 800);
         setLayout(null);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         getContentPane().setBackground(Constants.DARK_BLUE);
-
         addGuiComponents();
     }
 
