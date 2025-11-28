@@ -5,10 +5,9 @@ import org.example.client.panels.MainWindow;
 import javax.swing.*;
 
 public class Client {
-    private Flag moveToNextUI;
+    private Flag moveToNextUI = new Flag();
 
     public Client() {
-        moveToNextUI.setFlag(false);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

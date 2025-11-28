@@ -3,8 +3,8 @@ package org.example.client;
 public class Flag {
     private boolean flag;
 
-    public Flag(boolean flag) {
-        this.flag = flag;
+    public Flag() {
+        this.flag = false;
     }
 
     public boolean isFlag() {

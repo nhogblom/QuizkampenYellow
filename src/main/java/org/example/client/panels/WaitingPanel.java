@@ -14,6 +14,7 @@ public class WaitingPanel extends JFrame {
 
     public WaitingPanel(String username, Flag moveToNextUI) {
         this.username = username;
+        this.moveToNextUI = moveToNextUI;
         super("");
         setSize(600, 800);
         setLayout(null);
