@@ -3,15 +3,43 @@ package org.example.client.panels;
 import javax.swing.*;
 import java.awt.*;
 
+import org.example.client.ClientBackpack;
+import org.example.Question;
+
+/**
+ * QuestionPanel
+ *
+ * This panel displays a single quiz question + 4 answer buttons.
+ *
+ * DESIGN:
+ * - GUI-only: no networking, no socket logic.
+ * - Communicates via QuestionAnsweredListener, provided from outside
+ *   (WaitingPanel -> NetworkClient).
+ * - Uses ClientBackpack only as shared context (stores a reference and
+ *   registers itself, so NetworkClient can call updateQuestion(...)).
+ */
 public class QuestionPanel extends JFrame {
 
-    private String question;
-    private String option1, option2, option3, option4;
-    private boolean correct1, correct2, correct3;
+    /** Listener provided by WaitingPanel - forwarded to NetworkClient */
+    private final QuestionAnsweredListener listener;
+    private final ClientBackpack backpack;
 
+    /** GUI components updated when new questions arrive */
+    private JButton questionButton;
+    private JButton optionButton1;
+    private JButton optionButton2;
+    private JButton optionButton3;
+    private JButton optionButton4;
 
-    public QuestionPanel() {
-        super("");
+    public QuestionPanel(ClientBackpack backpack, QuestionAnsweredListener listener) {
+        super("Quizkampen - Question");
+        this.listener = listener;
+        this.backpack = backpack;
+
+        // Register this panel in the shared state so NetworkClient can find it
+        backpack.setQuestionPanel(this);
+        backpack.setActiveJframe(this);
+
         setSize(600, 800);
         setLayout(null);
         setLocationRelativeTo(null);
@@ -19,75 +47,88 @@ public class QuestionPanel extends JFrame {
         setResizable(false);
         getContentPane().setBackground(Constants.DARK_BLUE);
 
-        addAnswerBoxes();
         addGuiComponents();
     }
 
-    private void addGuiComponents(){
-        JButton questions = new JButton("QUESTION");
-        questions.setFont(new java.awt.Font("Arial", Font.BOLD, 16));
-        questions.setBounds(100, 140, 400, 200);
-        questions.setHorizontalAlignment(SwingConstants.CENTER);
-        getContentPane().add(questions);
-        questions.setForeground(Color.BLACK);
-        questions.setBackground(Color.WHITE);
-        questions.setEnabled(false);
-
-        //Category 1
-        JButton opt1 = new JButton("option1");
-        opt1.setFont(new java.awt.Font("Arial", Font.BOLD, 16));
-        opt1.setBounds(100, 550, 180, 150);
-        opt1.setForeground(Color.BLACK);
-        opt1.setBackground(Color.WHITE);
-        add(opt1);
-        //Category 2
-        JButton opt2 = new JButton("option2");
-        opt2.setFont(new java.awt.Font("Arial", Font.BOLD, 16));
-        opt2.setBounds(320, 380, 180, 150);
-        opt2.setForeground(Color.BLACK);
-        opt2.setBackground(Color.WHITE);
-        add(opt2);
-        //Category 3
-        JButton opt3 = new JButton("option3");
-        opt3.setFont(new java.awt.Font("Arial", Font.BOLD, 16));
-        opt3.setBounds(100, 380, 180, 150);
-        opt3.setForeground(Color.BLACK);
-        opt3.setBackground(Color.WHITE);
-        add(opt3);
-
-        JButton opt4 = new JButton("option4");
-        opt4.setFont(new java.awt.Font("Arial", Font.BOLD, 16));
-        opt4.setBounds(320, 550, 180, 150);
-        opt4.setForeground(Color.BLACK);
-        opt4.setBackground(Color.WHITE);
-        add(opt4);
-
-        JButton giveUp = new JButton("GIVE UP");
-        giveUp.setFont(new java.awt.Font("Arial", Font.BOLD, 14));
-        giveUp.setBounds(250, 15, 100, 25);
-        giveUp.setForeground(Color.BLACK);
-        giveUp.setBackground(Color.RED);
-        add(giveUp);
-    }
-
-    private void addAnswerBoxes() {
-        addAnswerRow(50);
-    }
-
-    private void addAnswerRow(int y) {
-        createButtonCluster(100, y);
-        createButtonCluster(330, y);
-    }
-
-    private void createButtonCluster(int x, int y) {
-        for (int i = 0; i < 3; i++) {
-            JButton button = new JButton("");
-            button.setBackground(Color.WHITE);
-            button.setBounds(x + (i * 60), y, 50, 50);
-            add(button);
-            button.setEnabled(false);
+    /**
+     * NetworkClient calls this method whenever a new question is received.
+     * This is the connection between the networking layer and the GUI layer.
+     */
+    public void updateQuestion(Question q) {
+        if (q == null) {
+            System.out.println("WARNING: updateQuestion called with null Question");
+            return;
         }
+        updateQuestion(q.getQuestionText(), q.getOptions());
     }
 
-    // todo frågorna visas upp och spelaren får göra sitt val.
+    /** Creates and places all GUI components */
+    private void addGuiComponents() {
+
+        // Main question box
+        questionButton = new JButton("QUESTION");
+        questionButton.setFont(new Font("Arial", Font.BOLD, 16));
+        questionButton.setBounds(100, 140, 400, 200);
+        questionButton.setEnabled(false);  // purely visual, not clickable
+        add(questionButton);
+
+        // Option 1
+        optionButton1 = makeOptionButton(100, 380);
+        optionButton1.addActionListener(e -> listener.onAnswerSelected(0)); // notify listener
+        add(optionButton1);
+
+        // Option 2
+        optionButton2 = makeOptionButton(320, 380);
+        optionButton2.addActionListener(e -> listener.onAnswerSelected(1));
+        add(optionButton2);
+
+        // Option 3
+        optionButton3 = makeOptionButton(100, 550);
+        optionButton3.addActionListener(e -> listener.onAnswerSelected(2));
+        add(optionButton3);
+
+        // Option 4
+        optionButton4 = makeOptionButton(320, 550);
+        optionButton4.addActionListener(e -> listener.onAnswerSelected(3));
+        add(optionButton4);
+    }
+
+    /** Helper for styling of all answer buttons */
+    private JButton makeOptionButton(int x, int y) {
+        JButton b = new JButton("option");
+        b.setFont(new Font("Arial", Font.BOLD, 16));
+        b.setBounds(x, y, 180, 150);
+        b.setBackground(Color.WHITE);
+        b.setForeground(Color.BLACK);
+        return b;
+    }
+
+    /**
+     * Update the text on all GUI components when a new question arrives.
+     * This is called from NetworkClient - handleQuestion().
+     */
+    public void updateQuestion(String question, String[] options) {
+        if (question == null || options == null || options.length < 4) {
+            System.out.println("WARNING: invalid question/options in updateQuestion");
+            return;
+        }
+
+        questionButton.setText(question);
+        optionButton1.setText(options[0]);
+        optionButton2.setText(options[1]);
+        optionButton3.setText(options[2]);
+        optionButton4.setText(options[3]);
+    }
+
+    /**
+     * Listener interface
+     * Implemented in WaitingPanel like:
+     *
+     *      optionIndex -> client.sendAnswer(optionIndex)
+     *
+     * This keeps QuestionPanel completely GUI-only.
+     */
+    public interface QuestionAnsweredListener {
+        void onAnswerSelected(int optionIndex);
+    }
 }

@@ -1,24 +1,36 @@
 package org.example.client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.example.client.panels.MainWindow;
+
+import javax.swing.*;
 
 public class Client {
-//    public static void main(String[] args) {
-//        NetworkClient client = new NetworkClient();
-//        client.connect();
-//
+    private ClientBackpack backpack = new ClientBackpack();
+
+    public Client() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new MainWindow(backpack).setVisible(true);
+            }
+        });
+    }
+
+    void main() {
+
+
+
+
 //        try (BufferedReader console = new BufferedReader(new InputStreamReader(System.in))) {
 //            String input;
 //            while ((input = console.readLine()) != null) {
 //                if (input.equalsIgnoreCase("exit")) break;
-//                client.sendMessage(input);
+//                client.sendMessage(new Message(MyMessageTypes.CHAT,input));
 //            }
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        } finally {
 //            client.disconnect();
 //        }
-//    }
+    }
 }

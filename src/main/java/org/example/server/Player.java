@@ -1,7 +1,6 @@
-package org.example;
+package org.example.server;
 
-import org.example.server.Chat;
-import org.example.server.ChatMessage;
+import org.example.Message;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,54 +14,47 @@ public class Player {
     private Socket socket;
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
-    private List<Object> incomingGamePackets = new LinkedList<>();
+    private List<Message> incomingMessages = new LinkedList<>();
     private Chat chat = new Chat();
+    PlayerListener playerListener;
 
     public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
         this.socket = socket;
         this.objectInputStream = objectInputStream;
         this.objectOutputStream = objectOutputStream;
 
-
-        new Thread(() -> {
-                while (true) {
-                    try {
-                        Object incoming = objectInputStream.readObject();
-                        if (incoming instanceof String s) {
-                            incomingGamePackets.add(s);
-                        } else if (incoming instanceof ChatMessage cm) {
-                            chat.broadcast(cm);
-                        } else if (incoming instanceof Player) {
-
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Fel inträffade i inkommande dataström för spelare" + username + "\n" + e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-
-        }).start();
+         playerListener = new PlayerListener(this,incomingMessages);
     }
 
-    public synchronized Object getGamePacket() {
-        if (!incomingGamePackets.isEmpty()) {
-            return incomingGamePackets.removeFirst();
+    public PlayerListener getPlayerListener() {
+        return playerListener;
+    }
+
+    public void setPlayerListener(PlayerListener playerListener) {
+        this.playerListener = playerListener;
+    }
+
+    public synchronized Message getMessage() {
+        if (!incomingMessages.isEmpty()) {
+            return incomingMessages.removeFirst();
         } else {
             return null;
         }
     }
 
-    public Object receive() {
+    public  Object receive() {
         try {
             return objectInputStream.readObject();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("IOException");
+            e.printStackTrace();
+            return null;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void send(Object object) {
+    public void send(Message object) {
         try {
             objectOutputStream.writeObject(object);
         } catch (IOException e) {
@@ -103,12 +95,12 @@ public class Player {
         this.objectOutputStream = objectOutputStream;
     }
 
-    public List<Object> getIncomingGamePackets() {
-        return incomingGamePackets;
+    public List<Message> getIncomingGamePackets() {
+        return incomingMessages;
     }
 
-    public void setIncomingGamePackets(List<Object> incomingGamePackets) {
-        this.incomingGamePackets = incomingGamePackets;
+    public void setIncomingGamePackets(List<Message> incomingGamePackets) {
+        this.incomingMessages = incomingGamePackets;
     }
 
     public Chat getChat() {

@@ -1,4 +1,4 @@
-package org.example.server;
+package org.example;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +24,7 @@ public class GameConfig {
     private int port;
     private int totalQuestionsPerRound;
     private int totalRoundsPerGame;
+    private String ipString;
 
     // Internal storage for the properties file
     private final Properties properties = new Properties();
@@ -53,6 +54,7 @@ public class GameConfig {
             properties.load(in);
 
             // Read values by key
+            ipString = properties.getProperty("ip");
             ip = InetAddress.getByName(properties.getProperty("ip"));
             port = Integer.parseInt(properties.getProperty("port"));
             totalQuestionsPerRound =
@@ -102,5 +104,9 @@ public class GameConfig {
 
     public Properties getProperties() {
         return properties;
+    }
+
+    public String getIpAsString() {
+        return ipString;
     }
 }

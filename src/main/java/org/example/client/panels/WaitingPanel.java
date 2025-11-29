@@ -1,16 +1,43 @@
 package org.example.client.panels;
 
+import org.example.client.ClientBackpack;
+import org.example.client.NetworkClient;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class WaitingPanel extends JFrame{
+/**
+ * WaitingPanel is the first screen shown after the user enters a username.
+ *
+ * Responsibilities:
+ * 1. Establish a connection to the server through NetworkClient.
+ * 2. Display connection status to the user while waiting for a match to start.
+ * 3. Listen for a server signal (MATCH_STARTED or DEVELOPMENTMSG)
+ * 4. When the server says “match started”, WaitingPanel:
+ *      - Creates a QuestionPanel and passes in a listener so the UI can
+ *        send chosen answers back to the server through NetworkClient.
+ *      - Switches the active UI frame inside NetworkClient so incoming questions
+ *        update the correct panel.
+ *      - Closes itself and shows the QuestionPanel.
+ *
+ *
+ * NOTE TO TEAM:
+ * - moveToNextUI acts as a shared flag updated by NetworkClient when the server
+ *   sends MATCH_STARTED. When true, WaitingPanel moves to the next screen.
+ * - QuestionPanel now requires a listener (QuestionAnsweredListener) so it remains
+ */
 
-    private String username;
+public class WaitingPanel extends JFrame {
 
-    public WaitingPanel(String username) {
+    private JLabel connectingLabel;
+    private final ClientBackpack backpack;
+    private final NetworkClient client;
 
-        this.username = username;
-        super("");
+    public WaitingPanel(ClientBackpack backpack) {
+        super("Quizkampen - Waiting");
+
+        this.backpack = backpack;
+
         setSize(600, 800);
         setLayout(null);
         setLocationRelativeTo(null);
@@ -19,20 +46,55 @@ public class WaitingPanel extends JFrame{
         getContentPane().setBackground(Constants.DARK_BLUE);
 
         addGuiComponents();
+
+        // Create client + connect
+        backpack.setActiveJframe(this);
+        this.client = new NetworkClient(backpack.getUsername(), backpack);
+        if (client.connect()) {
+            connectingLabel.setText("Connected as " + backpack.getUsername()+" waiting for opponent.");
+        } else {
+            connectingLabel.setText("Connection failed");
+        }
+
+        waitForServerStartSignal();
+    }
+
+    private void waitForServerStartSignal() {
+        new Thread(() -> {
+            while (!backpack.isGoToNextScreen()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+                }
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                // Build QuestionPanel with listener
+
+                QuestionPanel questionPanel = new QuestionPanel(backpack,optionIndex -> client.sendAnswer(optionIndex));
+
+                backpack.setActiveJframe(questionPanel);
+
+                this.dispose();
+                questionPanel.setVisible(true);
+
+                backpack.setGoToNextScreen(false);
+            });
+
+        }).start();
     }
 
     private void addGuiComponents() {
-        JLabel connectingLabel = new JLabel("Connected");
-        connectingLabel.setFont(new java.awt.Font("Arial", Font.BOLD, 36));
+        connectingLabel = new JLabel("");
+        connectingLabel.setFont(new Font("Arial", Font.BOLD, 36));
         connectingLabel.setBounds(100, 50, 400, 43);
         connectingLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        getContentPane().add(connectingLabel);
+        add(connectingLabel);
+
         JLabel title = new JLabel("Waiting for opponent...");
-        title.setFont(new java.awt.Font("Arial", Font.BOLD, 36));
+        title.setFont(new Font("Arial", Font.BOLD, 36));
         title.setBounds(100, 300, 400, 43);
         title.setHorizontalAlignment(SwingConstants.CENTER);
-        getContentPane().add(title);
+        add(title);
     }
-    //
-    // TODO användaren får info om att  anslutningen är etableradd och att motspelare inväntas.
 }

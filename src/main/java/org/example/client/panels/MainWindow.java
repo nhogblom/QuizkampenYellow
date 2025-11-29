@@ -1,17 +1,18 @@
 package org.example.client.panels;
-import org.example.Player;
-import org.example.server.PlayerQueue;
+
+import org.example.client.ClientBackpack;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.net.Socket;
 
 public class MainWindow extends JFrame {
 
     private JTextField usernameField;
+    private final ClientBackpack backpack;
 
-    public MainWindow() {
+    public MainWindow(ClientBackpack backpack) {
+        this.backpack = backpack;
         super("");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 800);
@@ -56,12 +57,16 @@ public class MainWindow extends JFrame {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                String username = usernameField.getText();
-                WaitingPanel waiting = new WaitingPanel(username);
+                backpack.setUsername(usernameField.getText());
+                if (backpack.getUsername().equals("") || backpack.getUsername().isEmpty()) {
+                    JOptionPane.showMessageDialog(MainWindow.this, "Please enter a username!");
+                } else {
+                    WaitingPanel waiting = new WaitingPanel(backpack);
+                    waiting.setLocationRelativeTo(MainWindow.this);
+                    MainWindow.this.dispose();
+                    waiting.setVisible(true);
+                }
 
-                waiting.setLocationRelativeTo(MainWindow.this);
-                MainWindow.this.dispose();
-                waiting.setVisible(true);
             }
         });
 

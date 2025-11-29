@@ -3,16 +3,15 @@ package org.example.server;
 import java.util.List;
 
 public class QuizQuestion {
-    // TODO Representerar en enda quizfråga med frågetext, fyra svarsalternativ, rätt svar och kategori.
 
     private String question;
     private List<String> answers;
-    private int correctAnswerIndex;
+    private final String correctAnswer;
 
-    public QuizQuestion(String question, List<String> answers, int correctAnswerIndex) {
+    public QuizQuestion(String question, List<String> answers, String correctAnswer) {
         this.question = question;
         this.answers = answers;
-        this.correctAnswerIndex = correctAnswerIndex;
+        this.correctAnswer = correctAnswer;
     }
 
     public String getQuestion() {
@@ -23,11 +22,12 @@ public class QuizQuestion {
         return answers;
     }
 
-    public int getCorrectAnswerIndex() {
-        return correctAnswerIndex;
+    public String getCorrectAnswer() {
+        return correctAnswer;
     }
 
-    public boolean isCorrect(int index) {
-        return index == correctAnswerIndex;
+    public boolean isCorrect(String clientAnswer) {
+        return clientAnswer.equals(correctAnswer);
     }
 }
+//

@@ -1,5 +1,7 @@
 package org.example.server;
 
+import org.example.GameConfig;
+
 public class Server {
 
     public Server() {
@@ -10,7 +12,7 @@ public class Server {
         Matchmaker matchmaker = new Matchmaker(playerQueue);
         // creates serverListener takes care of new connections.
         ServerListener serverListener = new ServerListener(gameConfig.getPort(), playerQueue);
-        //ServerListener serverListener = new ServerListener(55554, playerQueue);
+
     }
 
     void main() {
