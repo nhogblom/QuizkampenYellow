@@ -9,5 +9,6 @@ public enum MyMessageTypes {
     CATEGORY_CHOICE,// Klient → Server: valt kategori
     GIVE_UP,        // Klient → Server: spelaren ger upp
     CHAT,            // Klient ↔ Server: chatmeddelande
-    USERNAME, DEVELOPMENTMSG  // used during development
+    USERNAME,
+    DEVELOPMENTMSG  // used during development
 }
