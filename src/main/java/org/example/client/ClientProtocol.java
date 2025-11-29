@@ -1,5 +1,8 @@
 package org.example.client;
 
+import org.example.Message;
+import org.example.Question;
+
 public class ClientProtocol {
     private final NetworkClient client;
 
