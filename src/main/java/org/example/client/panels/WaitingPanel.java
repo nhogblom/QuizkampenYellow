@@ -42,14 +42,9 @@ public class WaitingPanel extends JFrame {
         backpack.setActiveJframe(this);
 
         // Create client + connect to server
-        this.client = new NetworkClient(backpack.getUsername(), backpack);
+        this.client = new NetworkClient(backpack);
 
-        if (client.connect()) {
-            // Connection OK then show message and then wait for MATCH_STARTED from server
-            connectingLabel.setText("Connected as " + backpack.getUsername() + ", waiting for opponent...");
-        } else {
-            connectingLabel.setText("Connection failed");
-        }
+        client.connect();
 
         waitForServerStartSignal();
     }
