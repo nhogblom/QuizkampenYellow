@@ -1,5 +1,9 @@
 package org.example.client;
 
+import org.example.Answer;
+import org.example.Message;
+import org.example.MyMessageTypes;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -13,9 +17,11 @@ public class NetworkClient {
         private static final int SERVER_PORT = 12346;
 
         private final String playerName;
+        private ClientBackpack backpack;
 
-        public NetworkClient(String playerName) {
+        public NetworkClient(String playerName, ClientBackpack backpack) {
             this.playerName = playerName;
+            this.backpack = backpack;
         }
 
         //Koppla upp mot server
