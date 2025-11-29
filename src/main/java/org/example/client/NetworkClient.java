@@ -3,114 +3,164 @@ package org.example.client;
 import org.example.Answer;
 import org.example.Message;
 import org.example.MyMessageTypes;
+import org.example.Question;
+import org.example.GameConfig;
 
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * NetworkClient
+ *
+ * This class is responsible for:
+ *  - Connecting to the server via TCP socket
+ *  - Sending and receiving Message objects
+ *  - Starting a listening thread that continuously reads server messages
+ *
+ * It does NOT decide what to do with all messages itself.
+ * For that we use ClientProtocol, which handles the "logic".
+ */
 public class NetworkClient {
 
-        private Socket socket;
-        private ObjectOutputStream objectWriter;
-        private ObjectInputStream objectReader;
+    private Socket socket;
+    private ObjectInputStream objectReader;
+    private ObjectOutputStream objectWriter;
 
-        private static final String SERVER_IP = "127.0.0.1";
-        private static final int SERVER_PORT = 12346;
+    private final String SERVER_IP;
+    private final int SERVER_PORT;
+    private final String playerName;
 
-        private final String playerName;
-        private ClientBackpack backpack;
+    // Shared state (who am I, which frame is active, etc.)
+    private final ClientBackpack backpack;
 
-        public NetworkClient(String playerName, ClientBackpack backpack) {
-            this.playerName = playerName;
-            this.backpack = backpack;
-        }
+    // NEW: This is where we delegate message handling logic
+    private final ClientProtocol protocol;
 
-        //Koppla upp mot server
-        public void connect() {
-            try {
-                socket = new Socket(SERVER_IP, SERVER_PORT);
+    /**
+     *  playerName  - The name of the player (username)
+     *  backpack  -  Shared state passed in from the GUI (WaitingPanel)
+     */
+    public NetworkClient(String playerName, ClientBackpack backpack) {
+        GameConfig gameConfig = new GameConfig();
 
-                objectWriter= new ObjectOutputStream(socket.getOutputStream());
-                objectReader = new ObjectInputStream(socket.getInputStream());
+        this.backpack = backpack;
+        this.backpack.setNetworkClient(this);   // allow other classes to find this client
 
-                System.out.println("Connected to server: " + SERVER_IP + ":" + SERVER_PORT);
+        SERVER_IP = gameConfig.getIpAsString();
+        SERVER_PORT = gameConfig.getPort();
+        this.playerName = playerName;
 
-                //Skicka användarnamn
-                sendUsername();
+        // Create the ClientProtocol that will handle most incoming messages
+        this.protocol = new ClientProtocol(this, this.backpack);
+    }
 
+    /**
+     * Connect to the server.
+     * Creates the socket and the object streams.
+     * Starts a new thread that listens for messages (listen()).
+     */
+    public boolean connect() {
+        try {
+            socket = new Socket(SERVER_IP, SERVER_PORT);
 
-                // Starta lyssnarthread
-                new Thread(this::listen).start();
+            objectWriter = new ObjectOutputStream(socket.getOutputStream());
+            objectReader = new ObjectInputStream(socket.getInputStream());
 
-            } catch (Exception e) {
-                System.out.println("Connection failed");
-                e.printStackTrace();
-            }
-        }
+            System.out.println("Connected to server: " + SERVER_IP + ":" + SERVER_PORT);
 
-        //Lyssna på meddelande från server
-        private void listen() {
-            ClientProtocol protocol =new ClientProtocol(this);
-            try {
-                while (true) {
-                    Message msg = (Message) objectReader.readObject();
-                    protocol.handleMessage(msg);
-                }
-            } catch (Exception e) {
-                System.out.println("Connection closed or error in listen()");
-                e.printStackTrace();
-            }
+            // Tell server our username first
+            sendMessage(new Message(MyMessageTypes.USERNAME, backpack.getUsername()));
 
-        }
+            // Start the listener thread
+            new Thread(this::listen).start();
+            return true;
 
-        // Hantera fråga: visa och skicka svar
-        public void sendMessage(Message msg) {
-            try {
-                objectWriter.writeObject(msg);
-                objectWriter.flush();
-            } catch (IOException e) {
-                System.out.println("Failed to send message: ");
-                e.printStackTrace();
-            }
-        }
-
-        public void disconnect() {
-            try {
-                if (objectReader != null) objectReader.close();
-                if (objectWriter != null) objectWriter.close();
-                if (socket != null) socket.close();
-                System.out.println("Disconnected from server");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void sendUsername() {
-            UsernameMessage usernameMsg = new UsernameMessage(playerName);
-            Message msg = new Message(MyMessageTypes.CHAT, usernameMsg);
-            sendMessage(msg);
-        }
-
-        public void sendAnswer(int chosenption) {
-            Answer answer=new Answer(playerName,chosenption);
-            AnswerMessage answerMsg =new AnswerMessage(answer);
-            Message msg= new Message(MyMessageTypes.ANSWER, answerMsg);
-            sendMessage(msg);
-        }
-
-        public void sendCategory(String category) {
-            CategoryChoiceMessage categoryMsg = new CategoryChoiceMessage(category);
-            sendMessage(new Message(MyMessageTypes.CATEGORY_CHOICE, categoryMsg));
-        }
-
-        public void sendGive(){
-            GiveUpMessage giveUpMessage = new GiveUpMessage();
-            sendMessage(new Message(MyMessageTypes.GIVE_UP, giveUpMessage));
-
-        }
-
-        //test klient
-        public static void main(String[] args) {
-            NetworkClient client = new NetworkClient("Player1");
-            client.connect();
+        } catch (Exception e) {
+            System.out.println("Connection failed");
+            e.printStackTrace();
+            return false;
         }
     }
+
+    /**
+     * This method runs in its own thread.
+     * It continuously waits for messages from the server.
+     */
+    private void listen() {
+        try {
+            while (true) {
+                // Block here until a Message object is received from the server
+                Message msg = (Message) objectReader.readObject();
+
+                // Some message types we keep in NetworkClient (because they affect navigation)
+                switch (msg.getType()) {
+                    case MATCH_STARTED:
+                        // Server says: the match has started and gives opponent's username
+                        backpack.setGoToNextScreen(true);
+                        backpack.setOpponentUsername((String) msg.getPayload());
+                        System.out.println("Match started, you are playing against " + backpack.getOpponentUsername());
+                        break;
+
+                    case DEVELOPMENTMSG:
+                        // Temporary messages from server.
+                        backpack.setGoToNextScreen(true);
+                        System.out.println("Development message received: " + msg.getPayload());
+                        break;
+
+                    default:
+                        // For all other message types, we go to ClientProtocol.
+                        // and we try to keep this class focused on networking, not game logic.
+                        protocol.handleMessage(msg);
+                        break;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Connection closed or error in listen()");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Helper method to send a generic Message to the server.
+     */
+    public void sendMessage(Message msg) {
+        try {
+            objectWriter.writeObject(msg);
+            objectWriter.flush();
+        } catch (IOException e) {
+            System.out.println("Failed to send message: ");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *  Sending an answer to a question.
+     * Called from QuestionPanel optionIndex - client.sendAnswer(optionIndex)
+     */
+    public void sendAnswer(int optionIndex) {
+        try {
+            Answer answer = new Answer(playerName, optionIndex);
+            Message message = new Message(MyMessageTypes.ANSWER, answer);
+            objectWriter.writeObject(message);
+            objectWriter.flush();
+            System.out.println("Sent answer: " + optionIndex);
+        } catch (IOException e) {
+            System.out.println("Failed to send answer.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Close all streams and the socket.
+     */
+    public void disconnect() {
+        try {
+            if (objectReader != null) objectReader.close();
+            if (objectWriter != null) objectWriter.close();
+            if (socket != null) socket.close();
+            System.out.println("Disconnected from server");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
