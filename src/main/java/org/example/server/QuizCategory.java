@@ -1,5 +1,8 @@
 package org.example.server;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class QuizCategory {
     private String name;
     private List<QuizQuestion> questions = new ArrayList<>();

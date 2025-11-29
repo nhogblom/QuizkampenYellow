@@ -1,5 +1,7 @@
 package org.example.client;
 
+import org.example.Question;
+
 import java.io.Serializable;
 
 public class QuestionMessage implements Serializable {
