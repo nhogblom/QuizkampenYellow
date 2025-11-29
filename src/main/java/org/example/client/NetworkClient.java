@@ -28,6 +28,10 @@ public class NetworkClient {
 
                 System.out.println("Connected to server: " + SERVER_IP + ":" + SERVER_PORT);
 
+                //Skicka användarnamn
+                sendUsername();
+
+
                 // Starta lyssnarthread
                 new Thread(this::listen).start();
 
@@ -39,26 +43,11 @@ public class NetworkClient {
 
         //Lyssna på meddelande från server
         private void listen() {
+            ClientProtocol protocol =new ClientProtocol(this);
             try {
                 while (true) {
                     Message msg = (Message) objectReader.readObject();
-
-                    switch (msg.getType()) {
-                        case QUESTION:
-                            handleQuestion((Question) msg.getPayload());
-                            break;
-                        case ROUND_RESULT:
-                            System.out.println("Round result received: " + msg.getPayload());
-                            break;
-                        case GAME_RESULT:
-                            System.out.println("Game result received: " + msg.getPayload());
-                            break;
-                        case CHAT:
-                            System.out.println("Chat message: " + msg.getPayload());
-                            break;
-                        default:
-                            System.out.println("Unknown message type: " + msg.getType());
-                    }
+                    protocol.handleMessage(msg);
                 }
             } catch (Exception e) {
                 System.out.println("Connection closed or error in listen()");
@@ -68,21 +57,6 @@ public class NetworkClient {
         }
 
         // Hantera fråga: visa och skicka svar
-        private void handleQuestion(Question question) {
-            System.out.println("Question: " + question.getQuestionText());
-            String[] options = question.getOptions();
-            for (int i = 0; i < options.length; i++) {
-                System.out.println((i + 1) + ": " + options[i]);
-            }
-
-            // OBS, Tillfälligt demo
-            int chosenOption = 0;
-            Answer answer = new Answer(playerName, chosenOption);
-
-            sendMessage(new Message(MyMessageTypes.ANSWER, answer));
-            System.out.println("Answer sent: option " + chosenOption);
-        }
-
         public void sendMessage(Message msg) {
             try {
                 objectWriter.writeObject(msg);
@@ -102,6 +76,30 @@ public class NetworkClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        public void sendUsername() {
+            UsernameMessage usernameMsg = new UsernameMessage(playerName);
+            Message msg = new Message(MyMessageTypes.CHAT, usernameMsg);
+            sendMessage(msg);
+        }
+
+        public void sendAnswer(int chosenption) {
+            Answer answer=new Answer(playerName,chosenption);
+            AnswerMessage answerMsg =new AnswerMessage(answer);
+            Message msg= new Message(MyMessageTypes.ANSWER, answerMsg);
+            sendMessage(msg);
+        }
+
+        public void sendCategory(String category) {
+            CategoryChoiceMessage categoryMsg = new CategoryChoiceMessage(category);
+            sendMessage(new Message(MyMessageTypes.CATEGORY_CHOICE, categoryMsg));
+        }
+
+        public void sendGive(){
+            GiveUpMessage giveUpMessage = new GiveUpMessage();
+            sendMessage(new Message(MyMessageTypes.GIVE_UP, giveUpMessage));
+
         }
 
         //test klient

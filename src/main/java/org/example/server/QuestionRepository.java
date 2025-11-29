@@ -52,7 +52,7 @@ public class QuestionRepository {
                 List.of("Hat-trick", "Tripple", "Three-Goal", "Combo"), 0));
         sportQuestions.add(new QuizQuestion(
                 "Which sport is played in Wimbledon?",
-                List.of("Tennis", "Basket", "Rugby". "Golf"), 0));
+                List.of("Tennis", "Basket", "Rugby", "Golf"), 0));
 
 
         historyQuestions.add(new QuizQuestion(
