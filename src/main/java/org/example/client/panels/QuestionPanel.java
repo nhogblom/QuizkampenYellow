@@ -26,7 +26,7 @@ public class QuestionPanel extends JFrame {
     private final ClientBackpack backpack;
 
     /** GUI components updated when new questions arrive */
-    private JButton questionButton;
+    private JLabel questionLabel;
     private JButton optionButton1;
     private JButton optionButton2;
     private JButton optionButton3;
@@ -62,11 +62,12 @@ public class QuestionPanel extends JFrame {
     private void addGuiComponents() {
 
         // Main question box
-        questionButton = new JButton("QUESTION");
-        questionButton.setFont(new Font("Arial", Font.BOLD, 16));
-        questionButton.setBounds(100, 120, 400, 200);
-        questionButton.setEnabled(false);  // purely visual, not clickable
-        add(questionButton);
+        questionLabel = new JLabel("QUESTION");
+        questionLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        questionLabel.setBounds(100, 120, 400, 200);
+        questionLabel.setEnabled(false);// purely visual, not clickable
+        questionLabel.setHorizontalAlignment(JLabel.CENTER);
+        add(questionLabel);
 
         // Option 1
         optionButton1 = makeOptionButton(100, 340);
@@ -126,6 +127,8 @@ public class QuestionPanel extends JFrame {
     private void sendAnswerAndDoNecessaryStuff(JButton jb){
         backpack.getNetworkClient().sendMessage(new Message(MessageTypes.ANSWER,jb.getText()));
         setButtonState(false);
+
+
     }
 
     private void setButtonState(boolean state) {
@@ -133,6 +136,9 @@ public class QuestionPanel extends JFrame {
         optionButton2.setEnabled(state);
         optionButton3.setEnabled(state);
         optionButton4.setEnabled(state);
+        this.validate();
+        this.repaint();
+
     }
 
     /** Helper for styling of all answer buttons */
@@ -155,7 +161,8 @@ public class QuestionPanel extends JFrame {
             return;
         }
         setButtonState(true);
-        questionButton.setText(question.getQuestion());
+
+        questionLabel.setText("<html><h1>"+question.getQuestion()+"</h1></html>");
         // todo remove hard corded buttons to make it work with more questions per round etc~
         optionButton1.setText(question.getAnswers().get(0));
         optionButton2.setText(question.getAnswers().get(1));

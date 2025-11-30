@@ -1,6 +1,7 @@
 package org.example.server;
 
 import org.example.Message;
+import org.example.GameResult;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,6 +18,7 @@ public class Player {
     private List<Message> incomingMessages = new LinkedList<>();
     private Chat chat = new Chat();
     PlayerListener playerListener;
+    private GameResult gameResult = new GameResult();
 
     public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
         this.socket = socket;
@@ -99,5 +101,21 @@ public class Player {
 
     public void setChat(Chat chat) {
         this.chat = chat;
+    }
+
+    public List<Message> getIncomingMessages() {
+        return incomingMessages;
+    }
+
+    public void setIncomingMessages(List<Message> incomingMessages) {
+        this.incomingMessages = incomingMessages;
+    }
+
+    public GameResult getGameResult() {
+        return gameResult;
+    }
+
+    public void setGameResult(GameResult gameResult) {
+        this.gameResult = gameResult;
     }
 }
