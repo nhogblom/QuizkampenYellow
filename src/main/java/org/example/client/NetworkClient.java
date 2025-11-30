@@ -2,8 +2,7 @@ package org.example.client;
 
 import org.example.Answer;
 import org.example.Message;
-import org.example.MyMessageTypes;
-import org.example.Question;
+import org.example.MessageTypes;
 import org.example.GameConfig;
 
 import java.io.*;
@@ -69,7 +68,7 @@ public class NetworkClient {
             System.out.println("Connected to server: " + SERVER_IP + ":" + SERVER_PORT);
 
             // Tell server our username first
-            sendMessage(new Message(MyMessageTypes.USERNAME, backpack.getUsername()));
+            sendMessage(new Message(MessageTypes.USERNAME, backpack.getUsername()));
 
             // Start the listener thread
             new Thread(this::listen).start();
@@ -140,7 +139,7 @@ public class NetworkClient {
     public void sendAnswer(int optionIndex) {
         try {
             Answer answer = new Answer(playerName, optionIndex);
-            Message message = new Message(MyMessageTypes.ANSWER, answer);
+            Message message = new Message(MessageTypes.ANSWER, answer);
             objectWriter.writeObject(message);
             objectWriter.flush();
             System.out.println("Sent answer: " + optionIndex);
