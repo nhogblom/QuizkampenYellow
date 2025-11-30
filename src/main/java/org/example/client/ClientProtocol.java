@@ -3,14 +3,17 @@ package org.example.client;
 import org.example.Message;
 import org.example.Question;
 import org.example.client.panels.QuestionPanel;
+import org.example.server.CategoryPrompt;
+
+import java.util.List;
 
 /**
  * ClientProtocol
- *
+ * <p>
  * This class is responsible for:
- *  - Receiving messages (already read from the socket)
- *  - Deciding WHAT to do with them (update GUI, print info)
- *
+ * - Receiving messages (already read from the socket)
+ * - Deciding WHAT to do with them (update GUI, print info)
+ * <p>
  * NetworkClient handles small networking like sockets, streams.
  * ClientProtocol handles the "game logic" on the client side.
  *
@@ -24,8 +27,8 @@ public class ClientProtocol {
     private final ClientBackpack backpack;
 
     /**
-     *  client  -  the NetworkClient that owns this protocol
-     *  backpack - shared state object: holds active JFrame, QuestionPanel, usernames, etc.
+     * client  -  the NetworkClient that owns this protocol
+     * backpack - shared state object: holds active JFrame, QuestionPanel, usernames, etc.
      */
     public ClientProtocol(NetworkClient client, ClientBackpack backpack) {
         this.client = client;
@@ -124,7 +127,13 @@ public class ClientProtocol {
      */
     private void handleCategoryChoice(Object payload) {
         // TODO: update GUI to show chosen category (e.g. in a label)
-        System.out.println("Category choice: " + payload);
+        if (payload instanceof String s) {
+            // show player that they have to wait for the opponent that is currently choosing the cat for next round
+            System.out.println(s);
+        } else if (payload instanceof CategoryPrompt categoryPrompt) {
+            // hantera category prompt i ui
+        }
+
     }
 
     /**
