@@ -16,8 +16,8 @@ public class QuestionRepository {
                 .toList();
     }
 
-    public List<QuizQuestion> getRandomQuestions(String categoryName, int count) {
-        List<QuizQuestion> questions = categoryQuestions.get(categoryName);
+    public List<QuizQuestion> getRandomQuestions(QuizCategory category, int count) {
+        List<QuizQuestion> questions = categoryQuestions.get(category.getName());
         if(questions == null || questions.isEmpty()) {
             return Collections.emptyList();
         }

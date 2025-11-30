@@ -34,21 +34,21 @@ public class CategoryPanel extends JFrame {
     }
 
     public void setCategories(CategoryPrompt categoryPrompt) {
-        cat1.setText(categoryPrompt.getCategories().get(0));
+        cat1.setText(categoryPrompt.getCategories().get(0).getName());
         cat1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 backpack.getNetworkClient().sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, categoryPrompt.getCategories().get(0)));
             }
         });
-        cat2.setText(categoryPrompt.getCategories().get(1));
+        cat2.setText(categoryPrompt.getCategories().get(1).getName());
         cat2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 backpack.getNetworkClient().sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, categoryPrompt.getCategories().get(1)));
             }
         });
-        cat3.setText(categoryPrompt.getCategories().get(2));
+        cat3.setText(categoryPrompt.getCategories().get(2).getName());
         cat3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

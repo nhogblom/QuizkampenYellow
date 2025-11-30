@@ -1,9 +1,10 @@
 package org.example.server;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuizCategory {
+public class QuizCategory implements Serializable {
     private String name;
     private List<QuizQuestion> questions = new ArrayList<>();
 

@@ -160,7 +160,7 @@ public class Game implements Runnable {
         // Block until chooser responds with CATEGORY_CHOICE
         //String category = waitForCategoryChoice(chooser);
 
-        String currentCategory = receiveCategoryChoice(chooser);
+        QuizCategory currentCategory = receiveCategoryChoice(chooser);
 
         // change to the actual category with questions ~.
 
@@ -193,10 +193,10 @@ public class Game implements Runnable {
         player2.send(new Message(MessageTypes.DEVELOPMENTMSG, questionText));
     }
 
-    private String receiveCategoryChoice(Player chooser) {
+    private QuizCategory receiveCategoryChoice(Player chooser) {
         Message msg = chooser.getPlayerListener().getMessage();
         if (msg.getType() == MessageTypes.CATEGORY_CHOICE) {
-            return (String) msg.getPayload();
+            return (QuizCategory) msg.getPayload();
         }
         return null;
     }

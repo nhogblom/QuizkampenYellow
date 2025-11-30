@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class CategoryPrompt implements Serializable {
-    private List<String> categories;
+    private List<QuizCategory> categories;
 
     public CategoryPrompt() {
         QuestionRepository questionRepository = new QuestionRepository();
@@ -15,11 +15,11 @@ public class CategoryPrompt implements Serializable {
         return categories.toString();
     }
 
-    public List<String> getCategories() {
+    public List<QuizCategory> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<String> categories) {
+    public void setCategories(List<QuizCategory> categories) {
         this.categories = categories;
     }
 }
