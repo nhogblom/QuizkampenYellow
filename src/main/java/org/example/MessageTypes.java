@@ -11,5 +11,5 @@ public enum MessageTypes {
     CHAT,            // Klient ↔ Server: chatmeddelande
     USERNAME,
     DEVELOPMENTMSG,
-    SERVERMSG// used during development
+    CATEGORYTOPLAY, SERVERMSG// used during development
 }

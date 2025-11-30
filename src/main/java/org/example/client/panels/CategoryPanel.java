@@ -1,19 +1,26 @@
 package org.example.client.panels;
 
+import org.example.Message;
+import org.example.MessageTypes;
+import org.example.client.Client;
 import org.example.client.ClientBackpack;
 import org.example.server.CategoryPrompt;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class CategoryPanel extends JFrame {
 
     private JButton cat1;
     private JButton cat2;
     private JButton cat3;
+    private ClientBackpack backpack;
 
     public CategoryPanel(ClientBackpack backpack) {
         super("");
+        this.backpack = backpack;
         backpack.setCategoryPanel(this);
         setSize(600, 800);
         setLayout(null);
@@ -28,11 +35,26 @@ public class CategoryPanel extends JFrame {
 
     public void setCategories(CategoryPrompt categoryPrompt) {
         cat1.setText(categoryPrompt.getCategories().get(0));
-        cat1.addActionListener((_)-> {
-            // skapa ett anrop tillbaka till servern~
+        cat1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                backpack.getNetworkClient().sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, categoryPrompt.getCategories().get(0)));
+            }
         });
         cat2.setText(categoryPrompt.getCategories().get(1));
+        cat2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                backpack.getNetworkClient().sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, categoryPrompt.getCategories().get(1)));
+            }
+        });
         cat3.setText(categoryPrompt.getCategories().get(2));
+        cat3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                backpack.getNetworkClient().sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, categoryPrompt.getCategories().get(2)));
+            }
+        });
     }
 
 

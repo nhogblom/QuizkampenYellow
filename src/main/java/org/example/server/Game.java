@@ -1,57 +1,57 @@
 package org.example.server;
 
-import org.example.GameConfig;
-import org.example.Message;
 import org.example.*;
+
+import java.util.List;
 import java.util.Random;
 
 /**
  * Game
- *
+ * <p>
  * This class controls the entire match between two players.
  * It runs inside its own thread (created by Matchmaker).
- *
- *  OVERVIEW
- *
+ * <p>
+ * OVERVIEW
+ * <p>
  * Server responsibilities in a match:
- *  • Receive usernames from both players
- *  • Send MATCH_STARTED messages
- *  • Handle category selection (CATEGORY_CHOICE)
- *  • Send real QUESTION objects to both players
- *  • Receive answers (ANSWER)
- *  • Track scoring
- *  • Send ROUND_RESULT after each round
- *  • Send GAME_RESULT when the match ends
- *  • Handle CHAT messages at ANY time
- *
- *
- *  PROTOCOL (client <-> server)
- *
+ * • Receive usernames from both players
+ * • Send MATCH_STARTED messages
+ * • Handle category selection (CATEGORY_CHOICE)
+ * • Send real QUESTION objects to both players
+ * • Receive answers (ANSWER)
+ * • Track scoring
+ * • Send ROUND_RESULT after each round
+ * • Send GAME_RESULT when the match ends
+ * • Handle CHAT messages at ANY time
+ * <p>
+ * <p>
+ * PROTOCOL (client <-> server)
+ * <p>
  * Server → Client:
- *   MATCH_STARTED(opponentName)
- *   QUESTION(Question object)
- *   ROUND_RESULT(String summary)
- *   GAME_RESULT(String summary)
- *   CATEGORY_CHOICE("WAITING" / chosenCategory)
- *   CHAT(String message)
- *
+ * MATCH_STARTED(opponentName)
+ * QUESTION(Question object)
+ * ROUND_RESULT(String summary)
+ * GAME_RESULT(String summary)
+ * CATEGORY_CHOICE("WAITING" / chosenCategory)
+ * CHAT(String message)
+ * <p>
  * Client → Server:
- *   USERNAME(String)
- *   ANSWER(Answer object)
- *   CATEGORY_CHOICE(String)
- *   CHAT(String)
- *
- *  INTERNAL GAME FLOW
- *
+ * USERNAME(String)
+ * ANSWER(Answer object)
+ * CATEGORY_CHOICE(String)
+ * CHAT(String)
+ * <p>
+ * INTERNAL GAME FLOW
+ * <p>
  * 1) receiveUsernames()
  * 2) initGame() — send MATCH_STARTED
  * 3) For each round:
- *       a) request category from chooser
- *       b) wait for CATEGORY_CHOICE
- *       c) send QUESTION messages
- *       d) wait for ANSWER messages
- *       e) update scores
- *       f) send ROUND_RESULT
+ * a) request category from chooser
+ * b) wait for CATEGORY_CHOICE
+ * c) send QUESTION messages
+ * d) wait for ANSWER messages
+ * e) update scores
+ * f) send ROUND_RESULT
  * 4) endGame() — send GAME_RESULT
  *
  */
@@ -67,6 +67,7 @@ public class Game implements Runnable {
 
     // question repo and category types~
     private final QuestionRepository questionRepo = new QuestionRepository();
+    private List<QuizQuestion> questionsForThisRound;
 
     private final Random random = new Random();
 
@@ -147,7 +148,7 @@ public class Game implements Runnable {
 
         // Decides who chooses category
         Player chooser = (round % 2 == 1) ? player1 : player2;
-        Player other   = (chooser == player1 ? player2 : player1);
+        Player other = (chooser == player1 ? player2 : player1);
 
         // Ask chooser to pick a category
         chooser.send(new Message(MessageTypes.CATEGORY_CHOICE, new CategoryPrompt()));
@@ -155,15 +156,21 @@ public class Game implements Runnable {
         // Tell the other player to wait
         other.send(new Message(MessageTypes.CATEGORY_CHOICE, "Waiting for opponent to choose a category for round "));
 
+        // no needed, we only allow client to send requests when it should be possible.
         // Block until chooser responds with CATEGORY_CHOICE
-        String category = waitForCategoryChoice(chooser);
+        //String category = waitForCategoryChoice(chooser);
+
+        String currentCategory = receiveCategoryChoice(chooser);
+
+        // change to the actual category with questions ~.
+
 
         // Inform both players of final category
-        broadcast(new Message(MessageTypes.CATEGORY_CHOICE, category));
+        questionsForThisRound = questionRepo.getRandomQuestions(currentCategory,config.getTotalQuestionsPerRound());
 
         // Play all questions for this round
-        for (int i = 0; i < config.getTotalQuestionsPerRound(); i++) {
-            playSingleQuestion(round, i + 1);
+        for (int i = 0; i < questionsForThisRound.size(); i++) {
+            playSingleQuestion(round, i + 1,questionsForThisRound.get(i));
         }
 
         // After round ends, send round summary
@@ -186,37 +193,28 @@ public class Game implements Runnable {
         player2.send(new Message(MessageTypes.DEVELOPMENTMSG, questionText));
     }
 
-    private String waitForCategoryChoice(Player chooser) {
-
-        while (true) {
-            Message msg = chooser.getPlayerListener().getMessage();
-
-            // Allow chat during category selection
-            if (msg.getType() == MessageTypes.CHAT) {
-                relayChat(chooser, msg);
-                continue;
-            }
-
-            if (msg.getType() == MessageTypes.CATEGORY_CHOICE) {
-                return (String) msg.getPayload();
-            }
+    private String receiveCategoryChoice(Player chooser) {
+        Message msg = chooser.getPlayerListener().getMessage();
+        if (msg.getType() == MessageTypes.CATEGORY_CHOICE) {
+            return (String) msg.getPayload();
         }
+        return null;
     }
-    private void playSingleQuestion(int round, int questionNumber) {
 
-        // Generate a placeholder question for MVP
-        Question q = generatePlaceholderQuestion(round, questionNumber);
+
+    private void playSingleQuestion(int round, int questionNumber,QuizQuestion question) {
+
 
         // Send actual QUESTION messages to both clients
-        broadcast(new Message(MessageTypes.QUESTION, q));
+        broadcast(new Message(MessageTypes.QUESTION, question));
 
         // Wait for both players to respond with ANSWER messages
-        int answer1 = waitForAnswer(player1);
-        int answer2 = waitForAnswer(player2);
+        String answer1 = collectAnswer(player1);
+        String answer2 = collectAnswer(player2);
 
         // MVP scoring
-        if (answer1 == 0) scorePlayer1++;
-        if (answer2 == 0) scorePlayer2++;
+        if (answer1.equals(question.getCorrectAnswer())) scorePlayer1++;
+        if (answer2.equals(question.getCorrectAnswer())) scorePlayer2++;
     }
 
     private Question generatePlaceholderQuestion(int round, int questionNumber) {
@@ -267,25 +265,12 @@ public class Game implements Runnable {
         }
         return "";
     }
-    private int waitForAnswer(Player player) {
 
-        while (true) {
-            Message msg = player.getPlayerListener().getMessage();
-
-            switch (msg.getType()) {
-
-                case CHAT:
-                    // Chat must work allthe time
-                    relayChat(player, msg);
-                    continue;
-
-                case ANSWER:
-                    Answer a = (Answer) msg.getPayload();
-                    return a.getChosenOption();
-
-            }
-        }
+    private String collectAnswer(Player player) {
+        Message msg = player.getPlayerListener().getMessage();
+        return (String) msg.getPayload();
     }
+
 
     //   ROUND & GAME RESULTS
 
@@ -296,7 +281,6 @@ public class Game implements Runnable {
 
         broadcast(new Message(MessageTypes.ROUND_RESULT, summary));
     }
-
 
 
     /**

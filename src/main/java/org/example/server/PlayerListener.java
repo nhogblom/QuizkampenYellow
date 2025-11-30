@@ -1,7 +1,7 @@
 package org.example.server;
 
 import org.example.Message;
-import org.example.MessageTypes;      //added import
+import org.example.MessageTypes;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,15 +29,18 @@ public class PlayerListener extends Thread {
                         System.out.println("CHAT message received (ignored for game queue): " + msg.getPayload());
                         continue;  // do NOT queue chat messages
                     }
+                    synchronized (this) {
+                        incomingMessages.add(msg);
+                        notifyAll();
+                    }
 
-                    incomingMessages.add(msg);
-                    notifyAll();
                 } else if (incoming instanceof Player) {
 
                 }
             } catch (Exception e) {
                 System.out.println("Fel inträffade i inkommande dataström för spelare "
                         + player.getUsername() + "\n" + e.getMessage());
+                e.printStackTrace();
                 this.interrupt();
                 break;
             }
@@ -46,15 +49,15 @@ public class PlayerListener extends Thread {
 
     public synchronized Message getMessage() {
         while (true) {
-        if (!incomingMessages.isEmpty()) {
-            return incomingMessages.removeFirst();
-        } else {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if (!incomingMessages.isEmpty()) {
+                return incomingMessages.removeFirst();
+            } else {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
         }
     }
 

@@ -2,12 +2,14 @@ package org.example.client;
 
 import org.example.client.panels.CategoryPanel;
 import org.example.client.panels.MainWindow;
+import org.example.client.panels.QuestionPanel;
 
 import javax.swing.*;
 
 public class Client {
     private ClientBackpack backpack = new ClientBackpack();
     private CategoryPanel categoryPanel = new CategoryPanel(backpack);
+    private QuestionPanel questionPanel = new QuestionPanel(backpack);
 
     //TODO lägga in alla paneler här och sen bara styra om dom syns eller ej senare i programmet.
 
