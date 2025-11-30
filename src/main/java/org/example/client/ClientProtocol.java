@@ -21,7 +21,7 @@ import java.util.List;
 public class ClientProtocol {
 
     // We keep a reference to NetworkClient if we ever need to send new messages later
-    private final NetworkClient client;
+    private final NetworkClient networkClient;
 
     // ClientBackpack gives us access to GUI stuff, like QuestionPanel
     private final ClientBackpack backpack;
@@ -30,8 +30,8 @@ public class ClientProtocol {
      * client  -  the NetworkClient that owns this protocol
      * backpack - shared state object: holds active JFrame, QuestionPanel, usernames, etc.
      */
-    public ClientProtocol(NetworkClient client, ClientBackpack backpack) {
-        this.client = client;
+    public ClientProtocol(NetworkClient networkClient, ClientBackpack backpack) {
+        this.networkClient = networkClient;
         this.backpack = backpack;
     }
 
