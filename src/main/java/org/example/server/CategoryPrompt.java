@@ -14,4 +14,12 @@ public class CategoryPrompt implements Serializable {
     public String printCategories() {
         return categories.toString();
     }
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
+    }
 }
