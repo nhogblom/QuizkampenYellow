@@ -35,7 +35,7 @@ public class CategoryPanel extends JFrame {
         cat3.setText(categoryPrompt.getCategories().get(2));
     }
 
-    public void waiting
+
 
     private void addGuiComponents() {
         JLabel cat = new JLabel("Choose a category:");
