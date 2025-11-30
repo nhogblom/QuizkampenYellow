@@ -3,14 +3,18 @@ package org.example.client;
 import org.example.Message;
 import org.example.Question;
 import org.example.client.panels.QuestionPanel;
+import org.example.server.CategoryPrompt;
+import org.example.server.QuizQuestion;
+
+import java.util.List;
 
 /**
  * ClientProtocol
- *
+ * <p>
  * This class is responsible for:
- *  - Receiving messages (already read from the socket)
- *  - Deciding WHAT to do with them (update GUI, print info)
- *
+ * - Receiving messages (already read from the socket)
+ * - Deciding WHAT to do with them (update GUI, print info)
+ * <p>
  * NetworkClient handles small networking like sockets, streams.
  * ClientProtocol handles the "game logic" on the client side.
  *
@@ -18,17 +22,17 @@ import org.example.client.panels.QuestionPanel;
 public class ClientProtocol {
 
     // We keep a reference to NetworkClient if we ever need to send new messages later
-    private final NetworkClient client;
+    private final NetworkClient networkClient;
 
     // ClientBackpack gives us access to GUI stuff, like QuestionPanel
     private final ClientBackpack backpack;
 
     /**
-     *  client  -  the NetworkClient that owns this protocol
-     *  backpack - shared state object: holds active JFrame, QuestionPanel, usernames, etc.
+     * client  -  the NetworkClient that owns this protocol
+     * backpack - shared state object: holds active JFrame, QuestionPanel, usernames, etc.
      */
-    public ClientProtocol(NetworkClient client, ClientBackpack backpack) {
-        this.client = client;
+    public ClientProtocol(NetworkClient networkClient, ClientBackpack backpack) {
+        this.networkClient = networkClient;
         this.backpack = backpack;
     }
 
@@ -40,7 +44,7 @@ public class ClientProtocol {
         switch (msg.getType()) {
             case QUESTION:
                 // Payload should be a Question object
-                Question question = (Question) msg.getPayload();
+                QuizQuestion question = (QuizQuestion) msg.getPayload();
                 handleQuestion(question);
                 break;
 
@@ -73,13 +77,18 @@ public class ClientProtocol {
      * Handle an incoming Question from the server.
      * This is where we update the GUI (QuestionPanel) instead of only printing in console.
      */
-    private void handleQuestion(Question question) {
-        System.out.println("Received question: " + question.getQuestionText());
+    private void handleQuestion(QuizQuestion question) {
+        System.out.println("Received question: " + question.getQuestion());
 
         // 1) Try the QuestionPanel directly stored in the backpack
         QuestionPanel qp = backpack.getQuestionPanel();
         if (qp != null) {
             qp.updateQuestion(question);
+            backpack.getCategoryPanel().setVisible(false);
+
+            qp.setVisible(true);
+
+
             return;
         }
 
@@ -101,6 +110,9 @@ public class ClientProtocol {
     private void handleRoundResult(Object payload) {
         // TODO: later, update some score GUI or show summary panel
         System.out.println("Round result: " + payload);
+        backpack.getQuestionPanel().setVisible(false);
+        backpack.getRoundSummaryPanel().setVisible(true);
+
     }
 
     /**
@@ -128,7 +140,14 @@ public class ClientProtocol {
      */
     private void handleCategoryChoice(Object payload) {
         // TODO: update GUI to show chosen category (e.g. in a label)
-        System.out.println("Category choice: " + payload);
+        if (payload instanceof String s) {
+            // show player that they have to wait for the opponent that is currently choosing the cat for next round
+            backpack.getCategoryPanel().displayWaitMessage(s);
+            // todo skriv ut vänte meddelande till den väntande spelaren
+        } else if (payload instanceof CategoryPrompt categoryPrompt) {
+            // hantera category prompt i ui
+            backpack.getCategoryPanel().setCategories(categoryPrompt);
+        }
     }
 
     /**

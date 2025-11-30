@@ -3,8 +3,10 @@ package org.example.client.panels;
 import javax.swing.*;
 import java.awt.*;
 
+import org.example.Message;
+import org.example.MessageTypes;
 import org.example.client.ClientBackpack;
-import org.example.Question;
+import org.example.server.QuizQuestion;
 
 /**
  * QuestionPanel
@@ -20,8 +22,7 @@ import org.example.Question;
  */
 public class QuestionPanel extends JFrame {
 
-    /** Listener provided by WaitingPanel - forwarded to NetworkClient */
-    private final QuestionAnsweredListener listener;
+
     private final ClientBackpack backpack;
 
     /** GUI components updated when new questions arrive */
@@ -36,15 +37,15 @@ public class QuestionPanel extends JFrame {
     private JTextField chatInput;
     private JButton sendChatButton;
 
-    public QuestionPanel(ClientBackpack backpack, QuestionAnsweredListener listener) {
+
+    public QuestionPanel(ClientBackpack backpack) {
         super("Quizkampen - Question");
-        this.listener = listener;
         this.backpack = backpack;
+        backpack.setQuestionPanel(this);
 
         // Register this panel in the shared state so NetworkClient can find it
         backpack.setQuestionPanel(this);
         backpack.setActiveJframe(this);
-
         setSize(600, 800);
         setLayout(null);
         setLocationRelativeTo(null);
@@ -55,17 +56,7 @@ public class QuestionPanel extends JFrame {
         addGuiComponents();
     }
 
-    /**
-     * NetworkClient calls this method whenever a new question is received.
-     * This is the connection between the networking layer and the GUI layer.
-     */
-    public void updateQuestion(Question q) {
-        if (q == null) {
-            System.out.println("WARNING: updateQuestion called with null Question");
-            return;
-        }
-        updateQuestion(q.getQuestionText(), q.getOptions());
-    }
+
 
     /** Creates and places all GUI components */
     private void addGuiComponents() {
@@ -79,23 +70,25 @@ public class QuestionPanel extends JFrame {
 
         // Option 1
         optionButton1 = makeOptionButton(100, 340);
-        optionButton1.addActionListener(e -> listener.onAnswerSelected(0)); // notify listener
+        optionButton1.addActionListener(e -> sendAnswerAndDoNecessaryStuff(this.optionButton1)); // notify listener
         add(optionButton1);
 
         // Option 2
         optionButton2 = makeOptionButton(320, 340);
-        optionButton2.addActionListener(e -> listener.onAnswerSelected(1));
+        optionButton2.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton2));
         add(optionButton2);
 
         // Option 3
         optionButton3 = makeOptionButton(100, 500);
-        optionButton3.addActionListener(e -> listener.onAnswerSelected(2));
+        optionButton3.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton3));
         add(optionButton3);
 
         // Option 4
         optionButton4 = makeOptionButton(320, 500);
-        optionButton4.addActionListener(e -> listener.onAnswerSelected(3));
+        optionButton4.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton4));
         add(optionButton4);
+
+
 
         // Chat area
         chatArea = new JTextArea();
@@ -130,6 +123,18 @@ public class QuestionPanel extends JFrame {
         });
     }
 
+    private void sendAnswerAndDoNecessaryStuff(JButton jb){
+        backpack.getNetworkClient().sendMessage(new Message(MessageTypes.ANSWER,jb.getText()));
+        setButtonState(false);
+    }
+
+    private void setButtonState(boolean state) {
+        optionButton1.setEnabled(state);
+        optionButton2.setEnabled(state);
+        optionButton3.setEnabled(state);
+        optionButton4.setEnabled(state);
+    }
+
     /** Helper for styling of all answer buttons */
     private JButton makeOptionButton(int x, int y) {
         JButton b = new JButton("option");
@@ -144,17 +149,19 @@ public class QuestionPanel extends JFrame {
      * Update the text on all GUI components when a new question arrives.
      * This is called from NetworkClient - handleQuestion().
      */
-    public void updateQuestion(String question, String[] options) {
-        if (question == null || options == null || options.length < 4) {
+    public void updateQuestion(QuizQuestion question) {
+        if (question == null) {
             System.out.println("WARNING: invalid question/options in updateQuestion");
             return;
         }
+        setButtonState(true);
+        questionButton.setText(question.getQuestion());
+        // todo remove hard corded buttons to make it work with more questions per round etc~
+        optionButton1.setText(question.getAnswers().get(0));
+        optionButton2.setText(question.getAnswers().get(1));
+        optionButton3.setText(question.getAnswers().get(2));
+        optionButton4.setText(question.getAnswers().get(3));
 
-        questionButton.setText(question);
-        optionButton1.setText(options[0]);
-        optionButton2.setText(options[1]);
-        optionButton3.setText(options[2]);
-        optionButton4.setText(options[3]);
     }
 
     /**
@@ -175,7 +182,4 @@ public class QuestionPanel extends JFrame {
      *
      * This keeps QuestionPanel completely GUI-only.
      */
-    public interface QuestionAnsweredListener {
-        void onAnswerSelected(int optionIndex);
-    }
 }

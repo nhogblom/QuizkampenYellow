@@ -46,7 +46,7 @@ public class WaitingPanel extends JFrame {
 
         if (client.connect()) {
             // Connection OK then show message and then wait for MATCH_STARTED from server
-            connectingLabel.setText("Connected as " + backpack.getUsername() + ", waiting for opponent...");
+            connectingLabel.setText("Connected as " + backpack.getUsername() + " waiting for opponent...");
         } else {
             connectingLabel.setText("Connection failed");
         }
@@ -75,16 +75,32 @@ public class WaitingPanel extends JFrame {
                 // Optional: update text briefly before switching
                 connectingLabel.setText("Opponent found! Starting game...");
 
+
+                // todo rensa bort det som blivit överflödigt och städa upp
+//                // Build QuestionPanel with listener -> sends answers back via NetworkClient
+//                QuestionPanel questionPanel =
+//                        new QuestionPanel(backpack, client::sendAnswer);
+//
+//                // Register new active frame in backpack
+//                backpack.setActiveJframe(questionPanel);
+//
+//                // Close the waiting window and show the question window
+//                this.dispose();
+//
+//                questionPanel.setVisible(true);
+
+
                 // Build QuestionPanel with listener -> sends answers back via NetworkClient
-                QuestionPanel questionPanel =
-                        new QuestionPanel(backpack, client::sendAnswer);
+//                CategoryPanel categoryPanel =
+//                        new CategoryPanel(backpack);
 
                 // Register new active frame in backpack
-                backpack.setActiveJframe(questionPanel);
+                backpack.setActiveJframe(backpack.getCategoryPanel());
 
                 // Close the waiting window and show the question window
                 this.dispose();
-                questionPanel.setVisible(true);
+
+                backpack.getCategoryPanel().setVisible(true);
 
                 // Reset flag so it can be reused if needed later
                 backpack.setGoToNextScreen(false);

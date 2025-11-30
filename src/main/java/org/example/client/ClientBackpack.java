@@ -1,17 +1,20 @@
 package org.example.client;
 
+import org.example.client.panels.CategoryPanel;
 import org.example.client.panels.QuestionPanel;
-import org.example.client.panels.WaitingPanel;
+import org.example.client.panels.RoundSummaryPanel;
 
 import javax.swing.*;
 
 public class ClientBackpack {
+    private CategoryPanel categoryPanel;
     private String username;
     private String opponentUsername;
     private boolean goToNextScreen;
     private JFrame activeJframe;
     private NetworkClient networkClient;
     private QuestionPanel questionPanel;
+    private RoundSummaryPanel roundSummaryPanel;
 
     public QuestionPanel getQuestionPanel() {
         return questionPanel;
@@ -49,6 +52,14 @@ public class ClientBackpack {
         this.activeJframe = activeJframe;
     }
 
+    public CategoryPanel getCategoryPanel() {
+        return categoryPanel;
+    }
+
+    public void setCategoryPanel(CategoryPanel categoryPanel) {
+        this.categoryPanel = categoryPanel;
+    }
+
     public String getOpponentUsername() {
         return opponentUsername;
     }
@@ -63,5 +74,13 @@ public class ClientBackpack {
 
     public NetworkClient getNetworkClient() {
         return networkClient;
+    }
+
+    public void setRoundSummaryPanel(RoundSummaryPanel roundSummaryPanel) {
+        this.roundSummaryPanel = roundSummaryPanel;
+    }
+
+    public RoundSummaryPanel getRoundSummaryPanel() {
+        return roundSummaryPanel;
     }
 }
