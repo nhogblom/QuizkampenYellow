@@ -158,7 +158,7 @@ public class NetworkClient {
         }
 
         try {
-            Message message = new Message(MyMessageTypes.CHAT, text);
+            Message message = new Message(MessageTypes.CHAT, text);
             objectWriter.writeObject(message);
             objectWriter.flush();
             System.out.println("Sent chat message: " + text);
