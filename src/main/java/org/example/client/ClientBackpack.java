@@ -1,11 +1,13 @@
 package org.example.client;
 
+import org.example.client.panels.CategoryPanel;
 import org.example.client.panels.QuestionPanel;
 import org.example.client.panels.WaitingPanel;
 
 import javax.swing.*;
 
 public class ClientBackpack {
+    private CategoryPanel categoryPanel;
     private String username;
     private String opponentUsername;
     private boolean goToNextScreen;
@@ -47,6 +49,14 @@ public class ClientBackpack {
 
     public void setActiveJframe(JFrame activeJframe) {
         this.activeJframe = activeJframe;
+    }
+
+    public CategoryPanel getCategoryPanel() {
+        return categoryPanel;
+    }
+
+    public void setCategoryPanel(CategoryPanel categoryPanel) {
+        this.categoryPanel = categoryPanel;
     }
 
     public String getOpponentUsername() {
