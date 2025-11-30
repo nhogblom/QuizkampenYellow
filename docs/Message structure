@@ -1,0 +1,5 @@
+CATEGORY_CHOICE
+Två varianter
+Den ena innehåller en List<String> = frågorna till den som väljer.
+Den som inte väljer mottar istället en String med text så visas upp i väntan på att spelet börjar. (hanteras i ClientProtocol
+
