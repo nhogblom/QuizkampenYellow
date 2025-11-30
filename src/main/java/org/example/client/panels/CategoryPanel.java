@@ -1,10 +1,6 @@
 package org.example.client.panels;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class CategoryPanel extends JFrame {
 
@@ -21,7 +17,7 @@ public class CategoryPanel extends JFrame {
         setResizable(false);
         getContentPane().setBackground(Constants.DARK_BLUE);
 
-        addGuiComponents();
+        addGuiComponents();;
     }
 
     private void addGuiComponents(){
@@ -54,5 +50,4 @@ public class CategoryPanel extends JFrame {
         add(cat3);
     }
 
-    //  todo spelare promtas att göra ett val av spelkategori~
 }
