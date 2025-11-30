@@ -42,17 +42,7 @@ public class Player {
         }
     }
 
-    public  Object receive() {
-        try {
-            return objectInputStream.readObject();
-        } catch (IOException e) {
-            System.out.println("IOException");
-            e.printStackTrace();
-            return null;
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
     public void send(Message object) {
         try {
@@ -111,5 +101,3 @@ public class Player {
         this.chat = chat;
     }
 }
-
-// TODO Representerar en ansluten spelare; lagrar användarnamn och kommunikationsströmmar.
