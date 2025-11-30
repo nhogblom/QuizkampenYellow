@@ -130,10 +130,11 @@ public class ClientProtocol {
         if (payload instanceof String s) {
             // show player that they have to wait for the opponent that is currently choosing the cat for next round
             System.out.println(s);
+            // todo skriv ut vänte meddelande till den väntande spelaren
         } else if (payload instanceof CategoryPrompt categoryPrompt) {
             // hantera category prompt i ui
+            backpack.getCategoryPanel().setCategories(categoryPrompt);
         }
-
     }
 
     /**
