@@ -22,24 +22,19 @@ public class ServerListener extends Thread {
             while (true) {
                 System.out.println("ServerListener: Waiting for connection...");
                 Socket socket = serverSocket.accept();
-                System.out.println("ServerListener: Connection accepted");
-                System.out.println("Creating ObjectOutputStream...");
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 objectOutputStream.flush();
-                System.out.println("ObjectOutputStream created");
-                System.out.println("Creating ObjectInputStream...");
+
 
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-                System.out.println("ObjectInputStream created");
-                System.out.println("Creating Player...");
+
 
                 Player player = new Player(socket, objectInputStream, objectOutputStream);
-                System.out.println("Player created, adding to queue...");
+
 
                 playerQueue.add(player);
-                System.out.println("Player added");
+                System.out.println("Player created and added to queue.");
 
-                System.out.println("ServerListener: connection established.");
             }
         } catch (Exception e) {
             System.out.println("ServerListener Error: " + e.getMessage());
@@ -47,5 +42,3 @@ public class ServerListener extends Thread {
         }
     }
 }
-
-//  TODO Lyssnar efter nya anslutningar. Skapar användare med användarnamn, socket, in- & out-ström.
