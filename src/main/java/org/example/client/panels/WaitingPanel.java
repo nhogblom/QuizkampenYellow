@@ -46,7 +46,7 @@ public class WaitingPanel extends JFrame {
 
         if (client.connect()) {
             // Connection OK then show message and then wait for MATCH_STARTED from server
-            connectingLabel.setText("Connected as " + backpack.getUsername() + ", waiting for opponent...");
+            connectingLabel.setText("Connected as " + backpack.getUsername() + " waiting for opponent...");
         } else {
             connectingLabel.setText("Connection failed");
         }
