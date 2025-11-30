@@ -17,7 +17,7 @@ import java.net.Socket;
  *  - Starting a listening thread that continuously reads server messages
  *
  * It does NOT decide what to do with all messages itself.
- * For that we use ClientProtocol, which handles the "logic".
+ * For that we use ClientProtocol, which handles the logic.
  */
 public class NetworkClient {
 
@@ -29,10 +29,9 @@ public class NetworkClient {
     private final int SERVER_PORT;
     private final String playerName;
 
-    // Shared state (who am I, which frame is active, etc.)
     private final ClientBackpack backpack;
 
-    // NEW: This is where we delegate message handling logic
+    // This is where we delegate message handling logic
     private final ClientProtocol protocol;
 
     /**
@@ -82,7 +81,7 @@ public class NetworkClient {
     }
 
     /**
-     * This method runs in its own thread.
+     * Method runs in its own thread.
      * It continuously waits for messages from the server.
      */
     private void listen() {
@@ -120,7 +119,7 @@ public class NetworkClient {
     }
 
     /**
-     * Helper method to send a generic Message to the server.
+     * Method to send a generic Message to the server.
      */
     public void sendMessage(Message msg) {
         try {
@@ -133,7 +132,7 @@ public class NetworkClient {
     }
 
     /**
-     *  Sending an answer to a question.
+     * Sending an answer to a question.
      * Called from QuestionPanel optionIndex - client.sendAnswer(optionIndex)
      */
     public void sendAnswer(int optionIndex) {
@@ -145,6 +144,26 @@ public class NetworkClient {
             System.out.println("Sent answer: " + optionIndex);
         } catch (IOException e) {
             System.out.println("Failed to send answer.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sending a chat message to the server.
+     * This is called from QuestionPanel's chat input.
+     */
+    public void sendChatMessage(String text) {
+        if (text == null || text.isBlank()) {
+            return; // don't send empty messages
+        }
+
+        try {
+            Message message = new Message(MyMessageTypes.CHAT, text);
+            objectWriter.writeObject(message);
+            objectWriter.flush();
+            System.out.println("Sent chat message: " + text);
+        } catch (IOException e) {
+            System.out.println("Failed to send chat message.");
             e.printStackTrace();
         }
     }

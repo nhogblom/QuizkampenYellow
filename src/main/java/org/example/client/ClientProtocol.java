@@ -115,11 +115,15 @@ public class ClientProtocol {
     }
 
     /**
-     * Handle chat messages (not really implemented yet).
+     * Handle chat messages.
      */
     private void handleChat(Object payload) {
-        // TODO: connect this to a chat panel / chat window
-        System.out.println("Chat message: " + payload);
+        QuestionPanel qp = backpack.getQuestionPanel();
+        if (qp != null) {
+            qp.appendChatMessage(payload.toString());
+        } else {
+            System.out.println("Chat message (no panel available): " + payload);
+        }
     }
 
     /**

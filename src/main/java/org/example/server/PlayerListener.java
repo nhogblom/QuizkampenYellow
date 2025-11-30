@@ -1,6 +1,7 @@
 package org.example.server;
 
 import org.example.Message;
+import org.example.MessageTypes;      //added import
 
 import java.io.IOException;
 import java.util.List;
@@ -21,11 +22,22 @@ public class PlayerListener extends Thread {
             try {
                 Object incoming = player.getObjectInputStream().readObject();
                 if (incoming instanceof Message msg) {
+
+                    // NEW: Keep CHAT out of queue
+
+                    if (msg.getType() == MessageTypes.CHAT) {
+                        System.out.println("CHAT message received (ignored for game queue): " + msg.getPayload());
+                        continue;  // do NOT queue chat messages
+                    }
+
                     incomingMessages.add(msg);
                     notifyAll();
+                } else if (incoming instanceof Player) {
+
                 }
             } catch (Exception e) {
-                System.out.println("Fel inträffade i inkommande dataström för spelare" + player.getUsername() + "\n" + e.getMessage());
+                System.out.println("Fel inträffade i inkommande dataström för spelare "
+                        + player.getUsername() + "\n" + e.getMessage());
                 this.interrupt();
                 break;
             }
@@ -46,7 +58,7 @@ public class PlayerListener extends Thread {
         }
     }
 
-//    public synchronized Message receive() {
+//    public Message receive() {
 //        try {
 //            return (Message) player.getObjectInputStream().readObject();
 //        } catch (IOException e) {
