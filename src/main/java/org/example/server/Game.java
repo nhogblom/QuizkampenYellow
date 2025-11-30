@@ -128,43 +128,13 @@ public class Game implements Runnable {
      * This will later choose who selects the category.
      * MVP: only prints on console and sends info text.
      */
-    private void promptForCategory(int round) throws Exception {
 
-        // Send 3 categories to user
-
-        System.out.println("promptForCategory() called for round " + round);
-
-        // MVP placeholder: just inform both players whose turn it would be.
-
-        Player chooser = (round % 2 == 1) ? player1 : player2;
-
-        Message msg = new Message(MessageTypes.CATEGORY_CHOICE, new CategoryPrompt());
-
-        chooser.send(msg);
-        getOpponent(chooser).send(new Message(MessageTypes.CATEGORY_CHOICE, "Waiting for opponent to choose a category for round "));
-    }
 
     /**
      * Player sends back category choice to server.
      * MVP:  read a single String and log it.
      */
-    private void promptCategoryChoice(int round) throws Exception {
 
-
-        System.out.println("promptCategoryChoice() called for round " + round);
-
-        Player chooser = (round % 2 == 1) ? player1 : player2;
-
-        Object response = nextMessage(chooser);
-        String chosenCategory = (response instanceof String) ? (String) response : "UNKNOWN";
-
-        System.out.println("Round " + round + " chosen category by "
-                + safeUsername(chooser) + ": " + chosenCategory);
-
-        // Inform both players which category was chosen (even if it's just a placeholder).
-        player1.send(new Message(MessageTypes.DEVELOPMENTMSG, "CATEGORY_CHOSEN: " + chosenCategory));
-        player2.send(new Message(MessageTypes.DEVELOPMENTMSG, "CATEGORY_CHOSEN: " + chosenCategory));
-    }
 
     /**
      * Plays a whole round:
@@ -180,10 +150,10 @@ public class Game implements Runnable {
         Player other   = (chooser == player1 ? player2 : player1);
 
         // Ask chooser to pick a category
-        chooser.send(new Message(MessageTypes.CATEGORY_CHOICE, "CHOOSE_CATEGORY"));
+        chooser.send(new Message(MessageTypes.CATEGORY_CHOICE, new CategoryPrompt()));
 
         // Tell the other player to wait
-        other.send(new Message(MessageTypes.CATEGORY_CHOICE, "WAITING"));
+        other.send(new Message(MessageTypes.CATEGORY_CHOICE, "Waiting for opponent to choose a category for round "));
 
         // Block until chooser responds with CATEGORY_CHOICE
         String category = waitForCategoryChoice(chooser);
@@ -324,21 +294,9 @@ public class Game implements Runnable {
                 + player1.getUsername() + "=" + scorePlayer1 + ", "
                 + player2.getUsername() + "=" + scorePlayer2;
 
-        broadcast(new Message(MyMessageTypes.ROUND_RESULT, summary));
+        broadcast(new Message(MessageTypes.ROUND_RESULT, summary));
     }
 
-    private void endGame() {
-        String result;
-
-        if (scorePlayer1 > scorePlayer2)
-            result = player1.getUsername() + " wins!";
-        else if (scorePlayer2 > scorePlayer1)
-            result = player2.getUsername() + " wins!";
-        else
-            result = "It's a tie!";
-
-        broadcast(new Message(MyMessageTypes.GAME_RESULT, result));
-    }
 
 
     /**
@@ -361,25 +319,28 @@ public class Game implements Runnable {
                 + safeUsername(player1) + "=" + scorePlayer1 + ", "
                 + safeUsername(player2) + "=" + scorePlayer2;
 
-        player1.send(new Message(MyMessageTypes.DEVELOPMENTMSG, summary));
-        player2.send(new Message(MyMessageTypes.DEVELOPMENTMSG, summary));
+        player1.send(new Message(MessageTypes.DEVELOPMENTMSG, summary));
+        player2.send(new Message(MessageTypes.DEVELOPMENTMSG, summary));
     }
 
     /**
      * Determines the winner based on total scores.
      * MVP version: only console output.
      */
-    private void endGame() {
-        System.out.println("endGame() called");
 
-        if (scorePlayer1 > scorePlayer2) {
-            System.out.println("Winner: " + safeUsername(player1));
-        } else if (scorePlayer2 > scorePlayer1) {
-            System.out.println("Winner: " + safeUsername(player2));
-        } else {
-            System.out.println("The game ended in a tie.");
-        }
+    private void endGame() {
+        String result;
+
+        if (scorePlayer1 > scorePlayer2)
+            result = player1.getUsername() + " wins!";
+        else if (scorePlayer2 > scorePlayer1)
+            result = player2.getUsername() + " wins!";
+        else
+            result = "It's a tie!";
+
+        broadcast(new Message(MessageTypes.GAME_RESULT, result));
     }
+
 
     //   CHAT SUPPORT
 
