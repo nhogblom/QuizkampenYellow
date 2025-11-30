@@ -89,4 +89,7 @@ public class CategoryPanel extends JFrame {
         add(cat3);
     }
 
+    public void displayWaitMessage(String s) {
+        System.out.println("Väntar på motståndaren.");
+    }
 }

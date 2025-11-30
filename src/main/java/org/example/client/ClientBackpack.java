@@ -2,7 +2,7 @@ package org.example.client;
 
 import org.example.client.panels.CategoryPanel;
 import org.example.client.panels.QuestionPanel;
-import org.example.client.panels.WaitingPanel;
+import org.example.client.panels.RoundSummaryPanel;
 
 import javax.swing.*;
 
@@ -14,6 +14,7 @@ public class ClientBackpack {
     private JFrame activeJframe;
     private NetworkClient networkClient;
     private QuestionPanel questionPanel;
+    private RoundSummaryPanel roundSummaryPanel;
 
     public QuestionPanel getQuestionPanel() {
         return questionPanel;
@@ -73,5 +74,13 @@ public class ClientBackpack {
 
     public NetworkClient getNetworkClient() {
         return networkClient;
+    }
+
+    public void setRoundSummaryPanel(RoundSummaryPanel roundSummaryPanel) {
+        this.roundSummaryPanel = roundSummaryPanel;
+    }
+
+    public RoundSummaryPanel getRoundSummaryPanel() {
+        return roundSummaryPanel;
     }
 }

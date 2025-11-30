@@ -84,7 +84,10 @@ public class ClientProtocol {
         QuestionPanel qp = backpack.getQuestionPanel();
         if (qp != null) {
             qp.updateQuestion(question);
+            backpack.getCategoryPanel().setVisible(false);
+
             qp.setVisible(true);
+
 
             return;
         }
@@ -107,6 +110,9 @@ public class ClientProtocol {
     private void handleRoundResult(Object payload) {
         // TODO: later, update some score GUI or show summary panel
         System.out.println("Round result: " + payload);
+        backpack.getQuestionPanel().setVisible(false);
+        backpack.getRoundSummaryPanel().setVisible(true);
+
     }
 
     /**
@@ -136,7 +142,7 @@ public class ClientProtocol {
         // TODO: update GUI to show chosen category (e.g. in a label)
         if (payload instanceof String s) {
             // show player that they have to wait for the opponent that is currently choosing the cat for next round
-            System.out.println(s);
+            backpack.getCategoryPanel().displayWaitMessage(s);
             // todo skriv ut vänte meddelande till den väntande spelaren
         } else if (payload instanceof CategoryPrompt categoryPrompt) {
             // hantera category prompt i ui

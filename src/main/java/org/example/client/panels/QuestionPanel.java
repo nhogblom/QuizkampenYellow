@@ -2,12 +2,10 @@ package org.example.client.panels;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collections;
 
 import org.example.Message;
 import org.example.MessageTypes;
 import org.example.client.ClientBackpack;
-import org.example.Question;
 import org.example.server.QuizQuestion;
 
 /**
@@ -72,22 +70,22 @@ public class QuestionPanel extends JFrame {
 
         // Option 1
         optionButton1 = makeOptionButton(100, 340);
-        optionButton1.addActionListener(e -> onAnswerSelected(this.optionButton1)); // notify listener
+        optionButton1.addActionListener(e -> sendAnswerAndDoNecessaryStuff(this.optionButton1)); // notify listener
         add(optionButton1);
 
         // Option 2
         optionButton2 = makeOptionButton(320, 340);
-        optionButton2.addActionListener(e ->  onAnswerSelected(this.optionButton2));
+        optionButton2.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton2));
         add(optionButton2);
 
         // Option 3
         optionButton3 = makeOptionButton(100, 500);
-        optionButton3.addActionListener(e ->  onAnswerSelected(this.optionButton3));
+        optionButton3.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton3));
         add(optionButton3);
 
         // Option 4
         optionButton4 = makeOptionButton(320, 500);
-        optionButton4.addActionListener(e ->  onAnswerSelected(this.optionButton4));
+        optionButton4.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton4));
         add(optionButton4);
 
 
@@ -125,8 +123,16 @@ public class QuestionPanel extends JFrame {
         });
     }
 
-    private void onAnswerSelected(JButton jb){
+    private void sendAnswerAndDoNecessaryStuff(JButton jb){
         backpack.getNetworkClient().sendMessage(new Message(MessageTypes.ANSWER,jb.getText()));
+        setButtonState(false);
+    }
+
+    private void setButtonState(boolean state) {
+        optionButton1.setEnabled(state);
+        optionButton2.setEnabled(state);
+        optionButton3.setEnabled(state);
+        optionButton4.setEnabled(state);
     }
 
     /** Helper for styling of all answer buttons */
@@ -148,14 +154,14 @@ public class QuestionPanel extends JFrame {
             System.out.println("WARNING: invalid question/options in updateQuestion");
             return;
         }
-
+        setButtonState(true);
         questionButton.setText(question.getQuestion());
         // todo remove hard corded buttons to make it work with more questions per round etc~
-//        Collections.shuffle(question.getAnswers());
         optionButton1.setText(question.getAnswers().get(0));
         optionButton2.setText(question.getAnswers().get(1));
         optionButton3.setText(question.getAnswers().get(2));
         optionButton4.setText(question.getAnswers().get(3));
+
     }
 
     /**

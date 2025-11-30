@@ -1,13 +1,18 @@
 package org.example.client.panels;
 
+import org.example.client.ClientBackpack;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class RoundSummaryPanel extends JFrame{
+public class RoundSummaryPanel extends JFrame {
+    private ClientBackpack backpack;
 
-    public RoundSummaryPanel(){
-
+    public RoundSummaryPanel(ClientBackpack backpack) {
         super("");
+        this.backpack = backpack;
+        this.backpack = backpack;
+        backpack.setRoundSummaryPanel(this);
         setSize(600, 800);
         setLayout(null);
         setLocationRelativeTo(null);
@@ -19,7 +24,7 @@ public class RoundSummaryPanel extends JFrame{
         addAnswerBoxes();
     }
 
-    private void addGuiComponents(){
+    private void addGuiComponents() {
         JButton Player1 = new JButton("Player 1");
         Player1.setBounds(100, 150, 170, 100);
         Player1.setForeground(Color.WHITE);

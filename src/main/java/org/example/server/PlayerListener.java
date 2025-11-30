@@ -27,6 +27,7 @@ public class PlayerListener extends Thread {
 
                     if (msg.getType() == MessageTypes.CHAT) {
                         System.out.println("CHAT message received (ignored for game queue): " + msg.getPayload());
+
                         continue;  // do NOT queue chat messages
                     }
                     synchronized (this) {
