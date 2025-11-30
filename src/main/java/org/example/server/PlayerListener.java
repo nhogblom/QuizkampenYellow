@@ -19,12 +19,10 @@ public class PlayerListener extends Thread {
     public void run() {
         while (true) {
             try {
-                Object incoming = player.receive();
+                Object incoming = player.getObjectInputStream().readObject();
                 if (incoming instanceof Message msg) {
                     incomingMessages.add(msg);
                     notifyAll();
-                } else if (incoming instanceof Player) {
-
                 }
             } catch (Exception e) {
                 System.out.println("Fel inträffade i inkommande dataström för spelare" + player.getUsername() + "\n" + e.getMessage());
@@ -34,7 +32,7 @@ public class PlayerListener extends Thread {
         }
     }
 
-    public synchronized Message getGamePacket() {
+    public synchronized Message getMessage() {
         while (true) {
         if (!incomingMessages.isEmpty()) {
             return incomingMessages.removeFirst();
@@ -48,7 +46,7 @@ public class PlayerListener extends Thread {
         }
     }
 
-//    public Message receive() {
+//    public synchronized Message receive() {
 //        try {
 //            return (Message) player.getObjectInputStream().readObject();
 //        } catch (IOException e) {
