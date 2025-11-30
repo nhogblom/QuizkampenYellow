@@ -1,13 +1,18 @@
 package org.example.client;
 
+import org.example.client.panels.CategoryPanel;
 import org.example.client.panels.MainWindow;
 
 import javax.swing.*;
 
 public class Client {
     private ClientBackpack backpack = new ClientBackpack();
+    private CategoryPanel categoryPanel = new CategoryPanel(backpack);
+
+    //TODO lägga in alla paneler här och sen bara styra om dom syns eller ej senare i programmet.
 
     public Client() {
+        backpack.setCategoryPanel(categoryPanel);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
