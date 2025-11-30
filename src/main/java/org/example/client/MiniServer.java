@@ -2,7 +2,7 @@ package org.example.client;
 
 import org.example.Answer;
 import org.example.Message;
-import org.example.MyMessageTypes;
+import org.example.MessageTypes;
 import org.example.Question;
 
 import java.io.ObjectInputStream;
@@ -40,13 +40,13 @@ public class MiniServer {
 
                 String[] options = {"Option A", "Option B", "Option C", "Option D"};
                 Question question = new Question("What is 2 + 2?", options);
-                Message questionMsg = new Message(MyMessageTypes.QUESTION, question);
+                Message questionMsg = new Message(MessageTypes.QUESTION, question);
                 out.writeObject(questionMsg);
                 out.flush();
 
                 // Vänta på svar
                 Message answerMsg = (Message) in.readObject();
-                if (answerMsg.getType() == MyMessageTypes.ANSWER) {
+                if (answerMsg.getType() == MessageTypes.ANSWER) {
                     Answer answer = (Answer) answerMsg.getPayload();
                     System.out.println("Received answer from " + answer.getPlayerName() +
                             ": option " + answer.getChosenOption());
