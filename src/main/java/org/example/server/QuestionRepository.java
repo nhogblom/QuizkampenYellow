@@ -1,4 +1,5 @@
 package org.example.server;
+
 import java.util.*;
 
 public class QuestionRepository {
@@ -6,7 +7,16 @@ public class QuestionRepository {
     private Random random = new Random();
 
     public QuestionRepository() {
-        loadHardcodedQuestions();
+        Map<String, List<QuizQuestion>> loadedFile = QuestionStorage.loadQuestions();
+        if (loadedFile.isEmpty()) {
+            System.out.println("No saved questions found, loading hardcode.");
+            loadHardcodedQuestions();
+            QuestionStorage.saveQuestion(categoryQuestions);
+        } else {
+            categoryQuestions = loadedFile;
+            System.out.println("Questions loaded successfully from file.");
+        }
+
     }
 
     public List<QuizCategory> getCategories() {
@@ -18,10 +28,10 @@ public class QuestionRepository {
 
     public List<QuizQuestion> getRandomQuestions(QuizCategory category, int count) {
         List<QuizQuestion> questions = categoryQuestions.get(category.getName());
-        if(questions == null || questions.isEmpty()) {
+        if (questions == null || questions.isEmpty()) {
             return Collections.emptyList();
         }
-        if(count > questions.size()) {
+        if (count > questions.size()) {
             count = questions.size();
         }
         Collections.shuffle(questions, random);
