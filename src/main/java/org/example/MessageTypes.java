@@ -1,6 +1,6 @@
 package org.example;
 
-public enum MyMessageTypes {
+public enum MessageTypes {
     MATCH_STARTED,
     QUESTION,       // Server → Klient: en fråga
     ANSWER,         // Klient → Server: spelarens svar
@@ -10,5 +10,6 @@ public enum MyMessageTypes {
     GIVE_UP,        // Klient → Server: spelaren ger upp
     CHAT,            // Klient ↔ Server: chatmeddelande
     USERNAME,
-    DEVELOPMENTMSG  // used during development
+    DEVELOPMENTMSG,
+    SERVERMSG// used during development
 }
