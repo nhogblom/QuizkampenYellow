@@ -31,6 +31,11 @@ public class QuestionPanel extends JFrame {
     private JButton optionButton3;
     private JButton optionButton4;
 
+    /** Chat GUI components */
+    private JTextArea chatArea;
+    private JTextField chatInput;
+    private JButton sendChatButton;
+
     public QuestionPanel(ClientBackpack backpack, QuestionAnsweredListener listener) {
         super("Quizkampen - Question");
         this.listener = listener;
@@ -68,29 +73,61 @@ public class QuestionPanel extends JFrame {
         // Main question box
         questionButton = new JButton("QUESTION");
         questionButton.setFont(new Font("Arial", Font.BOLD, 16));
-        questionButton.setBounds(100, 140, 400, 200);
+        questionButton.setBounds(100, 120, 400, 200);
         questionButton.setEnabled(false);  // purely visual, not clickable
         add(questionButton);
 
         // Option 1
-        optionButton1 = makeOptionButton(100, 380);
+        optionButton1 = makeOptionButton(100, 340);
         optionButton1.addActionListener(e -> listener.onAnswerSelected(0)); // notify listener
         add(optionButton1);
 
         // Option 2
-        optionButton2 = makeOptionButton(320, 380);
+        optionButton2 = makeOptionButton(320, 340);
         optionButton2.addActionListener(e -> listener.onAnswerSelected(1));
         add(optionButton2);
 
         // Option 3
-        optionButton3 = makeOptionButton(100, 550);
+        optionButton3 = makeOptionButton(100, 500);
         optionButton3.addActionListener(e -> listener.onAnswerSelected(2));
         add(optionButton3);
 
         // Option 4
-        optionButton4 = makeOptionButton(320, 550);
+        optionButton4 = makeOptionButton(320, 500);
         optionButton4.addActionListener(e -> listener.onAnswerSelected(3));
         add(optionButton4);
+
+        // Chat area
+        chatArea = new JTextArea();
+        chatArea.setEditable(false);
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
+        chatArea.setBackground(Color.WHITE);
+        chatArea.setForeground(Color.BLACK);
+        chatArea.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        JScrollPane chatScrollPane = new JScrollPane(chatArea);
+        chatScrollPane.setBounds(100, 660, 400, 60);
+        add(chatScrollPane);
+
+        // Chat input field
+        chatInput = new JTextField();
+        chatInput.setBounds(100, 730, 320, 30);
+        add(chatInput);
+
+        // Send button
+        sendChatButton = new JButton("Send");
+        sendChatButton.setBounds(430, 730, 70, 30);
+        add(sendChatButton);
+
+        // Wire send button to NetworkClient via backpack
+        sendChatButton.addActionListener(e -> {
+            String text = chatInput.getText().trim();
+            if (!text.isEmpty()) {
+                backpack.getNetworkClient().sendChatMessage(text);
+                chatInput.setText("");
+            }
+        });
     }
 
     /** Helper for styling of all answer buttons */
@@ -118,6 +155,16 @@ public class QuestionPanel extends JFrame {
         optionButton2.setText(options[1]);
         optionButton3.setText(options[2]);
         optionButton4.setText(options[3]);
+    }
+
+    /**
+     * Append a chat message to the chat area.
+     * Can be called from ClientProtocol.handleChat(...)
+     */
+    public void appendChatMessage(String message) {
+        if (message == null) return;
+        chatArea.append(message + "\n");
+        chatArea.setCaretPosition(chatArea.getDocument().getLength());
     }
 
     /**
