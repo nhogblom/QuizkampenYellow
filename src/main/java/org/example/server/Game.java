@@ -171,16 +171,16 @@ public class Game implements Runnable {
         broadcast(new Message(MessageTypes.QUESTION, question));
 
         // Wait for both players to respond with ANSWER messages
-        String answer1 = collectAnswer(player1);
-        String answer2 = collectAnswer(player2);
+        String player1Answer = collectAnswer(player1);
+        String player2Answer = collectAnswer(player2);
 
         // add round result
-        if ((answer1.equals(question.getCorrectAnswer()))) {
+        if ((player1Answer.equals(question.getCorrectAnswer()))) {
             player1.getGameResult().getRoundResult(round).addResult(true);
         } else {
             player1.getGameResult().getRoundResult(round).addResult(false);
         }
-        if (answer2.equals(question.getCorrectAnswer())) {
+        if (player2Answer.equals(question.getCorrectAnswer())) {
             player2.getGameResult().getRoundResult(round).addResult(true);
         } else {
             player2.getGameResult().getRoundResult(round).addResult(false);
