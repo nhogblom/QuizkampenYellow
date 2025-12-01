@@ -233,7 +233,7 @@ public class Game implements Runnable {
             winner = "DRAW"; //
         }
 
-        // Send only the winner name (or "DRAW") to both clients.
+        // Send only the winner name "DRAW" to both clients.
         broadcast(new Message(MessageTypes.GAME_RESULT, winner));
     }
 
