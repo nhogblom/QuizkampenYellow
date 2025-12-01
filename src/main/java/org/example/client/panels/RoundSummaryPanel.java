@@ -13,6 +13,7 @@ public class RoundSummaryPanel extends JFrame {
     JButton Player1;
     JButton Player2;
     JLabel countDown;
+    private JLabel playAgainLabel;
 
     // Game over UI
     private JLabel gameOverLabel;
@@ -68,6 +69,15 @@ public class RoundSummaryPanel extends JFrame {
         gameOverLabel.setVisible(false);
         add(gameOverLabel);
 
+        // ---- "Play again?" label (initially hidden) ----
+        playAgainLabel = new JLabel("Play again?");
+        playAgainLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        playAgainLabel.setBounds(100, 360, 400, 40);
+        playAgainLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        playAgainLabel.setForeground(Color.WHITE);
+        playAgainLabel.setVisible(false);
+        add(playAgainLabel);
+
         // ---- "Play again?" buttons (initially hidden) ----
         playAgainYes = new JButton("Yes");
         playAgainYes.setBounds(150, 390, 120, 40);
@@ -81,7 +91,7 @@ public class RoundSummaryPanel extends JFrame {
 
         // Simple behaviour for now:
         playAgainYes.addActionListener(e -> {
-            // TODO: hook into real "start a new game" later if we want.
+            //TODO: hook into real "start a new game" later if we want.
             JOptionPane.showMessageDialog(this, "Play again is not implemented yet.");
         });
 
@@ -158,7 +168,7 @@ public class RoundSummaryPanel extends JFrame {
 
         gameOverLabel.setText(message);
         gameOverLabel.setVisible(true);
-
+        playAgainLabel.setVisible(true);
         playAgainYes.setVisible(true);
         playAgainNo.setVisible(true);
 
