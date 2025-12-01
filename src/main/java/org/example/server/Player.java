@@ -61,6 +61,12 @@ public class Player {
         return username;
     }
 
+    public String safeUsername() {
+        return this.getUsername() != null
+                ? this.getUsername()
+                : "Unknown";
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }

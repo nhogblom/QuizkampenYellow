@@ -269,23 +269,11 @@ public class Game implements Runnable {
     private void endRound(int round) {
         System.out.println("endRound() called for round " + round);
         System.out.println("Current scores after round " + round + ": "
-                + safeUsername(player1) + "=" + scorePlayer1 + ", "
-                + safeUsername(player2) + "=" + scorePlayer2);
+                + player1.safeUsername() + "=" + scorePlayer1 + ", "
+                + player2.safeUsername() + "=" + scorePlayer2);
     }
 
-    /**
-     * Sends a summary of the round to both players.
-     */
-    private void sendRoundSummary(int round) throws Exception {
-        System.out.println("sendRoundSummary() called for round " + round);
 
-        String summary = "ROUND_SUMMARY R" + round + ": "
-                + safeUsername(player1) + "=" + scorePlayer1 + ", "
-                + safeUsername(player2) + "=" + scorePlayer2;
-
-        player1.send(new Message(MessageTypes.DEVELOPMENTMSG, summary));
-        player2.send(new Message(MessageTypes.DEVELOPMENTMSG, summary));
-    }
 
     /**
      * Determines the winner based on total scores.
@@ -312,27 +300,9 @@ public class Game implements Runnable {
         player2.send(msg);
     }
 
-    /**
-     * Sends a final summary to both players (MVP).
-     */
-    private void sendGameSummary() {
-        System.out.println("sendGameSummary() called");
 
-        player1.send(new Message(MessageTypes.DEVELOPMENTMSG, "GAME_SUMMARY: Your score = " + scorePlayer1 +
-                ", Opponent score = " + scorePlayer2));
 
-        player2.send(new Message(MessageTypes.DEVELOPMENTMSG, "GAME_SUMMARY: Your score = " + scorePlayer2 +
-                ", Opponent score = " + scorePlayer1));
-    }
 
-    /**
-     * method to avoid null usernames in logs.
-     */
-    private String safeUsername(Player player) {
-        return player != null && player.getUsername() != null
-                ? player.getUsername()
-                : "Unknown";
-    }
 
     private Player getOpponent(Player player) {
         return player == player1 ? player2 : player1;
