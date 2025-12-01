@@ -8,11 +8,11 @@ import java.util.List;
 
 public class PlayerListener extends Thread {
     private final Player player;
-    private final List<Message> incomingMessages;
+    private final List<Message> incomingMessagesQueue;
 
-    public PlayerListener(Player player, List<Message> incomingMessages) {
+    public PlayerListener(Player player, List<Message> incomingMessagesQueue) {
         this.player = player;
-        this.incomingMessages = incomingMessages;
+        this.incomingMessagesQueue = incomingMessagesQueue;
         this.start();
     }
 
@@ -21,26 +21,19 @@ public class PlayerListener extends Thread {
         while (true) {
             try {
                 Object incoming = player.getObjectInputStream().readObject();
-
                 if (incoming instanceof Message msg) {
-
                     // CHAT MESSAGES are held here
                     if (msg.getType() == MessageTypes.CHAT) {
                         System.out.println("CHAT message received: " + msg.getPayload());
                         ChatRouter.relay(player, msg.getPayload().toString());
                         continue;  // Do NOT queue chat messages for the game logic
                     }
-
                     // All other messages go into queue
                     synchronized (this) {
-                        incomingMessages.add(msg);
+                        incomingMessagesQueue.add(msg);
                         notifyAll();
                     }
-
-                } else {
-                    // If incoming isn't a Message we ignore it
                 }
-
             } catch (Exception e) {
                 System.out.println("Error in incoming stream for player "
                         + player.getUsername() + ": " + e.getMessage());
@@ -50,13 +43,11 @@ public class PlayerListener extends Thread {
             }
         }
     }
-
-
     public synchronized Message getMessageFromQueue() {
         while (true) {
-            if (!incomingMessages.isEmpty()) {
-                System.out.println(incomingMessages.size());
-                return incomingMessages.removeFirst();
+            if (!incomingMessagesQueue.isEmpty()) {
+                System.out.println(incomingMessagesQueue.size());
+                return incomingMessagesQueue.removeFirst();
             } else {
                 try {
                     wait();
@@ -64,24 +55,6 @@ public class PlayerListener extends Thread {
                     throw new RuntimeException(e);
                 }
             }
-        }
-    }
-
-//    public Message receive() {
-//        try {
-//            return (Message) player.getObjectInputStream().readObject();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
-    public void send(Object object) {
-        try {
-            player.getObjectOutputStream().writeObject(object);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
