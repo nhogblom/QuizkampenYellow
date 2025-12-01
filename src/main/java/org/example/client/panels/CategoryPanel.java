@@ -91,5 +91,9 @@ public class CategoryPanel extends JFrame {
 
     public void displayWaitMessage(String s) {
         System.out.println("Väntar på motståndaren.");
+        cat1.setText("");
+        cat2.setText("");
+        cat3.setText("");
+
     }
 }

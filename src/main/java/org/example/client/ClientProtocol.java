@@ -1,7 +1,7 @@
 package org.example.client;
 
 import org.example.Message;
-import org.example.Question;
+import org.example.RoundResult;
 import org.example.client.panels.QuestionPanel;
 import org.example.server.CategoryPrompt;
 import org.example.server.QuizQuestion;
@@ -107,12 +107,14 @@ public class ClientProtocol {
      * Handle message that tells us the result of a round.
      * For now, we just print and leave a TODO for future GUI updates.
      */
+    int y = 360;
     private void handleRoundResult(Object payload) {
         // TODO: later, update some score GUI or show summary panel
-        System.out.println("Round result: " + payload);
         backpack.getQuestionPanel().setVisible(false);
         backpack.getRoundSummaryPanel().setVisible(true);
-
+        backpack.getRoundSummaryPanel().setPlayerName();
+        backpack.getRoundSummaryPanel().addAnswerRow(y, (List<RoundResult>) payload);
+        y = y + 60;
     }
 
     /**

@@ -2,6 +2,7 @@ package org.example.server;
 
 import org.example.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -144,6 +145,9 @@ public class Game implements Runnable {
      * - receive answers
      * - update scores
      */
+
+    GameResult gameResult = new GameResult();
+
     private void playRound(int round) throws Exception {
 
         // Decides who chooses category
@@ -166,11 +170,14 @@ public class Game implements Runnable {
 
 
         // Inform both players of final category
-        questionsForThisRound = questionRepo.getRandomQuestions(currentCategory,config.getTotalQuestionsPerRound());
+        questionsForThisRound = questionRepo.getRandomQuestions(currentCategory, config.getTotalQuestionsPerRound());
+
+
+        RoundResult rr = new RoundResult(round);
 
         // Play all questions for this round
         for (int i = 0; i < questionsForThisRound.size(); i++) {
-            playSingleQuestion(round, i + 1,questionsForThisRound.get(i));
+            playSingleQuestion(round, i + 1, questionsForThisRound.get(i));
         }
 
         // After round ends, send round summary
@@ -202,8 +209,11 @@ public class Game implements Runnable {
     }
 
 
-    private void playSingleQuestion(int round, int questionNumber,QuizQuestion question) {
+    private void playSingleQuestion(int round, int questionNumber, QuizQuestion question) {
 
+        ///  add RoundResult to later receive our results.
+        player1.getGameResult().addRoundResult(round);
+        player2.getGameResult().addRoundResult(round);
 
         // Send actual QUESTION messages to both clients
         broadcast(new Message(MessageTypes.QUESTION, question));
@@ -213,8 +223,16 @@ public class Game implements Runnable {
         String answer2 = collectAnswer(player2);
 
         // MVP scoring
-        if (answer1.equals(question.getCorrectAnswer())) scorePlayer1++;
-        if (answer2.equals(question.getCorrectAnswer())) scorePlayer2++;
+        if ((answer1.equals(question.getCorrectAnswer()))) {
+            player1.getGameResult().getRoundResult(round).addResult(true);
+        } else {
+            player1.getGameResult().getRoundResult(round).addResult(false);
+        }
+        if (answer2.equals(question.getCorrectAnswer())) {
+            player2.getGameResult().getRoundResult(round).addResult(true);
+        } else {
+            player2.getGameResult().getRoundResult(round).addResult(false);
+        }
     }
 
     private Question generatePlaceholderQuestion(int round, int questionNumber) {
@@ -275,11 +293,16 @@ public class Game implements Runnable {
     //   ROUND & GAME RESULTS
 
     private void sendRoundResult(int round) {
-        String summary = "Round " + round + " results: "
-                + player1.getUsername() + "=" + scorePlayer1 + ", "
-                + player2.getUsername() + "=" + scorePlayer2;
+        List<RoundResult> roundResultsForPlayer1 = new ArrayList<RoundResult>();
+        roundResultsForPlayer1.add(player1.getGameResult().getRoundResult(round));
+        roundResultsForPlayer1.add(player2.getGameResult().getRoundResult(round));
 
-        broadcast(new Message(MessageTypes.ROUND_RESULT, summary));
+        List<RoundResult> roundResultsForPlayer2 = new ArrayList<RoundResult>();
+        roundResultsForPlayer2.add(player2.getGameResult().getRoundResult(round));
+        roundResultsForPlayer2.add(player1.getGameResult().getRoundResult(round));
+
+        player1.send(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer1));
+        player2.send(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer2));
     }
 
 
