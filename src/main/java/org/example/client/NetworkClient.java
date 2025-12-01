@@ -38,7 +38,7 @@ public class NetworkClient {
      *  playerName  - The name of the player (username)
      *  backpack  -  Shared state passed in from the GUI (WaitingPanel)
      */
-    public NetworkClient(String playerName, ClientBackpack backpack) {
+    public NetworkClient(ClientBackpack backpack) {
         GameConfig gameConfig = new GameConfig();
 
         this.backpack = backpack;
@@ -46,7 +46,6 @@ public class NetworkClient {
 
         SERVER_IP = gameConfig.getIpAsString();
         SERVER_PORT = gameConfig.getPort();
-        this.playerName = playerName;
 
         // Create the ClientProtocol that will handle most incoming messages
         this.protocol = new ClientProtocol(this, this.backpack);
@@ -131,22 +130,6 @@ public class NetworkClient {
         }
     }
 
-    /**
-     * Sending an answer to a question.
-     * Called from QuestionPanel optionIndex - client.sendAnswer(optionIndex)
-     */
-    public void sendAnswer(int optionIndex) {
-        try {
-            Answer answer = new Answer(playerName, optionIndex);
-            Message message = new Message(MessageTypes.ANSWER, answer);
-            objectWriter.writeObject(message);
-            objectWriter.flush();
-            System.out.println("Sent answer: " + optionIndex);
-        } catch (IOException e) {
-            System.out.println("Failed to send answer.");
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Sending a chat message to the server.
