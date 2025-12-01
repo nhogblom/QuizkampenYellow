@@ -122,9 +122,29 @@ public class ClientProtocol {
      * Handle message that tells us the final game result.
      */
     private void handleGameresult(Object payload) {
-        // TODO: later, show a "Game Over" / "Winner" screen
-        JOptionPane.showMessageDialog(null,"Game result: " + (String)payload);
+        String winnerName = (String) payload;
+        String localUsername = backpack.getUsername();
+
+        // Get the shared RoundSummaryPanel from the backpack
+        var rsp = backpack.getRoundSummaryPanel();
+        if (rsp == null) {
+            // Fallback if something is wrong
+            JOptionPane.showMessageDialog(null, "Winner: " + winnerName);
+            return;
+        }
+
+        // Hide question + category panels if they are visible
+        if (backpack.getQuestionPanel() != null) {
+            backpack.getQuestionPanel().setVisible(false);
+        }
+        if (backpack.getCategoryPanel() != null) {
+            backpack.getCategoryPanel().setVisible(false);
+        }
+
+        // Show the "X won! Congrats! Play again? Yes / No" UI
+        rsp.showGameOver(winnerName, localUsername);
     }
+
 
     /**
      * Handle chat messages.

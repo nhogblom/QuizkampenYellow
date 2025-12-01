@@ -217,18 +217,26 @@ public class Game implements Runnable {
 
     /**
      * Determines the winner based on total scores.
-     * MVP version: only console output.
+     *
      */
-    // todo fix this logic. :(
 
     private void endGame() {
-        String result;
-
         int player1Result = player1.getGameResult().getResult();
         int player2Result = player2.getGameResult().getResult();
 
-        broadcast(new Message(MessageTypes.GAME_RESULT, player1Result+" - "+player2Result));
+        String winner;
+        if (player1Result > player2Result) {
+            winner = player1.getUsername();
+        } else if (player2Result > player1Result) {
+            winner = player2.getUsername();
+        } else {
+            winner = "DRAW"; //
+        }
+
+        // Send only the winner name "DRAW" to both clients.
+        broadcast(new Message(MessageTypes.GAME_RESULT, winner));
     }
+
 
 
     //   HELPERS
