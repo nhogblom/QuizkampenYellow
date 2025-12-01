@@ -70,8 +70,6 @@ public class Game implements Runnable {
     private final QuestionRepository questionRepo = new QuestionRepository();
     private List<QuizQuestion> questionsForThisRound;
 
-    GameResult gameResult = new GameResult();
-    private final Random random = new Random();
 
     public Game(Player p1, Player p2) {
         this.player1 = p1;
@@ -227,14 +225,10 @@ public class Game implements Runnable {
     private void endGame() {
         String result;
 
-        if (player1.getGameResult().getScorePlayer1() > player2.getGameResult().getScorePlayer2())
-            result = player1.getUsername() + " wins!";
-        else if (player1.getGameResult().getScorePlayer1() < player2.getGameResult().getScorePlayer2())
-            result = player2.getUsername() + " wins!";
-        else
-            result = "It's a tie!";
+        int player1Result = player1.getGameResult().getResult();
+        int player2Result = player2.getGameResult().getResult();
 
-        broadcast(new Message(MessageTypes.GAME_RESULT, result));
+        broadcast(new Message(MessageTypes.GAME_RESULT, player1Result+" - "+player2Result));
     }
 
 

@@ -4,8 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Game score is stored as true or false.
+GameResult consists of a list that contains lists of each round.
+The list of a round consists of 2 * the amount of questions for
+
+ */
+
 public class GameResult implements Serializable {
     private List<RoundResult> result = new ArrayList<>();
+
     private GameConfig gameConfig = new GameConfig();
 
     public GameResult() {
@@ -19,28 +27,18 @@ public class GameResult implements Serializable {
         this.result.add(new RoundResult(round));
     }
 
-    public List<RoundResult> getResult() {
-        return this.result;
-    }
-
-    public int getScorePlayer1() {
-        int totalPoints = 0;
+    public int getResult() {
+        int score = 0;
         for (RoundResult roundResult : result) {
-            for (int i = 0; i < gameConfig.getTotalQuestionsPerRound(); i++) {
-                totalPoints += ((roundResult.getResults().get(i)) ? 1 : 0);
+            for (int j = 0; j < roundResult.getRound().size(); j++) {
+                if (roundResult.getRound().get(j) == true) {
+                    score++;
+                }
             }
+            return score;
         }
-        return totalPoints;
-    }
 
-    public int getScorePlayer2() {
-        int totalPoints = 0;
-        for (RoundResult roundResult : result) {
-            for (int i = 0; i < gameConfig.getTotalQuestionsPerRound(); i++) {
-                totalPoints += ((roundResult.getResults().get(gameConfig.getTotalQuestionsPerRound() + i)) ? 1 : 0);
-            }
-        }
-        return totalPoints;
+        return 1;
     }
 
     public void setResult(List<RoundResult> result) {

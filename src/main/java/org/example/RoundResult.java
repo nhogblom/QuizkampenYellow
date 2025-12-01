@@ -16,8 +16,8 @@ public class RoundResult implements Serializable {
         results.add(result);
     }
 
-    public int getRound() {
-        return round;
+    public List<Boolean> getRound() {
+        return results;
     }
 
     public void setRound(int round) {
