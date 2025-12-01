@@ -4,7 +4,6 @@ import org.example.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Game
@@ -112,8 +111,8 @@ public class Game implements Runnable {
         scorePlayer1 = 0;
         scorePlayer2 = 0;
         // Let players know that the match has started and who the opponent is.
-        player1.send(new Message(MessageTypes.MATCH_STARTED, player2.getUsername()));
-        player2.send(new Message(MessageTypes.MATCH_STARTED, player1.getUsername()));
+        player1.sendMessage(new Message(MessageTypes.MATCH_STARTED, player2.getUsername()));
+        player2.sendMessage(new Message(MessageTypes.MATCH_STARTED, player1.getUsername()));
     }
 
 
@@ -124,10 +123,10 @@ public class Game implements Runnable {
         Player other = (chooser == player1 ? player2 : player1);
 
         // Ask chooser to pick a category
-        chooser.send(new Message(MessageTypes.CATEGORY_CHOICE, new CategoryPrompt()));
+        chooser.sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, new CategoryPrompt()));
 
         // Tell the other player to wait
-        other.send(new Message(MessageTypes.CATEGORY_CHOICE, "Waiting for opponent to choose a category for round "));
+        other.sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, "Waiting for opponent to choose a category for round "));
 
         // Receive category from chooser
         QuizCategory currentCategory = receiveCategoryChoice(chooser);
@@ -211,8 +210,8 @@ public class Game implements Runnable {
         roundResultsForPlayer2.add(player2.getGameResult().getRoundResult(round));
         roundResultsForPlayer2.add(player1.getGameResult().getRoundResult(round));
 
-        player1.send(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer1));
-        player2.send(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer2));
+        player1.sendMessage(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer1));
+        player2.sendMessage(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer2));
     }
 
 
@@ -234,8 +233,8 @@ public class Game implements Runnable {
 
     //   HELPERS
     private void broadcast(Message msg) {
-        player1.send(msg);
-        player2.send(msg);
+        player1.sendMessage(msg);
+        player2.sendMessage(msg);
     }
 
 

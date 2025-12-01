@@ -35,9 +35,9 @@ public final class ChatRouter {
         //this sends to opponent
 
         String formatted = sender.getUsername() + ": " + text;
-        receiver.send(new Message(MessageTypes.CHAT, formatted));
+        receiver.sendMessage(new Message(MessageTypes.CHAT, formatted));
 
         //this sends back to sender to follow chat history
-        sender.send(new Message(MessageTypes.CHAT, formatted));
+        sender.sendMessage(new Message(MessageTypes.CHAT, formatted));
     }
 }

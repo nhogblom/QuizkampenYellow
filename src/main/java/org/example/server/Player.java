@@ -47,7 +47,7 @@ public class Player {
 
 
 
-    public void send(Message object) {
+    public void sendMessage(Message object) {
         try {
             objectOutputStream.writeObject(object);
         } catch (IOException e) {
