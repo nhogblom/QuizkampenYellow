@@ -1,5 +1,8 @@
 package org.example.server;
 import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 
 public class QuestionRepository {
     private Map<String, List<QuizQuestion>> categoryQuestions = new HashMap<>();

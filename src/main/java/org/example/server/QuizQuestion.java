@@ -3,7 +3,7 @@ package org.example.server;
 import java.io.Serializable;
 import java.util.List;
 
-public class QuizQuestion implements Serializable {
+public class QuizQuestion {
 
     private String question;
     private List<String> answers;
