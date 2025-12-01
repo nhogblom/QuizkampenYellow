@@ -27,6 +27,7 @@ public class QuizQuestion implements Serializable {
         return correctAnswer;
     }
 
+
     public boolean isCorrect(String clientAnswer) {
         return clientAnswer.equals(correctAnswer);
     }
