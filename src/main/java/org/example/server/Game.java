@@ -222,7 +222,7 @@ public class Game implements Runnable {
         String answer1 = collectAnswer(player1);
         String answer2 = collectAnswer(player2);
 
-        // MVP scoring
+        // add round result
         if ((answer1.equals(question.getCorrectAnswer()))) {
             player1.getGameResult().getRoundResult(round).addResult(true);
         } else {
@@ -235,57 +235,14 @@ public class Game implements Runnable {
         }
     }
 
-    private Question generatePlaceholderQuestion(int round, int questionNumber) {
-        String text = "Round " + round + ", Question " + questionNumber + ". What is correct?";
-        String[] options = {"Correct", "Incorrect 1", "Incorrect 2", "Incorrect 3"};
-        return new Question(text, options);
-    }
 
 
-    /**
-     * Receives answers from both players for a single question and updates scores.
-     * MVP rule: if the player answers exactly "1" → +1 point.
-     */
-    private void receiveAndScoreAnswers(int round, int questionNumber) throws Exception {
-        System.out.println("receiveAndScoreAnswers() called for round " + round
-                + ", question " + questionNumber);
-
-        // Receive
-        String answerP1 = readStringAnswer(player1);
-        String answerP2 = readStringAnswer(player2);
-
-        // MVP scoring: "1" is always the correct answer.
-        boolean p1Correct = "1".equals(answerP1);
-        boolean p2Correct = "1".equals(answerP2);
-
-        if (p1Correct) {
-            scorePlayer1++;
-        }
-        if (p2Correct) {
-            scorePlayer2++;
-        }
-
-        // Inform players about correctness of this question
-        player1.send(new Message(MessageTypes.DEVELOPMENTMSG, "QUESTION_RESULT R" + round + "Q" + questionNumber + ": "
-                + (p1Correct ? "CORRECT" : "WRONG")));
-        player2.send(new Message(MessageTypes.DEVELOPMENTMSG, "QUESTION_RESULT R" + round + "Q" + questionNumber + ": "
-                + (p2Correct ? "CORRECT" : "WRONG")));
-
-        System.out.println("Answers for R" + round + "Q" + questionNumber
-                + " -> " + safeUsername(player1) + ": " + answerP1 + " (" + (p1Correct ? "correct" : "wrong") + "), "
-                + safeUsername(player2) + ": " + answerP2 + " (" + (p2Correct ? "correct" : "wrong") + ")");
-    }
-
-    private String readStringAnswer(Player player) {
-        Object o = nextMessage(player);
-        if (o instanceof String s) {
-            return s;
-        }
-        return "";
-    }
 
     private String collectAnswer(Player player) {
         Message msg = player.getPlayerListener().getMessage();
+        if (msg.getPayload() instanceof QuizCategory) {
+            System.out.println(((QuizCategory) msg.getPayload()).getName());
+        }
         return (String) msg.getPayload();
     }
 
@@ -338,7 +295,7 @@ public class Game implements Runnable {
     private void endGame() {
         String result;
 
-        if (scorePlayer1 > scorePlayer2)
+        if (player1.getGameResult().getScorePlayer1() > player2.getGameResult().getScorePlayer2())
             result = player1.getUsername() + " wins!";
         else if (scorePlayer2 > scorePlayer1)
             result = player2.getUsername() + " wins!";
@@ -347,7 +304,6 @@ public class Game implements Runnable {
 
         broadcast(new Message(MessageTypes.GAME_RESULT, result));
     }
-
 
 
     //   HELPERS

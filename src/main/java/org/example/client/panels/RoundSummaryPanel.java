@@ -78,13 +78,15 @@ public class RoundSummaryPanel extends JFrame {
 
     public void startCountDown() {
 
-        for (int i = 5; i < 0; i--) {
+        for (int i = 5; i >= 0; i--) {
             countDown.setText(Integer.toString(i));
+
             try {
-                wait(1000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
         }
         this.dispose();
         backpack.getCategoryPanel().setVisible(true);

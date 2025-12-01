@@ -55,6 +55,7 @@ public class PlayerListener extends Thread {
     public synchronized Message getMessage() {
         while (true) {
             if (!incomingMessages.isEmpty()) {
+                System.out.println(incomingMessages.size());
                 return incomingMessages.removeFirst();
             } else {
                 try {

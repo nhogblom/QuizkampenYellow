@@ -6,6 +6,7 @@ import org.example.client.panels.QuestionPanel;
 import org.example.server.CategoryPrompt;
 import org.example.server.QuizQuestion;
 
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -122,7 +123,7 @@ public class ClientProtocol {
      */
     private void handleGameresult(Object payload) {
         // TODO: later, show a "Game Over" / "Winner" screen
-        System.out.println("Game result: " + payload);
+        JOptionPane.showMessageDialog(null,"Game result: " + (String)payload);
     }
 
     /**
