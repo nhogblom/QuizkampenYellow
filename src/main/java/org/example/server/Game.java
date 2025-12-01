@@ -70,6 +70,7 @@ public class Game implements Runnable {
     private final QuestionRepository questionRepo = new QuestionRepository();
     private List<QuizQuestion> questionsForThisRound;
 
+    GameResult gameResult = new GameResult();
     private final Random random = new Random();
 
     public Game(Player p1, Player p2) {
@@ -117,36 +118,6 @@ public class Game implements Runnable {
         player2.send(new Message(MessageTypes.MATCH_STARTED, player1.getUsername()));
     }
 
-    /**
-     * Helper to get the next message from a player.
-     * MVP: directly read from the socket.
-     * Later: can be changed to use Player's internal queue.
-     */
-    private Object nextMessage(Player player) {
-        return player.getPlayerListener().getMessage();
-    }
-
-    /**
-     * This will later choose who selects the category.
-     * MVP: only prints on console and sends info text.
-     */
-
-
-    /**
-     * Player sends back category choice to server.
-     * MVP:  read a single String and log it.
-     */
-
-
-    /**
-     * Plays a whole round:
-     * - For each question:
-     * - send question text to both
-     * - receive answers
-     * - update scores
-     */
-
-    GameResult gameResult = new GameResult();
 
     private void playRound(int round) throws Exception {
 
@@ -160,16 +131,10 @@ public class Game implements Runnable {
         // Tell the other player to wait
         other.send(new Message(MessageTypes.CATEGORY_CHOICE, "Waiting for opponent to choose a category for round "));
 
-        // no needed, we only allow client to send requests when it should be possible.
-        // Block until chooser responds with CATEGORY_CHOICE
-        //String category = waitForCategoryChoice(chooser);
-
+        // Receive category from chooser
         QuizCategory currentCategory = receiveCategoryChoice(chooser);
 
-        // change to the actual category with questions ~.
-
-
-        // Inform both players of final category
+        // Send each player the questions for this round.
         questionsForThisRound = questionRepo.getRandomQuestions(currentCategory, config.getTotalQuestionsPerRound());
 
 
@@ -188,17 +153,7 @@ public class Game implements Runnable {
      * Sends a single placeholder question to both players.
      * Later I replace this with real questions from QuestionRepository.
      */
-    private void sendQuestion(int round, int questionNumber) throws Exception {
-        System.out.println("sendQuestion() called for round " + round
-                + ", question " + questionNumber);
 
-        String questionText = "QUESTION R" + round + "Q" + questionNumber + ": "
-                + "This is a placeholder question. Answer with '1', '2', '3', or '4'. "
-                + "Correct answer is '1' in MVP.";
-
-        player1.send(new Message(MessageTypes.DEVELOPMENTMSG, questionText));
-        player2.send(new Message(MessageTypes.DEVELOPMENTMSG, questionText));
-    }
 
     private QuizCategory receiveCategoryChoice(Player chooser) {
         Message msg = chooser.getPlayerListener().getMessage();
@@ -264,28 +219,17 @@ public class Game implements Runnable {
 
 
     /**
-     * Calculates end of round statistics.
-     */
-    private void endRound(int round) {
-        System.out.println("endRound() called for round " + round);
-        System.out.println("Current scores after round " + round + ": "
-                + player1.safeUsername() + "=" + scorePlayer1 + ", "
-                + player2.safeUsername() + "=" + scorePlayer2);
-    }
-
-
-
-    /**
      * Determines the winner based on total scores.
      * MVP version: only console output.
      */
+    // todo fix this logic. :(
 
     private void endGame() {
         String result;
 
         if (player1.getGameResult().getScorePlayer1() > player2.getGameResult().getScorePlayer2())
             result = player1.getUsername() + " wins!";
-        else if (scorePlayer2 > scorePlayer1)
+        else if (player1.getGameResult().getScorePlayer1() < player2.getGameResult().getScorePlayer2())
             result = player2.getUsername() + " wins!";
         else
             result = "It's a tie!";
@@ -299,8 +243,6 @@ public class Game implements Runnable {
         player1.send(msg);
         player2.send(msg);
     }
-
-
 
 
 
