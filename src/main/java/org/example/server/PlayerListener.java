@@ -21,32 +21,36 @@ public class PlayerListener extends Thread {
         while (true) {
             try {
                 Object incoming = player.getObjectInputStream().readObject();
+
                 if (incoming instanceof Message msg) {
 
-                    // NEW: Keep CHAT out of queue
-
+                    // CHAT MESSAGES are held here
                     if (msg.getType() == MessageTypes.CHAT) {
-                        System.out.println("CHAT message received (ignored for game queue): " + msg.getPayload());
-
-                        continue;  // do NOT queue chat messages
+                        System.out.println("CHAT message received: " + msg.getPayload());
+                        ChatRouter.relay(player, msg.getPayload().toString());
+                        continue;  // Do NOT queue chat messages for the game logic
                     }
+
+                    // All other messages go into queue
                     synchronized (this) {
                         incomingMessages.add(msg);
                         notifyAll();
                     }
 
-                } else if (incoming instanceof Player) {
-
+                } else {
+                    // If incoming isn't a Message we ignore it
                 }
+
             } catch (Exception e) {
-                System.out.println("Fel inträffade i inkommande dataström för spelare "
-                        + player.getUsername() + "\n" + e.getMessage());
+                System.out.println("Error in incoming stream for player "
+                        + player.getUsername() + ": " + e.getMessage());
                 e.printStackTrace();
                 this.interrupt();
                 break;
             }
         }
     }
+
 
     public synchronized Message getMessage() {
         while (true) {
