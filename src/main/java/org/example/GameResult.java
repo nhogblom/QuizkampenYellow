@@ -35,10 +35,8 @@ public class GameResult implements Serializable {
                     score++;
                 }
             }
-            return score;
         }
-
-        return 1;
+        return score;
     }
 
     public void setResult(List<RoundResult> result) {

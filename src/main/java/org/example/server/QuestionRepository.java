@@ -19,8 +19,10 @@ public class QuestionRepository {
     }
 
     public List<QuizCategory> getCategories() {
-        return categoryQuestions.keySet()
-                .stream()
+        List<String> keys = new ArrayList<>(categoryQuestions.keySet());
+        Collections.shuffle(keys, random);
+
+        return keys.stream()
                 .map(QuizCategory::new)
                 .toList();
     }
