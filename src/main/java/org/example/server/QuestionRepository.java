@@ -1,5 +1,4 @@
 package org.example.server;
-
 import java.util.*;
 
 public class QuestionRepository {
@@ -31,7 +30,7 @@ public class QuestionRepository {
         if (questions == null || questions.isEmpty()) {
             return Collections.emptyList();
         }
-        if (count > questions.size()) {
+        if(count > questions.size()) {
             count = questions.size();
         }
         Collections.shuffle(questions, random);

@@ -42,7 +42,7 @@ public class WaitingPanel extends JFrame {
         backpack.setActiveJframe(this);
 
         // Create client + connect to server
-        this.client = new NetworkClient(backpack.getUsername(), backpack);
+        this.client = new NetworkClient(backpack);
 
         if (client.connect()) {
             // Connection OK then show message and then wait for MATCH_STARTED from server
@@ -74,25 +74,6 @@ public class WaitingPanel extends JFrame {
             SwingUtilities.invokeLater(() -> {
                 // Optional: update text briefly before switching
                 connectingLabel.setText("Opponent found! Starting game...");
-
-
-                // todo rensa bort det som blivit överflödigt och städa upp
-//                // Build QuestionPanel with listener -> sends answers back via NetworkClient
-//                QuestionPanel questionPanel =
-//                        new QuestionPanel(backpack, client::sendAnswer);
-//
-//                // Register new active frame in backpack
-//                backpack.setActiveJframe(questionPanel);
-//
-//                // Close the waiting window and show the question window
-//                this.dispose();
-//
-//                questionPanel.setVisible(true);
-
-
-                // Build QuestionPanel with listener -> sends answers back via NetworkClient
-//                CategoryPanel categoryPanel =
-//                        new CategoryPanel(backpack);
 
                 // Register new active frame in backpack
                 backpack.setActiveJframe(backpack.getCategoryPanel());

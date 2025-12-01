@@ -2,8 +2,8 @@ package org.example.server;
 
 import org.example.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Game
@@ -69,7 +69,6 @@ public class Game implements Runnable {
     private final QuestionRepository questionRepo = new QuestionRepository();
     private List<QuizQuestion> questionsForThisRound;
 
-    private final Random random = new Random();
 
     public Game(Player p1, Player p2) {
         this.player1 = p1;
@@ -101,10 +100,10 @@ public class Game implements Runnable {
 
     private void receiveUsernames() {
         player1.setUsername(
-                (String) player1.playerListener.getMessage().getPayload()
+                (String) player1.playerListener.getMessageFromQueue().getPayload()
         );
         player2.setUsername(
-                (String) player2.getPlayerListener().getMessage().getPayload()
+                (String) player2.getPlayerListener().getMessageFromQueue().getPayload()
         );
     }
 
@@ -112,38 +111,11 @@ public class Game implements Runnable {
         scorePlayer1 = 0;
         scorePlayer2 = 0;
         // Let players know that the match has started and who the opponent is.
-        player1.send(new Message(MessageTypes.MATCH_STARTED, player2.getUsername()));
-        player2.send(new Message(MessageTypes.MATCH_STARTED, player1.getUsername()));
+        player1.sendMessage(new Message(MessageTypes.MATCH_STARTED, player2.getUsername()));
+        player2.sendMessage(new Message(MessageTypes.MATCH_STARTED, player1.getUsername()));
     }
 
-    /**
-     * Helper to get the next message from a player.
-     * MVP: directly read from the socket.
-     * Later: can be changed to use Player's internal queue.
-     */
-    private Object nextMessage(Player player) {
-        return player.getPlayerListener().getMessage();
-    }
 
-    /**
-     * This will later choose who selects the category.
-     * MVP: only prints on console and sends info text.
-     */
-
-
-    /**
-     * Player sends back category choice to server.
-     * MVP:  read a single String and log it.
-     */
-
-
-    /**
-     * Plays a whole round:
-     * - For each question:
-     * - send question text to both
-     * - receive answers
-     * - update scores
-     */
     private void playRound(int round) throws Exception {
 
         // Decides who chooses category
@@ -151,26 +123,23 @@ public class Game implements Runnable {
         Player other = (chooser == player1 ? player2 : player1);
 
         // Ask chooser to pick a category
-        chooser.send(new Message(MessageTypes.CATEGORY_CHOICE, new CategoryPrompt()));
+        chooser.sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, new CategoryPrompt()));
 
         // Tell the other player to wait
-        other.send(new Message(MessageTypes.CATEGORY_CHOICE, "Waiting for opponent to choose a category for round "));
+        other.sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, "Waiting for opponent to choose a category for round "));
 
-        // no needed, we only allow client to send requests when it should be possible.
-        // Block until chooser responds with CATEGORY_CHOICE
-        //String category = waitForCategoryChoice(chooser);
-
+        // Receive category from chooser
         QuizCategory currentCategory = receiveCategoryChoice(chooser);
 
-        // change to the actual category with questions ~.
+        // Send each player the questions for this round.
+        questionsForThisRound = questionRepo.getRandomQuestions(currentCategory, config.getTotalQuestionsPerRound());
 
 
-        // Inform both players of final category
-        questionsForThisRound = questionRepo.getRandomQuestions(currentCategory,config.getTotalQuestionsPerRound());
+        RoundResult rr = new RoundResult(round);
 
         // Play all questions for this round
         for (int i = 0; i < questionsForThisRound.size(); i++) {
-            playSingleQuestion(round, i + 1,questionsForThisRound.get(i));
+            playSingleQuestion(round, i + 1, questionsForThisRound.get(i));
         }
 
         // After round ends, send round summary
@@ -181,20 +150,10 @@ public class Game implements Runnable {
      * Sends a single placeholder question to both players.
      * Later I replace this with real questions from QuestionRepository.
      */
-    private void sendQuestion(int round, int questionNumber) throws Exception {
-        System.out.println("sendQuestion() called for round " + round
-                + ", question " + questionNumber);
 
-        String questionText = "QUESTION R" + round + "Q" + questionNumber + ": "
-                + "This is a placeholder question. Answer with '1', '2', '3', or '4'. "
-                + "Correct answer is '1' in MVP.";
-
-        player1.send(new Message(MessageTypes.DEVELOPMENTMSG, questionText));
-        player2.send(new Message(MessageTypes.DEVELOPMENTMSG, questionText));
-    }
 
     private QuizCategory receiveCategoryChoice(Player chooser) {
-        Message msg = chooser.getPlayerListener().getMessage();
+        Message msg = chooser.getPlayerListener().getMessageFromQueue();
         if (msg.getType() == MessageTypes.CATEGORY_CHOICE) {
             return (QuizCategory) msg.getPayload();
         }
@@ -202,8 +161,11 @@ public class Game implements Runnable {
     }
 
 
-    private void playSingleQuestion(int round, int questionNumber,QuizQuestion question) {
+    private void playSingleQuestion(int round, int questionNumber, QuizQuestion question) {
 
+        ///  add RoundResult to later receive our results.
+        player1.getGameResult().addRoundResult(round);
+        player2.getGameResult().addRoundResult(round);
 
         // Send actual QUESTION messages to both clients
         broadcast(new Message(MessageTypes.QUESTION, question));
@@ -212,62 +174,27 @@ public class Game implements Runnable {
         String answer1 = collectAnswer(player1);
         String answer2 = collectAnswer(player2);
 
-        // MVP scoring
-        if (answer1.equals(question.getCorrectAnswer())) scorePlayer1++;
-        if (answer2.equals(question.getCorrectAnswer())) scorePlayer2++;
-    }
-
-    private Question generatePlaceholderQuestion(int round, int questionNumber) {
-        String text = "Round " + round + ", Question " + questionNumber + ". What is correct?";
-        String[] options = {"Correct", "Incorrect 1", "Incorrect 2", "Incorrect 3"};
-        return new Question(text, options);
-    }
-
-
-    /**
-     * Receives answers from both players for a single question and updates scores.
-     * MVP rule: if the player answers exactly "1" → +1 point.
-     */
-    private void receiveAndScoreAnswers(int round, int questionNumber) throws Exception {
-        System.out.println("receiveAndScoreAnswers() called for round " + round
-                + ", question " + questionNumber);
-
-        // Receive
-        String answerP1 = readStringAnswer(player1);
-        String answerP2 = readStringAnswer(player2);
-
-        // MVP scoring: "1" is always the correct answer.
-        boolean p1Correct = "1".equals(answerP1);
-        boolean p2Correct = "1".equals(answerP2);
-
-        if (p1Correct) {
-            scorePlayer1++;
+        // add round result
+        if ((answer1.equals(question.getCorrectAnswer()))) {
+            player1.getGameResult().getRoundResult(round).addResult(true);
+        } else {
+            player1.getGameResult().getRoundResult(round).addResult(false);
         }
-        if (p2Correct) {
-            scorePlayer2++;
+        if (answer2.equals(question.getCorrectAnswer())) {
+            player2.getGameResult().getRoundResult(round).addResult(true);
+        } else {
+            player2.getGameResult().getRoundResult(round).addResult(false);
         }
-
-        // Inform players about correctness of this question
-        player1.send(new Message(MessageTypes.DEVELOPMENTMSG, "QUESTION_RESULT R" + round + "Q" + questionNumber + ": "
-                + (p1Correct ? "CORRECT" : "WRONG")));
-        player2.send(new Message(MessageTypes.DEVELOPMENTMSG, "QUESTION_RESULT R" + round + "Q" + questionNumber + ": "
-                + (p2Correct ? "CORRECT" : "WRONG")));
-
-        System.out.println("Answers for R" + round + "Q" + questionNumber
-                + " -> " + safeUsername(player1) + ": " + answerP1 + " (" + (p1Correct ? "correct" : "wrong") + "), "
-                + safeUsername(player2) + ": " + answerP2 + " (" + (p2Correct ? "correct" : "wrong") + ")");
     }
 
-    private String readStringAnswer(Player player) {
-        Object o = nextMessage(player);
-        if (o instanceof String s) {
-            return s;
-        }
-        return "";
-    }
+
+
 
     private String collectAnswer(Player player) {
-        Message msg = player.getPlayerListener().getMessage();
+        Message msg = player.getPlayerListener().getMessageFromQueue();
+        if (msg.getPayload() instanceof QuizCategory) {
+            System.out.println(((QuizCategory) msg.getPayload()).getName());
+        }
         return (String) msg.getPayload();
     }
 
@@ -275,92 +202,42 @@ public class Game implements Runnable {
     //   ROUND & GAME RESULTS
 
     private void sendRoundResult(int round) {
-        String summary = "Round " + round + " results: "
-                + player1.getUsername() + "=" + scorePlayer1 + ", "
-                + player2.getUsername() + "=" + scorePlayer2;
+        List<RoundResult> roundResultsForPlayer1 = new ArrayList<RoundResult>();
+        roundResultsForPlayer1.add(player1.getGameResult().getRoundResult(round));
+        roundResultsForPlayer1.add(player2.getGameResult().getRoundResult(round));
 
-        broadcast(new Message(MessageTypes.ROUND_RESULT, summary));
+        List<RoundResult> roundResultsForPlayer2 = new ArrayList<RoundResult>();
+        roundResultsForPlayer2.add(player2.getGameResult().getRoundResult(round));
+        roundResultsForPlayer2.add(player1.getGameResult().getRoundResult(round));
+
+        player1.sendMessage(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer1));
+        player2.sendMessage(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer2));
     }
 
-
-    /**
-     * Calculates end of round statistics.
-     */
-    private void endRound(int round) {
-        System.out.println("endRound() called for round " + round);
-        System.out.println("Current scores after round " + round + ": "
-                + safeUsername(player1) + "=" + scorePlayer1 + ", "
-                + safeUsername(player2) + "=" + scorePlayer2);
-    }
-
-    /**
-     * Sends a summary of the round to both players.
-     */
-    private void sendRoundSummary(int round) throws Exception {
-        System.out.println("sendRoundSummary() called for round " + round);
-
-        String summary = "ROUND_SUMMARY R" + round + ": "
-                + safeUsername(player1) + "=" + scorePlayer1 + ", "
-                + safeUsername(player2) + "=" + scorePlayer2;
-
-        player1.send(new Message(MessageTypes.DEVELOPMENTMSG, summary));
-        player2.send(new Message(MessageTypes.DEVELOPMENTMSG, summary));
-    }
 
     /**
      * Determines the winner based on total scores.
      * MVP version: only console output.
      */
+    // todo fix this logic. :(
 
     private void endGame() {
         String result;
 
-        if (scorePlayer1 > scorePlayer2)
-            result = player1.getUsername() + " wins!";
-        else if (scorePlayer2 > scorePlayer1)
-            result = player2.getUsername() + " wins!";
-        else
-            result = "It's a tie!";
+        int player1Result = player1.getGameResult().getResult();
+        int player2Result = player2.getGameResult().getResult();
 
-        broadcast(new Message(MessageTypes.GAME_RESULT, result));
+        broadcast(new Message(MessageTypes.GAME_RESULT, player1Result+" - "+player2Result));
     }
 
-
-    //   CHAT SUPPORT
-
-    private void relayChat(Player sender, Message msg) {
-        Player receiver = (sender == player1 ? player2 : player1);
-        String text = sender.getUsername() + ": " + msg.getPayload();
-        receiver.send(new Message(MessageTypes.CHAT, text));
-    }
 
     //   HELPERS
     private void broadcast(Message msg) {
-        player1.send(msg);
-        player2.send(msg);
+        player1.sendMessage(msg);
+        player2.sendMessage(msg);
     }
 
-    /**
-     * Sends a final summary to both players (MVP).
-     */
-    private void sendGameSummary() {
-        System.out.println("sendGameSummary() called");
 
-        player1.send(new Message(MessageTypes.DEVELOPMENTMSG, "GAME_SUMMARY: Your score = " + scorePlayer1 +
-                ", Opponent score = " + scorePlayer2));
-
-        player2.send(new Message(MessageTypes.DEVELOPMENTMSG, "GAME_SUMMARY: Your score = " + scorePlayer2 +
-                ", Opponent score = " + scorePlayer1));
-    }
-
-    /**
-     * method to avoid null usernames in logs.
-     */
-    private String safeUsername(Player player) {
-        return player != null && player.getUsername() != null
-                ? player.getUsername()
-                : "Unknown";
-    }
 
     private Player getOpponent(Player player) {
         return player == player1 ? player2 : player1;

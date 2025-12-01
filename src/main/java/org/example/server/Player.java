@@ -1,6 +1,7 @@
 package org.example.server;
 
 import org.example.Message;
+import org.example.GameResult;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,8 +16,10 @@ public class Player {
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
     private List<Message> incomingMessages = new LinkedList<>();
-    private Chat chat = new Chat();
     PlayerListener playerListener;
+    private GameResult gameResult = new GameResult();
+    private Player opponent;
+
 
     public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
         this.socket = socket;
@@ -30,10 +33,6 @@ public class Player {
         return playerListener;
     }
 
-    public void setPlayerListener(PlayerListener playerListener) {
-        this.playerListener = playerListener;
-    }
-
     public synchronized Message getMessage() {
         if (!incomingMessages.isEmpty()) {
             return incomingMessages.removeFirst();
@@ -43,8 +42,7 @@ public class Player {
     }
 
 
-
-    public void send(Message object) {
+    public void sendMessage(Message object) {
         try {
             objectOutputStream.writeObject(object);
         } catch (IOException e) {
@@ -57,47 +55,29 @@ public class Player {
         return username;
     }
 
+
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public void setSocket(Socket socket) {
-        this.socket = socket;
     }
 
     public ObjectInputStream getObjectInputStream() {
         return objectInputStream;
     }
 
-    public void setObjectInputStream(ObjectInputStream objectInputStream) {
-        this.objectInputStream = objectInputStream;
+    public GameResult getGameResult() {
+        return gameResult;
     }
 
-    public ObjectOutputStream getObjectOutputStream() {
-        return objectOutputStream;
+    /**
+     * Opponent reference used for routing chat messages between players.
+     */
+
+    public Player getOpponent() {
+        return opponent;
     }
 
-    public void setObjectOutputStream(ObjectOutputStream objectOutputStream) {
-        this.objectOutputStream = objectOutputStream;
+    public void setOpponent(Player opponent) {
+        this.opponent = opponent;
     }
 
-    public List<Message> getIncomingGamePackets() {
-        return incomingMessages;
-    }
-
-    public void setIncomingGamePackets(List<Message> incomingGamePackets) {
-        this.incomingMessages = incomingGamePackets;
-    }
-
-    public Chat getChat() {
-        return chat;
-    }
-
-    public void setChat(Chat chat) {
-        this.chat = chat;
-    }
 }
