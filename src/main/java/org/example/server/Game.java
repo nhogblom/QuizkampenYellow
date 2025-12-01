@@ -349,13 +349,6 @@ public class Game implements Runnable {
     }
 
 
-    //   CHAT SUPPORT
-
-    private void relayChat(Player sender, Message msg) {
-        Player receiver = (sender == player1 ? player2 : player1);
-        String text = sender.getUsername() + ": " + msg.getPayload();
-        receiver.send(new Message(MessageTypes.CHAT, text));
-    }
 
     //   HELPERS
     private void broadcast(Message msg) {

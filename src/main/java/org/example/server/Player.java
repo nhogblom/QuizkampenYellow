@@ -19,6 +19,8 @@ public class Player {
     private Chat chat = new Chat();
     PlayerListener playerListener;
     private GameResult gameResult = new GameResult();
+    private Player opponent;
+
 
     public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
         this.socket = socket;
@@ -103,13 +105,6 @@ public class Player {
         this.chat = chat;
     }
 
-    public List<Message> getIncomingMessages() {
-        return incomingMessages;
-    }
-
-    public void setIncomingMessages(List<Message> incomingMessages) {
-        this.incomingMessages = incomingMessages;
-    }
 
     public GameResult getGameResult() {
         return gameResult;
@@ -118,4 +113,17 @@ public class Player {
     public void setGameResult(GameResult gameResult) {
         this.gameResult = gameResult;
     }
+
+    /**
+     * Opponent reference used for routing chat messages between players.
+     */
+
+    public Player getOpponent() {
+        return opponent;
+    }
+
+    public void setOpponent(Player opponent) {
+        this.opponent = opponent;
+    }
+
 }
