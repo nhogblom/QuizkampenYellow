@@ -27,7 +27,7 @@ public class NetworkClient {
 
     private final String SERVER_IP;
     private final int SERVER_PORT;
-    private final String playerName;
+
 
     private final ClientBackpack backpack;
 
