@@ -52,7 +52,7 @@ public class PlayerListener extends Thread {
     }
 
 
-    public synchronized Message getMessage() {
+    public synchronized Message getMessageFromQueue() {
         while (true) {
             if (!incomingMessages.isEmpty()) {
                 System.out.println(incomingMessages.size());

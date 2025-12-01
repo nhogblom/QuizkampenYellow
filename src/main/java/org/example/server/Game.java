@@ -103,10 +103,10 @@ public class Game implements Runnable {
 
     private void receiveUsernames() {
         player1.setUsername(
-                (String) player1.playerListener.getMessage().getPayload()
+                (String) player1.playerListener.getMessageFromQueue().getPayload()
         );
         player2.setUsername(
-                (String) player2.getPlayerListener().getMessage().getPayload()
+                (String) player2.getPlayerListener().getMessageFromQueue().getPayload()
         );
     }
 
@@ -156,7 +156,7 @@ public class Game implements Runnable {
 
 
     private QuizCategory receiveCategoryChoice(Player chooser) {
-        Message msg = chooser.getPlayerListener().getMessage();
+        Message msg = chooser.getPlayerListener().getMessageFromQueue();
         if (msg.getType() == MessageTypes.CATEGORY_CHOICE) {
             return (QuizCategory) msg.getPayload();
         }
@@ -194,7 +194,7 @@ public class Game implements Runnable {
 
 
     private String collectAnswer(Player player) {
-        Message msg = player.getPlayerListener().getMessage();
+        Message msg = player.getPlayerListener().getMessageFromQueue();
         if (msg.getPayload() instanceof QuizCategory) {
             System.out.println(((QuizCategory) msg.getPayload()).getName());
         }
