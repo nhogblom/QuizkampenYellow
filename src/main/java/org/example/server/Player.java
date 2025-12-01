@@ -16,7 +16,6 @@ public class Player {
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
     private List<Message> incomingMessages = new LinkedList<>();
-    private Chat chat = new Chat();
     PlayerListener playerListener;
     private GameResult gameResult = new GameResult();
     private Player opponent;
@@ -101,14 +100,6 @@ public class Player {
 
     public void setIncomingGamePackets(List<Message> incomingGamePackets) {
         this.incomingMessages = incomingGamePackets;
-    }
-
-    public Chat getChat() {
-        return chat;
-    }
-
-    public void setChat(Chat chat) {
-        this.chat = chat;
     }
 
 
