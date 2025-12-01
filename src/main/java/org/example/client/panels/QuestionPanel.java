@@ -52,7 +52,6 @@ public class QuestionPanel extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         getContentPane().setBackground(Constants.DARK_BLUE);
-
         addGuiComponents();
     }
 
@@ -127,8 +126,6 @@ public class QuestionPanel extends JFrame {
     private void sendAnswerAndDoNecessaryStuff(JButton jb){
         backpack.getNetworkClient().sendMessage(new Message(MessageTypes.ANSWER,jb.getText()));
         setButtonState(false);
-
-
     }
 
     private void setButtonState(boolean state) {
