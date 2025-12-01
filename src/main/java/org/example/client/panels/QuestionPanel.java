@@ -132,12 +132,12 @@ public class QuestionPanel extends JFrame {
     }
 
     private void setButtonState(boolean state) {
-        optionButton1.setEnabled(state);
-        optionButton2.setEnabled(state);
-        optionButton3.setEnabled(state);
-        optionButton4.setEnabled(state);
-        this.validate();
-        this.repaint();
+//        optionButton1.setEnabled(state);
+//        optionButton2.setEnabled(state);
+//        optionButton3.setEnabled(state);
+//        optionButton4.setEnabled(state);
+//        this.validate();
+//        this.repaint();
 
     }
 

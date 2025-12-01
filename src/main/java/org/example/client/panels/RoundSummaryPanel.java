@@ -2,10 +2,10 @@ package org.example.client.panels;
 
 import org.example.RoundResult;
 import org.example.client.ClientBackpack;
-import java.util.List;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class RoundSummaryPanel extends JFrame {
     private ClientBackpack backpack;
@@ -58,6 +58,7 @@ public class RoundSummaryPanel extends JFrame {
     public void addAnswerRow(int y, List<RoundResult> roundResult) {
         createButtonCluster(100, y, roundResult.get(0));
         createButtonCluster(330, y, roundResult.get(1));
+        startCountDown();
     }
 
     private void createButtonCluster(int x, int y, RoundResult roundResult) {
@@ -75,16 +76,20 @@ public class RoundSummaryPanel extends JFrame {
         Player2.setText(backpack.getOpponentUsername());
     }
 
-    public void startCountDown(){
-        new Thread(() ->{
-            for(int i = 5; i < 0; i--){
-                countDown.setText(Integer.toString(i));
-            }
-            this.dispose();
-            backpack.getQuestionPanel().setVisible(true);
-        }).start();
-    }
+    public void startCountDown() {
 
+        for (int i = 5; i < 0; i--) {
+            countDown.setText(Integer.toString(i));
+            try {
+                wait(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        this.dispose();
+        backpack.getCategoryPanel().setVisible(true);
+
+    }
 
 
     //  todo spelresultat från avslutad omgång., övergå till att nästa spelare får välja kategori alternativt om alla rundor körts till game summary panel
