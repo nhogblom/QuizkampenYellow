@@ -40,7 +40,7 @@ public class NetworkClient {
      */
     public NetworkClient(ClientBackpack backpack) {
         GameConfig gameConfig = new GameConfig();
-
+        gameConfig.setBackpack(backpack);
         this.backpack = backpack;
         this.backpack.setNetworkClient(this);   // allow other classes to find this client
 

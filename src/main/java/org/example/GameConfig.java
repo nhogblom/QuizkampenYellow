@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.client.ClientBackpack;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -28,7 +30,7 @@ public class GameConfig {
 
     // Internal storage for the properties file
     private final Properties properties = new Properties();
-
+    private ClientBackpack backpack;
 
 
     public GameConfig() {
@@ -108,5 +110,21 @@ public class GameConfig {
 
     public String getIpAsString() {
         return ipString;
+    }
+
+    public String getIpString() {
+        return ipString;
+    }
+
+    public void setIpString(String ipString) {
+        this.ipString = ipString;
+    }
+
+    public ClientBackpack getBackpack() {
+        return backpack;
+    }
+
+    public void setBackpack(ClientBackpack backpack) {
+        this.backpack = backpack;
     }
 }

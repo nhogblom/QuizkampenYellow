@@ -116,10 +116,11 @@ public class RoundSummaryPanel extends JFrame {
     }
 
     private void createButtonCluster(int x, int y, RoundResult roundResult) {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < backpack.getGameConfig().getTotalQuestionsPerRound(); i++) {
+
             JButton button = new JButton((roundResult.getResults().get(i)) ? "X" : "-");
             button.setBackground(Color.WHITE);
-            button.setBounds(x + (i * 60), y, 50, 50);
+            button.setBounds(x + (i * 55), y, 50, 50);
             add(button);
             button.setEnabled(false);
         }

@@ -1,5 +1,6 @@
 package org.example.client;
 
+import org.example.GameConfig;
 import org.example.client.panels.CategoryPanel;
 import org.example.client.panels.QuestionPanel;
 import org.example.client.panels.RoundSummaryPanel;
@@ -15,6 +16,7 @@ public class ClientBackpack {
     private NetworkClient networkClient;
     private QuestionPanel questionPanel;
     private RoundSummaryPanel roundSummaryPanel;
+    private GameConfig gameConfig;
 
     public QuestionPanel getQuestionPanel() {
         return questionPanel;
@@ -82,5 +84,13 @@ public class ClientBackpack {
 
     public RoundSummaryPanel getRoundSummaryPanel() {
         return roundSummaryPanel;
+    }
+
+    public GameConfig getGameConfig() {
+        return gameConfig;
+    }
+
+    public void setGameConfig(GameConfig gameConfig) {
+        this.gameConfig = gameConfig;
     }
 }
