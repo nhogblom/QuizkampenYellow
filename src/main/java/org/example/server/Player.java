@@ -33,10 +33,6 @@ public class Player {
         return playerListener;
     }
 
-    public void setPlayerListener(PlayerListener playerListener) {
-        this.playerListener = playerListener;
-    }
-
     public synchronized Message getMessage() {
         if (!incomingMessages.isEmpty()) {
             return incomingMessages.removeFirst();
@@ -44,7 +40,6 @@ public class Player {
             return null;
         }
     }
-
 
 
     public void sendMessage(Message object) {
@@ -60,55 +55,17 @@ public class Player {
         return username;
     }
 
-    public String safeUsername() {
-        return this.getUsername() != null
-                ? this.getUsername()
-                : "Unknown";
-    }
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public void setSocket(Socket socket) {
-        this.socket = socket;
     }
 
     public ObjectInputStream getObjectInputStream() {
         return objectInputStream;
     }
 
-    public void setObjectInputStream(ObjectInputStream objectInputStream) {
-        this.objectInputStream = objectInputStream;
-    }
-
-    public ObjectOutputStream getObjectOutputStream() {
-        return objectOutputStream;
-    }
-
-    public void setObjectOutputStream(ObjectOutputStream objectOutputStream) {
-        this.objectOutputStream = objectOutputStream;
-    }
-
-    public List<Message> getIncomingGamePackets() {
-        return incomingMessages;
-    }
-
-    public void setIncomingGamePackets(List<Message> incomingGamePackets) {
-        this.incomingMessages = incomingGamePackets;
-    }
-
-
     public GameResult getGameResult() {
         return gameResult;
-    }
-
-    public void setGameResult(GameResult gameResult) {
-        this.gameResult = gameResult;
     }
 
     /**
