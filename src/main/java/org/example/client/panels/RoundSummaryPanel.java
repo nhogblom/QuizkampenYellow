@@ -138,11 +138,7 @@ public class RoundSummaryPanel extends JFrame {
             JLabel label = new JLabel((roundResult.getResults().get(i) ? correct : wrong));
             label.setBounds(x + (i * 55), y, 50, 50);
             add(label);
-//            JButton button = new JButton((roundResult.getResults().get(i)) ? "X" : "-");
-//            button.setBackground(Color.WHITE);
-//            button.setBounds(x + (i * 55), y, 50, 50);
-//            add(button);
-//            button.setEnabled(false);
+
         }
         repaint();
         revalidate();
