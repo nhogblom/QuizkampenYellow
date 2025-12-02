@@ -15,6 +15,7 @@ public class QuestionStorage {
 
     private static final Gson gson = new Gson();
 
+
     //Save all question to file
     public static void saveQuestion(Map<String, List<QuizQuestion>> questions) {
         try (FileWriter out = new FileWriter(fileName, StandardCharsets.UTF_8)) {
