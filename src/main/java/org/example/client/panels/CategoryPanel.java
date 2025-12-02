@@ -41,6 +41,7 @@ public class CategoryPanel extends JFrame {
     }
 
     public void setCategories(CategoryPrompt categoryPrompt) {
+        cat.setBounds(100, 50, 400, 43);
         cat.setText("Choose a category:");
         cat1.setText(categoryPrompt.getCategories().get(0).getName());
         cat1.setVisible(true);
@@ -105,7 +106,8 @@ public class CategoryPanel extends JFrame {
     }
 
     public void displayWaitMessage(String s) {
-        cat.setText("Väntar på motståndaren.");
+        cat.setText("Waiting for opponent...");
+        cat.setBounds(50, 200, 500, 43);
         cat1.setText("");
         cat1.setVisible(false);
         cat2.setText("");
