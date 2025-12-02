@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class QuestionStorage {
 
-    private static final String fileName = "question.txt";
+    private static final String fileName = "/src/main/resources/question.json";
 
     private static final Gson gson = new Gson();
 
