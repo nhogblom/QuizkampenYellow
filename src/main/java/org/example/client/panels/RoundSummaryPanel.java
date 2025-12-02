@@ -2,6 +2,7 @@ package org.example.client.panels;
 
 import org.example.RoundResult;
 import org.example.client.ClientBackpack;
+import org.example.client.NetworkClient;
 
 import javax.swing.*;
 import java.awt.*;
@@ -89,14 +90,26 @@ public class RoundSummaryPanel extends JFrame {
         playAgainNo.setVisible(false);
         add(playAgainNo);
 
-        // Simple behaviour for now:
+
+        // Yes: disconnect current client and start a new game (new WaitingPanel)
         playAgainYes.addActionListener(e -> {
-            //TODO: hook into real "start a new game" later if we want.
-            JOptionPane.showMessageDialog(this, "Play again is not implemented yet.");
+            NetworkClient client = backpack.getNetworkClient();
+            if (client != null) {
+                client.disconnect();
+            }
+            // Start a new game using same backpack / username
+            WaitingPanel waitingPanel = new WaitingPanel(backpack);
+            waitingPanel.setVisible(true);
+            // Close this summary window
+            this.dispose();
         });
 
+        // No: disconnect and close the app window
         playAgainNo.addActionListener(e -> {
-            // Close this window. We could also exit the app if we want.
+            NetworkClient client = backpack.getNetworkClient();
+            if (client != null) {
+                client.disconnect();
+            }
             this.dispose();
         });
     }
@@ -117,7 +130,6 @@ public class RoundSummaryPanel extends JFrame {
 
     private void createButtonCluster(int x, int y, RoundResult roundResult) {
         for (int i = 0; i < backpack.getGameConfig().getTotalQuestionsPerRound(); i++) {
-
             JButton button = new JButton((roundResult.getResults().get(i)) ? "X" : "-");
             button.setBackground(Color.WHITE);
             button.setBounds(x + (i * 55), y, 50, 50);
