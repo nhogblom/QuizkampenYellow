@@ -100,7 +100,7 @@ public class Game implements Runnable {
 
     private void receiveUsernames() {
         player1.setUsername(
-                (String) player1.playerListener.getMessageFromQueue().getPayload()
+                (String) player1.getPlayerListener().getMessageFromQueue().getPayload()
         );
         player2.setUsername(
                 (String) player2.getPlayerListener().getMessageFromQueue().getPayload()

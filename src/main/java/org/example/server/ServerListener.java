@@ -29,7 +29,7 @@ public class ServerListener extends Thread {
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
 
 
-                Player player = new Player(socket, objectInputStream, objectOutputStream);
+                Player player = new Player(socket, objectInputStream, objectOutputStream,playerQueue);
 
 
                 playerQueue.add(player);

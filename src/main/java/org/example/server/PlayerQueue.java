@@ -8,7 +8,15 @@ public class PlayerQueue {
 
     public synchronized void add(Player player) {
         playerQueue.add(player);
+
         notifyAll();
+    }
+
+    public synchronized void remove(Player player) {
+        if  (playerQueue.contains(player)) {
+        playerQueue.remove(player);
+        notifyAll();
+        }
     }
 
     public synchronized boolean enoughPlayersForAGame() {

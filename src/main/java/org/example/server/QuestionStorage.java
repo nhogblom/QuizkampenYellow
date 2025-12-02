@@ -32,16 +32,13 @@ public class QuestionStorage {
 
     //Load all question from file
     public Map<String, List<QuizQuestion>> loadQuestions() {
-
         try (InputStreamReader isr = new InputStreamReader(Objects.requireNonNull(this.getClass().getResourceAsStream(fileName)))) {
-            return gson.fromJson(isr, new TypeToken<Map<String, List<QuizQuestion>>>(){}.getType());
+            return gson.fromJson(isr, new TypeToken<Map<String, List<QuizQuestion>>>() {
+            }.getType());
         } catch (Exception e) {
             System.out.println("Failed to load questions from file.");
             e.printStackTrace();
             return new HashMap<>();
         }
-
     }
-
-
 }

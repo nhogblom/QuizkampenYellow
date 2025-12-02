@@ -35,9 +35,8 @@ public class PlayerListener extends Thread {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("Error in incoming stream for player "
-                        + player.getUsername() + ": " + e.getMessage());
-                e.printStackTrace();
+                System.out.println("Client disconnected.");
+                player.getPlayerQueue().remove(player);
                 this.interrupt();
                 break;
             }
@@ -57,3 +56,5 @@ public class PlayerListener extends Thread {
         }
     }
 }
+
+

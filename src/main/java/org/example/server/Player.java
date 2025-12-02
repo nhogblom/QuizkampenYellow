@@ -16,21 +16,26 @@ public class Player {
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
     private List<Message> incomingMessages = new LinkedList<>();
-    PlayerListener playerListener;
+    private PlayerListener playerListener;
     private GameResult gameResult = new GameResult();
     private Player opponent;
+    private PlayerQueue playerQueue;
 
 
-    public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
+    public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, PlayerQueue playerQueue) {
         this.socket = socket;
         this.objectInputStream = objectInputStream;
         this.objectOutputStream = objectOutputStream;
-
-         playerListener = new PlayerListener(this,incomingMessages);
+        this.playerQueue = playerQueue;
+        this.playerListener = new PlayerListener(this,incomingMessages);
     }
 
     public PlayerListener getPlayerListener() {
         return playerListener;
+    }
+
+    public void setPlayerListener(PlayerListener playerListener) {
+        this.playerListener = playerListener;
     }
 
     public synchronized Message getMessage() {
@@ -80,4 +85,11 @@ public class Player {
         this.opponent = opponent;
     }
 
+    public PlayerQueue getPlayerQueue() {
+        return playerQueue;
+    }
+
+    public void setPlayerQueue(PlayerQueue playerQueue) {
+        this.playerQueue = playerQueue;
+    }
 }
