@@ -1,5 +1,7 @@
 package org.example.client.panels;
 
+import org.example.Message;
+import org.example.MessageTypes;
 import org.example.client.ClientBackpack;
 import org.example.client.NetworkClient;
 
@@ -41,7 +43,7 @@ public class WaitingPanel extends JFrame {
         // Register this frame as active so ClientBackpack knows where we are
         backpack.setActiveJframe(this);
 
-        // Create client + connect to server
+        // Create client + connect to server && if client already is set get client from backpack.
         if (client == null) {
             this.client = new NetworkClient(backpack);
             if (client.connect()) {
@@ -51,7 +53,9 @@ public class WaitingPanel extends JFrame {
                 connectingLabel.setText("Connection failed");
             }
         } else {
+            ///  send message to server playagain.
             this.client = new NetworkClient(backpack);
+            client.sendMessage(new Message(MessageTypes.PLAYAGAIN,backpack.getUsername()));
         }
 
 
