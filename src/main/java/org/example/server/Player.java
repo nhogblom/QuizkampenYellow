@@ -21,6 +21,9 @@ public class Player {
     private Player opponent;
     private PlayerQueue playerQueue;
 
+    // flag so we don't try to disconnect / clean up multiple times
+    private boolean disconnected = false;
+
     public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, PlayerQueue playerQueue) {
         this.socket = socket;
         this.objectInputStream = objectInputStream;
@@ -95,4 +98,45 @@ public class Player {
         this.getPlayerQueue().addPlayer(this);
     }
 
+    /**
+     * Called when the server detects that this player has unexpectedly disconnected.
+     * Responsible for cleaning up resources and removing the player from any queues.
+     */
+    public synchronized void handleUnexpectedDisconnect() {
+        if (disconnected) {
+            return;
+        }
+        disconnected = true;
+
+        System.out.println("Handling unexpected disconnect for player: " + username);
+
+        // Remove from the matchmaking queue if present
+        if (playerQueue != null) {
+            playerQueue.removePlayer(this);
+        }
+
+        // Here is where we later notify Game.java if we store a reference there.
+
+        // Clean up network resources on the server side
+        try {
+            if (objectInputStream != null) {
+                objectInputStream.close();
+            }
+        } catch (IOException ignored) {
+        }
+
+        try {
+            if (objectOutputStream != null) {
+                objectOutputStream.close();
+            }
+        } catch (IOException ignored) {
+        }
+
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException ignored) {
+        }
+    }
 }

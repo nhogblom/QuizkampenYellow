@@ -69,6 +69,8 @@ public class Game implements Runnable {
     private final QuestionRepository questionRepo = new QuestionRepository();
     private List<QuizQuestion> questionsForThisRound;
 
+    // flag to mark that the game was aborted due to unexpected disconnect
+    private volatile boolean gameAborted = false;
 
     public Game(Player p1, Player p2) {
         this.player1 = p1;
@@ -79,18 +81,27 @@ public class Game implements Runnable {
     @Override
     public void run() {
         try {
-            // Step 0: Get usernames first
+            //  Get usernames first
             receiveUsernames();
-
-            // Step 1: Start the match
-            initGame();
-
-            // Step 2: Play all configured rounds
-            for (int round = 1; round <= config.getTotalRoundsPerGame(); round++) {
-                playRound(round);
+            if (gameAborted) {
+                return;
             }
 
-            // Step 3: End game and send results
+            //  Start the match
+            initGame();
+            if (gameAborted) {
+                return;
+            }
+
+            // Play all configured rounds
+            for (int round = 1; round <= config.getTotalRoundsPerGame(); round++) {
+                playRound(round);
+                if (gameAborted) {
+                    return;
+                }
+            }
+
+            // End game and send results
             endGame();
 
         } catch (Exception e) {
@@ -99,17 +110,38 @@ public class Game implements Runnable {
     }
 
     private void receiveUsernames() {
-        player1.setUsername(
-                (String) player1.getPlayerListener().getMessageFromQueue().getPayload()
-        );
-        player2.setUsername(
-                (String) player2.getPlayerListener().getMessageFromQueue().getPayload()
-        );
+        String username1 = waitForUsername(player1);
+        if (gameAborted || username1 == null) {
+            return;
+        }
+        player1.setUsername(username1);
+
+        String username2 = waitForUsername(player2);
+        if (gameAborted || username2 == null) {
+            return;
+        }
+        player2.setUsername(username2);
+    }
+
+    private String waitForUsername(Player player) {
+        while (true) {
+            Message msg = player.getPlayerListener().getMessageFromQueue();
+
+            if (msg.getType() == MessageTypes.USERNAME) {
+                return (String) msg.getPayload();
+            } else if (msg.getType() == MessageTypes.DISCONNECTED_UNEXPECTEDLY) {
+                handleUnexpectedDisconnect(player);
+                return null;
+            } else {
+                System.out.println("Unexpected message while waiting for USERNAME: " + msg.getType());
+            }
+        }
     }
 
     private void initGame() {
         scorePlayer1 = 0;
         scorePlayer2 = 0;
+
         // Let players know that the match has started and who the opponent is.
         player1.sendMessage(new Message(MessageTypes.MATCH_STARTED, player2.getUsername()));
         player2.sendMessage(new Message(MessageTypes.MATCH_STARTED, player1.getUsername()));
@@ -117,6 +149,10 @@ public class Game implements Runnable {
 
 
     private void playRound(int round) throws Exception {
+
+        if (gameAborted) {
+            return;
+        }
 
         // Decides who chooses category
         Player chooser = (round % 2 == 1) ? player1 : player2;
@@ -130,16 +166,25 @@ public class Game implements Runnable {
 
         // Receive category from chooser
         QuizCategory currentCategory = receiveCategoryChoice(chooser);
+        if (gameAborted || currentCategory == null) {
+            return;
+        }
 
         // Send each player the questions for this round.
         questionsForThisRound = questionRepo.getRandomQuestions(currentCategory, config.getTotalQuestionsPerRound());
-
 
         RoundResult rr = new RoundResult(round);
 
         // Play all questions for this round
         for (int i = 0; i < questionsForThisRound.size(); i++) {
+            if (gameAborted) {
+                return;
+            }
             playSingleQuestion(round, i + 1, questionsForThisRound.get(i));
+        }
+
+        if (gameAborted) {
+            return;
         }
 
         // After round ends, send round summary
@@ -151,19 +196,29 @@ public class Game implements Runnable {
      * Later I replace this with real questions from QuestionRepository.
      */
 
-
     private QuizCategory receiveCategoryChoice(Player chooser) {
-        Message msg = chooser.getPlayerListener().getMessageFromQueue();
-        if (msg.getType() == MessageTypes.CATEGORY_CHOICE) {
-            return (QuizCategory) msg.getPayload();
-        }
-        return null;
-    }
+        while (true) {
+            Message msg = chooser.getPlayerListener().getMessageFromQueue();
 
+            if (msg.getType() == MessageTypes.CATEGORY_CHOICE) {
+                return (QuizCategory) msg.getPayload();
+            } else if (msg.getType() == MessageTypes.DISCONNECTED_UNEXPECTEDLY) {
+                handleUnexpectedDisconnect(chooser);
+                return null;
+            } else {
+                System.out.println("Unexpected message while waiting for CATEGORY_CHOICE: " + msg.getType());
+            }
+        }
+    }
 
     private void playSingleQuestion(int round, int questionNumber, QuizQuestion question) {
 
+        if (gameAborted) {
+            return;
+        }
+
         ///  add RoundResult to later receive our results.
+
         player1.getGameResult().addRoundResult(round);
         player2.getGameResult().addRoundResult(round);
 
@@ -172,10 +227,16 @@ public class Game implements Runnable {
 
         // Wait for both players to respond with ANSWER messages
         String player1Answer = collectAnswer(player1);
+        if (gameAborted || player1Answer == null) {
+            return;
+        }
         String player2Answer = collectAnswer(player2);
+        if (gameAborted || player2Answer == null) {
+            return;
+        }
 
         // add round result
-        if ((player1Answer.equals(question.getCorrectAnswer()))) {
+        if (player1Answer.equals(question.getCorrectAnswer())) {
             player1.getGameResult().getRoundResult(round).addResult(true);
         } else {
             player1.getGameResult().getRoundResult(round).addResult(false);
@@ -187,17 +248,26 @@ public class Game implements Runnable {
         }
     }
 
-
-
-
     private String collectAnswer(Player player) {
-        Message msg = player.getPlayerListener().getMessageFromQueue();
-        if (msg.getPayload() instanceof QuizCategory) {
-            System.out.println(((QuizCategory) msg.getPayload()).getName());
-        }
-        return (String) msg.getPayload();
-    }
+        while (true) {
+            Message msg = player.getPlayerListener().getMessageFromQueue();
 
+            if (msg.getType() == MessageTypes.ANSWER) {
+                if (msg.getPayload() instanceof QuizCategory) {
+                    System.out.println(((QuizCategory) msg.getPayload()).getName());
+                }
+                return (String) msg.getPayload();
+            } else if (msg.getType() == MessageTypes.DISCONNECTED_UNEXPECTEDLY) {
+                handleUnexpectedDisconnect(player);
+                return null;
+            } else {
+                if (msg.getPayload() instanceof QuizCategory) {
+                    System.out.println(((QuizCategory) msg.getPayload()).getName());
+                }
+                System.out.println("Unexpected message while waiting for ANSWER: " + msg.getType());
+            }
+        }
+    }
 
     //   ROUND & GAME RESULTS
 
@@ -214,12 +284,10 @@ public class Game implements Runnable {
         player2.sendMessage(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer2));
     }
 
-
     /**
      * Determines the winner based on total scores.
      *
      */
-
     private void endGame() {
         int player1Result = player1.getGameResult().getResult();
         int player2Result = player2.getGameResult().getResult();
@@ -237,15 +305,39 @@ public class Game implements Runnable {
         broadcast(new Message(MessageTypes.GAME_RESULT, winner));
     }
 
+    /**
+     * Handle unexpected disconnect from one of the players.
+     * Opponent auto-wins. If no opponent/username yet → DRAW bit this should not happen during a regular game, it is
+     * just for safety (I hope...)
+     */
+    private void handleUnexpectedDisconnect(Player leaver) {
+        if (gameAborted) {
+            return;
+        }
 
+        System.out.println("Game: unexpected disconnect from player " + leaver.getUsername());
+        gameAborted = true;
+
+        Player opponent = getOpponent(leaver);
+
+        String winner;
+        if (opponent != null && opponent.getUsername() != null && !opponent.getUsername().isBlank()) {
+            winner = opponent.getUsername();
+        } else {
+            winner = "DRAW"; // Safety if opponent is null or has no username yet
+        }
+
+        // Only notify the opponent; leaver's socket is already inactive
+        if (opponent != null) {
+            opponent.sendMessage(new Message(MessageTypes.GAME_RESULT, winner));
+        }
+    }
 
     //   HELPERS
     private void broadcast(Message msg) {
         player1.sendMessage(msg);
         player2.sendMessage(msg);
     }
-
-
 
     private Player getOpponent(Player player) {
         return player == player1 ? player2 : player1;
