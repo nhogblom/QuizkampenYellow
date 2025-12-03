@@ -11,5 +11,8 @@ public enum MessageTypes {
     CHAT,            // Klient ↔ Server: chatmeddelande
     USERNAME,
     DEVELOPMENTMSG,
-    CATEGORYTOPLAY, SERVERMSG// used during development
-}
+    CATEGORYTOPLAY,
+    PLAYAGAIN,
+    SERVERMSG,// used during development
+    DISCONNECTED_UNEXPECTEDLY   // In server, player lost connection
+    }

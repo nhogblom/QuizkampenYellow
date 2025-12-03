@@ -1,6 +1,5 @@
 package org.example.client;
 
-import org.example.Answer;
 import org.example.Message;
 import org.example.MessageTypes;
 import org.example.GameConfig;
@@ -161,7 +160,7 @@ public class NetworkClient {
             if (socket != null) socket.close();
             System.out.println("Disconnected from server");
         } catch (IOException e) {
-            e.printStackTrace();
+            ;
         }
     }
 }

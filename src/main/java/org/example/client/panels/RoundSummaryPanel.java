@@ -100,15 +100,12 @@ public class RoundSummaryPanel extends JFrame {
 
         // Yes: disconnect current client and start a new game (new WaitingPanel)
         playAgainYes.addActionListener(e -> {
-            NetworkClient client = backpack.getNetworkClient();
-            if (client != null) {
-                client.disconnect();
-            }
             // Start a new game using same backpack / username
             WaitingPanel waitingPanel = new WaitingPanel(backpack);
             waitingPanel.setVisible(true);
             // Close this summary window
             this.dispose();
+            backpack.setRoundSummaryPanel(new RoundSummaryPanel(backpack));
         });
 
         // No: disconnect and close the app window
@@ -118,6 +115,7 @@ public class RoundSummaryPanel extends JFrame {
                 client.disconnect();
             }
             this.dispose();
+            System.exit(0);
         });
 
         gameOverBackground = new JButton();
@@ -144,6 +142,7 @@ public class RoundSummaryPanel extends JFrame {
 
     private void createButtonCluster(int x, int y, RoundResult roundResult) {
         for (int i = 0; i < backpack.getGameConfig().getTotalQuestionsPerRound(); i++) {
+
             ImageIcon correct = new ImageIcon(new ImageIcon("src/main/resources/right.png").getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
             ImageIcon wrong = new ImageIcon(new ImageIcon("src/main/resources/wrong.png").getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
 
