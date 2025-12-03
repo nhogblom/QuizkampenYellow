@@ -115,6 +115,7 @@ public class RoundSummaryPanel extends JFrame {
                 client.disconnect();
             }
             this.dispose();
+            System.exit(0);
         });
 
         gameOverBackground = new JButton();
