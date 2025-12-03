@@ -1,6 +1,5 @@
 package org.example.client;
 
-import org.example.Answer;
 import org.example.Message;
 import org.example.MessageTypes;
 import org.example.GameConfig;

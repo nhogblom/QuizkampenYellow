@@ -7,8 +7,7 @@ import java.util.List;
 /*
 Game score is stored as true or false.
 GameResult consists of a list that contains lists of each round.
-The list of a round consists of 2 * the amount of questions for
-
+The list of a round consists of boolean values for correct and wrong answer.
  */
 
 public class GameResult implements Serializable {

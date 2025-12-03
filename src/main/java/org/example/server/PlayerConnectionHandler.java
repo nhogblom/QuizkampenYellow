@@ -3,14 +3,13 @@ package org.example.server;
 import org.example.Message;
 import org.example.MessageTypes;
 
-import java.io.IOException;
 import java.util.List;
 
-public class PlayerListener extends Thread {
+public class PlayerConnectionHandler extends Thread {
     private final Player player;
     private final List<Message> incomingMessagesQueue;
 
-    public PlayerListener(Player player, List<Message> incomingMessagesQueue) {
+    public PlayerConnectionHandler(Player player, List<Message> incomingMessagesQueue) {
         this.player = player;
         this.incomingMessagesQueue = incomingMessagesQueue;
         this.start();
@@ -26,25 +25,26 @@ public class PlayerListener extends Thread {
                     if (msg.getType() == MessageTypes.CHAT) {
                         System.out.println("CHAT message received: " + msg.getPayload());
                         ChatRouter.relay(player, msg.getPayload().toString());
-                        continue;  // Do NOT queue chat messages for the game logic
-                    }else if(msg.getType() == MessageTypes.PLAYAGAIN) {
-                        player.getPlayerQueue().add(player);
-                    }
-                    // All other messages go into queue
-                    synchronized (this) {
-                        incomingMessagesQueue.add(msg);
-                        notifyAll();
+                    } else if (msg.getType() == MessageTypes.PLAYAGAIN) {
+                        player.resetValuesForNewGameAndAddToQueue();
+                    } else {
+                        // All other messages go into queue
+                        synchronized (this) {
+                            incomingMessagesQueue.add(msg);
+                            notifyAll();
+                        }
                     }
 
                 }
             } catch (Exception e) {
                 System.out.println("Client disconnected.");
-                player.getPlayerQueue().remove(player);
+                player.getPlayerQueue().removePlayer(player);
                 this.interrupt();
                 break;
             }
         }
     }
+
     public synchronized Message getMessageFromQueue() {
         while (true) {
             if (!incomingMessagesQueue.isEmpty()) {

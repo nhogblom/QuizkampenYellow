@@ -32,7 +32,7 @@ public class ServerListener extends Thread {
                 Player player = new Player(socket, objectInputStream, objectOutputStream,playerQueue);
 
 
-                playerQueue.add(player);
+                playerQueue.addPlayer(player);
                 System.out.println("Player created and added to queue.");
 
             }

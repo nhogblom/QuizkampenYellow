@@ -1,7 +1,7 @@
 package org.example.server;
 
-import org.example.Message;
 import org.example.GameResult;
+import org.example.Message;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,26 +16,25 @@ public class Player {
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
     private List<Message> incomingMessages = new LinkedList<>();
-    private PlayerListener playerListener;
+    private PlayerConnectionHandler playerConnectionHandler;
     private GameResult gameResult = new GameResult();
     private Player opponent;
     private PlayerQueue playerQueue;
-
 
     public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, PlayerQueue playerQueue) {
         this.socket = socket;
         this.objectInputStream = objectInputStream;
         this.objectOutputStream = objectOutputStream;
         this.playerQueue = playerQueue;
-        this.playerListener = new PlayerListener(this,incomingMessages);
+        this.playerConnectionHandler = new PlayerConnectionHandler(this, incomingMessages);
     }
 
-    public PlayerListener getPlayerListener() {
-        return playerListener;
+    public PlayerConnectionHandler getPlayerListener() {
+        return playerConnectionHandler;
     }
 
-    public void setPlayerListener(PlayerListener playerListener) {
-        this.playerListener = playerListener;
+    public void setPlayerListener(PlayerConnectionHandler playerConnectionHandler) {
+        this.playerConnectionHandler = playerConnectionHandler;
     }
 
     public synchronized Message getMessage() {
@@ -46,7 +45,6 @@ public class Player {
         }
     }
 
-
     public void sendMessage(Message object) {
         try {
             objectOutputStream.writeObject(object);
@@ -55,11 +53,9 @@ public class Player {
         }
     }
 
-
     public String getUsername() {
         return username;
     }
-
 
     public void setUsername(String username) {
         this.username = username;
@@ -92,4 +88,11 @@ public class Player {
     public void setPlayerQueue(PlayerQueue playerQueue) {
         this.playerQueue = playerQueue;
     }
+
+    public void resetValuesForNewGameAndAddToQueue() {
+        this.opponent = null;
+        this.gameResult = new GameResult();
+        this.getPlayerQueue().addPlayer(this);
+    }
+
 }
