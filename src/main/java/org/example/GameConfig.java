@@ -37,12 +37,12 @@ public class GameConfig {
         InputStream in = null;
         try {
             // 1) Försök först via classpath (det "rätta" sättet)
-            in = GameConfig.class.getResourceAsStream("/Game.properties");
-            System.out.println("Class URL: " + GameConfig.class.getResource("/Game.properties"));
+            in = GameConfig.class.getResourceAsStream("/config/Game.properties");
+            System.out.println("Class URL: " + GameConfig.class.getResource("/config/Game.properties"));
 
             // 2) Om den är null → fallback till filsystemet (så det funkar i IntelliJ)
             if (in == null) {
-                Path path = Paths.get("src", "main", "resources", "Game.properties");
+                Path path = Paths.get("src", "main", "resources", "config/Game.properties");
                 System.out.println("Classpath misslyckades, testar: " + path.toAbsolutePath());
 
                 if (Files.exists(path)) {
