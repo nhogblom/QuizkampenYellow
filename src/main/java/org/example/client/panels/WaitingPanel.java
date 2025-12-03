@@ -43,10 +43,9 @@ public class WaitingPanel extends JFrame {
 
         // Create client + connect to server
         this.client = new NetworkClient(backpack);
-
         if (client.connect()) {
             // Connection OK then show message and then wait for MATCH_STARTED from server
-            connectingLabel.setText("Connected as " + backpack.getUsername() + " waiting for opponent...");
+            connectingLabel.setText("<html><h1>"+"Connected as " + backpack.getUsername() + " waiting for opponent..."+"<html><h1>");
         } else {
             connectingLabel.setText("Connection failed");
         }
@@ -103,7 +102,7 @@ public class WaitingPanel extends JFrame {
 
         JLabel title = new JLabel("Waiting for opponent...");
         title.setFont(new Font("Arial", Font.BOLD, 36));
-        title.setBounds(100, 300, 400, 60);
+        title.setBounds(50, 300, 500, 60);
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setForeground(Color.WHITE);
         add(title);

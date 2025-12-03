@@ -49,6 +49,7 @@ public class MainWindow extends JFrame {
         add(usernameField);
 
         //start button
+
         JButton startButton = new JButton("Start new game");
         startButton.setFont(new java.awt.Font("Arial", Font.BOLD, 16));
         startButton.setBounds(100, 350, 400, 43);
@@ -88,7 +89,6 @@ public class MainWindow extends JFrame {
         });
 
         add(exitButton);
-
 
     }
 }

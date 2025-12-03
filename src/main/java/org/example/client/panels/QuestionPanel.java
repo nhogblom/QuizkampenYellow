@@ -59,32 +59,32 @@ public class QuestionPanel extends JFrame {
 
     /** Creates and places all GUI components */
     private void addGuiComponents() {
-
         // Main question box
         questionLabel = new JLabel("QUESTION");
         questionLabel.setFont(new Font("Arial", Font.BOLD, 22));
-        questionLabel.setBounds(100, 120, 400, 200);
-        questionLabel.setEnabled(false);// purely visual, not clickable
+        questionLabel.setBounds(100, 50, 400, 200);
+        questionLabel.setBackground(new Color(0, 0, 0, 0.2f));
+        questionLabel.setForeground(Color.WHITE);
         questionLabel.setHorizontalAlignment(JLabel.CENTER);
         add(questionLabel);
 
         // Option 1
-        optionButton1 = makeOptionButton(100, 340);
+        optionButton1 = makeOptionButton(100, 240);
         optionButton1.addActionListener(e -> sendAnswerAndDoNecessaryStuff(this.optionButton1)); // notify listener
         add(optionButton1);
 
         // Option 2
-        optionButton2 = makeOptionButton(320, 340);
+        optionButton2 = makeOptionButton(320, 240);
         optionButton2.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton2));
         add(optionButton2);
 
         // Option 3
-        optionButton3 = makeOptionButton(100, 500);
+        optionButton3 = makeOptionButton(100, 400);
         optionButton3.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton3));
         add(optionButton3);
 
         // Option 4
-        optionButton4 = makeOptionButton(320, 500);
+        optionButton4 = makeOptionButton(320, 400);
         optionButton4.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton4));
         add(optionButton4);
 
@@ -166,6 +166,7 @@ public class QuestionPanel extends JFrame {
         optionButton2.setText(question.getAnswers().get(1));
         optionButton3.setText(question.getAnswers().get(2));
         optionButton4.setText(question.getAnswers().get(3));
+
 
     }
 

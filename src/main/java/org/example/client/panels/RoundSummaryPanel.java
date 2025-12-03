@@ -4,6 +4,7 @@ import org.example.RoundResult;
 import org.example.client.ClientBackpack;
 import org.example.client.NetworkClient;
 
+import java.awt.geom.*;
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Paths;
@@ -19,6 +20,7 @@ public class RoundSummaryPanel extends JFrame {
     private JLabel playAgainLabel;
 
     // Game over UI
+    private JButton gameOverBackground;
     private JLabel gameOverLabel;
     private JButton playAgainYes;
     private JButton playAgainNo;
@@ -39,19 +41,20 @@ public class RoundSummaryPanel extends JFrame {
     }
 
     private void addGuiComponents() {
+        UIManager.put("Button.disabledText", Color.WHITE);
         // Player 1 box
         Player1 = new JButton(backpack.getUsername());
-        Player1.setBounds(100, 150, 170, 100);
-        Player1.setForeground(Color.WHITE);
-        Player1.setBackground(Constants.LIGHT_GREEN);
+        Player1.setFont(new Font("Arial", Font.BOLD, 20));
+        Player1.setBounds(100, 150, 170, 50);
+        Player1.setBackground(new Color(0, 0, 0, 0.2f));
         Player1.setEnabled(false);
         add(Player1);
 
         // Player 2 box
         Player2 = new JButton(backpack.getOpponentUsername());
-        Player2.setBounds(330, 150, 170, 100);
-        Player2.setForeground(Color.WHITE);
-        Player2.setBackground(Constants.LIGHT_GREEN);
+        Player2.setFont(new Font("Arial", Font.BOLD, 20));
+        Player2.setBounds(330, 150, 170, 50);
+        Player2.setBackground(new Color(0, 0, 0, 0.2f));
         Player2.setEnabled(false);
         add(Player2);
 
@@ -83,12 +86,14 @@ public class RoundSummaryPanel extends JFrame {
 
         // ---- "Play again?" buttons (initially hidden) ----
         playAgainYes = new JButton("Yes");
-        playAgainYes.setBounds(150, 390, 120, 40);
+        playAgainYes.setBounds(150, 425, 120, 40);
+        playAgainYes.setBackground(Constants.LIGHT_GREEN);
         playAgainYes.setVisible(false);
         add(playAgainYes);
 
         playAgainNo = new JButton("No");
-        playAgainNo.setBounds(330, 390, 120, 40);
+        playAgainNo.setBounds(330, 425, 120, 40);
+        playAgainNo.setBackground(Constants.LIGHT_RED);
         playAgainNo.setVisible(false);
         add(playAgainNo);
 
@@ -114,6 +119,13 @@ public class RoundSummaryPanel extends JFrame {
             }
             this.dispose();
         });
+
+        gameOverBackground = new JButton();
+        gameOverBackground.setBounds(100, 300, 400, 215);
+        gameOverBackground.setBackground(new Color(0, 0, 0, 0.6f));
+        gameOverBackground.setEnabled(false);
+        gameOverBackground.setVisible(false);
+        add(gameOverBackground);
     }
 
 //    private void addAnswerBoxes() {
@@ -181,7 +193,7 @@ public class RoundSummaryPanel extends JFrame {
         } else if (winnerName.equals(localUsername)) {
             message = "You won! Congrats!";
         } else {
-            message = winnerName + " won! Congrats!";
+            message = winnerName + " won!";
         }
 
         gameOverLabel.setText(message);
@@ -189,6 +201,7 @@ public class RoundSummaryPanel extends JFrame {
         playAgainLabel.setVisible(true);
         playAgainYes.setVisible(true);
         playAgainNo.setVisible(true);
+        gameOverBackground.setVisible(true);
 
         // panel is visible
         this.setVisible(true);
