@@ -14,5 +14,5 @@ public enum MessageTypes {
     CATEGORYTOPLAY,
     PLAYAGAIN,
     SERVERMSG,// used during development
-    DISCONNECTED_UNEXPECTEDLY   //
+    DISCONNECTED_UNEXPECTEDLY   // In server, player lost connection
     }

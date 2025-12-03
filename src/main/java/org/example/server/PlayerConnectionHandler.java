@@ -38,7 +38,19 @@ public class PlayerConnectionHandler extends Thread {
                 }
             } catch (Exception e) {
                 System.out.println("Client disconnected.");
+
+                // Instead of just failing the game, we push a "synthetic" message
+                // so Game - server logic can handle it like a normal event.
+                synchronized (this) {
+                    incomingMessagesQueue.add(
+                            new Message(MessageTypes.DISCONNECTED_UNEXPECTEDLY, null)
+                    );
+                    notifyAll();
+                }
+
+                // Still remove player from the waiting queue if present
                 player.getPlayerQueue().removePlayer(player);
+
                 this.interrupt();
                 break;
             }
@@ -59,5 +71,3 @@ public class PlayerConnectionHandler extends Thread {
         }
     }
 }
-
-
