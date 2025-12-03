@@ -8,11 +8,11 @@ import java.awt.*;
 
 /**
  * WaitingPanel is shown after entering a username.
- *
+ * <p>
  * It connects to the server, shows connection status,
  * and waits until NetworkClient sets goToNextScreen=true
  * (triggered by MATCH_STARTED).
- *
+ * <p>
  * When the match starts, it creates QuestionPanel,
  * registers it as the active frame in ClientBackpack,
  * and switches from this panel to QuestionPanel.
@@ -21,7 +21,7 @@ public class WaitingPanel extends JFrame {
 
     private JLabel connectingLabel;
     private final ClientBackpack backpack;
-    private final NetworkClient client;
+    private NetworkClient client;
 
     public WaitingPanel(ClientBackpack backpack) {
         super("Quizkampen - Waiting");
@@ -42,13 +42,18 @@ public class WaitingPanel extends JFrame {
         backpack.setActiveJframe(this);
 
         // Create client + connect to server
-        this.client = new NetworkClient(backpack);
-        if (client.connect()) {
-            // Connection OK then show message and then wait for MATCH_STARTED from server
-            connectingLabel.setText("<html><h1>"+"Connected as " + backpack.getUsername() + " waiting for opponent..."+"<html><h1>");
+        if (client == null) {
+            this.client = new NetworkClient(backpack);
+            if (client.connect()) {
+                // Connection OK then show message and then wait for MATCH_STARTED from server
+                connectingLabel.setText("<html><h1>" + "Connected as " + backpack.getUsername() + " waiting for opponent..." + "<html><h1>");
+            } else {
+                connectingLabel.setText("Connection failed");
+            }
         } else {
-            connectingLabel.setText("Connection failed");
+            this.client = new NetworkClient(backpack);
         }
+
 
         waitForServerStartSignal();
     }
@@ -56,7 +61,7 @@ public class WaitingPanel extends JFrame {
     /**
      * This method starts a thread that continuously checks the flag
      * goToNextScreen in ClientBackpack.
-     *
+     * <p>
      * NetworkClient sets goToNextScreen(true) when it receives MATCH_STARTED
      * (or DEVELOPMENTMSG). When that happens, we switch to
      * QuestionPanel on the Swing EDT (via SwingUtilities.invokeLater).

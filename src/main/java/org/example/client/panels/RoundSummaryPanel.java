@@ -100,10 +100,6 @@ public class RoundSummaryPanel extends JFrame {
 
         // Yes: disconnect current client and start a new game (new WaitingPanel)
         playAgainYes.addActionListener(e -> {
-            NetworkClient client = backpack.getNetworkClient();
-            if (client != null) {
-                client.disconnect();
-            }
             // Start a new game using same backpack / username
             WaitingPanel waitingPanel = new WaitingPanel(backpack);
             waitingPanel.setVisible(true);
