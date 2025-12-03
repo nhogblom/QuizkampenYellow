@@ -97,14 +97,19 @@ public class WaitingPanel extends JFrame {
         connectingLabel.setFont(new Font("Arial", Font.BOLD, 36));
         connectingLabel.setBounds(100, 50, 400, 60);
         connectingLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        connectingLabel.setForeground(Color.WHITE);
+        connectingLabel.setForeground(Color.DARK_GRAY);
         add(connectingLabel);
 
         JLabel title = new JLabel("Waiting for opponent...");
         title.setFont(new Font("Arial", Font.BOLD, 36));
         title.setBounds(50, 300, 500, 60);
         title.setHorizontalAlignment(SwingConstants.CENTER);
-        title.setForeground(Color.WHITE);
+        title.setForeground(Color.DARK_GRAY);
         add(title);
+
+        ImageIcon loading = new ImageIcon(new ImageIcon("src/main/resources/loading.gif").getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
+        JLabel loadingLabel = new JLabel("", loading, JLabel.CENTER);
+        loadingLabel.setBounds(100, 400, 300, 300);
+        add(loadingLabel);
     }
 }
