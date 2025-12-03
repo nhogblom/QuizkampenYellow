@@ -13,5 +13,6 @@ public enum MessageTypes {
     DEVELOPMENTMSG,
     CATEGORYTOPLAY,
     PLAYAGAIN,
-    SERVERMSG// used during development
-}
+    SERVERMSG,// used during development
+    DISCONNECTED_UNEXPECTEDLY   //
+    }
