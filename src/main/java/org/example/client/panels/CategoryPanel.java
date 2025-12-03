@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
 public class CategoryPanel extends JFrame {
     private JLabel cat;
@@ -22,6 +23,7 @@ public class CategoryPanel extends JFrame {
     private QuizCategory a1;
     private QuizCategory a2;
     private QuizCategory a3;
+    private JLabel loadingLabel;
 
 
 
@@ -53,6 +55,8 @@ public class CategoryPanel extends JFrame {
         cat3.setText(categoryPrompt.getCategories().get(2).getName());
         cat3.setVisible(true);
         a3 = categoryPrompt.getCategories().get(2);
+
+        loadingLabel.setVisible(false);
     }
 
 
@@ -103,10 +107,19 @@ public class CategoryPanel extends JFrame {
             }
         });
         add(cat3);
+
+        URL loadingUrl = getClass().getResource("/loading-96.gif"); // put loading.gif in src/main/resources
+        ImageIcon loading = new ImageIcon(loadingUrl);
+        loading.setImage(loading.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT));
+
+        loadingLabel = new JLabel(loading);
+        loadingLabel.setBounds(150, 200, 300, 300);
+        add(loadingLabel);
     }
 
     public void displayWaitMessage(String s) {
-        cat.setText("Waiting for opponent...");
+        loadingLabel.setVisible(true);
+        cat.setText("Waiting for opponent");
         cat.setBounds(50, 200, 500, 43);
         cat1.setText("");
         cat1.setVisible(false);
