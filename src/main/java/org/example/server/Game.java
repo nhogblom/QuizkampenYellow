@@ -333,11 +333,21 @@ public class Game implements Runnable {
         }
     }
 
-    //   HELPERS
+    //   HELPERS sending only to active players without throwing errors// individual try/catch blocks
     private void broadcast(Message msg) {
-        player1.sendMessage(msg);
-        player2.sendMessage(msg);
+        try {
+            player1.sendMessage(msg);
+        } catch (Exception e) {
+            System.out.println("broadcast: player1 unreachable (likely disconnected).");
+        }
+
+        try {
+            player2.sendMessage(msg);
+        } catch (Exception e) {
+            System.out.println("broadcast: player2 unreachable (likely disconnected).");
+        }
     }
+
 
     private Player getOpponent(Player player) {
         return player == player1 ? player2 : player1;
