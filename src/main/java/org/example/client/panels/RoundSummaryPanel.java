@@ -206,6 +206,24 @@ public class RoundSummaryPanel extends JFrame {
         this.setVisible(true);
     }
 
+    public void showOpponentLeft(String username) {
+        // Stop showing countdown in game-over mode
+        if (countDown != null) {
+            countDown.setVisible(false);
+        }
+
+        String message = username+" has left the game.";
+        gameOverLabel.setText(message);
+        gameOverLabel.setVisible(true);
+        playAgainLabel.setVisible(true);
+        playAgainYes.setVisible(true);
+        playAgainNo.setVisible(true);
+        gameOverBackground.setVisible(true);
+
+        // panel is visible
+        this.setVisible(true);
+    }
+
     //  todo spelresultat från avslutad omgång., övergå till att nästa spelare får välja kategori
     //  alternativt om alla rundor körts till game summary panel
 
