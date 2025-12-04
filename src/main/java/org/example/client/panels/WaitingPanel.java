@@ -7,6 +7,7 @@ import org.example.client.NetworkClient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 /**
  * WaitingPanel is shown after entering a username.
@@ -104,16 +105,24 @@ public class WaitingPanel extends JFrame {
     private void addGuiComponents() {
         connectingLabel = new JLabel("");
         connectingLabel.setFont(new Font("Arial", Font.BOLD, 36));
-        connectingLabel.setBounds(100, 50, 400, 60);
+        connectingLabel.setBounds(120, 120, 380, 200);
         connectingLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        connectingLabel.setForeground(Color.WHITE);
+        connectingLabel.setForeground(Color.DARK_GRAY);
         add(connectingLabel);
 
-        JLabel title = new JLabel("Waiting for opponent...");
+        JLabel title = new JLabel("Waiting for opponent");
         title.setFont(new Font("Arial", Font.BOLD, 36));
         title.setBounds(50, 300, 500, 60);
         title.setHorizontalAlignment(SwingConstants.CENTER);
-        title.setForeground(Color.WHITE);
+        title.setForeground(Color.DARK_GRAY);
         add(title);
+
+        URL loadingUrl = getClass().getResource("/loading-96.gif");
+        ImageIcon loading = new ImageIcon(loadingUrl);
+        loading.setImage(loading.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT));
+
+        JLabel loadingLabel = new JLabel(loading);
+        loadingLabel.setBounds(150, 300, 300, 300);
+        add(loadingLabel);
     }
 }
