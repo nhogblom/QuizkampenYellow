@@ -1,6 +1,9 @@
 package org.example.server;
 
-import org.example.*;
+import org.example.GameConfig;
+import org.example.Message;
+import org.example.MessageTypes;
+import org.example.RoundResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +67,6 @@ public class Game implements Runnable {
 
     // question repo and category types~
     private final QuestionRepository questionRepo = new QuestionRepository();
-    private List<QuizQuestion> questionsForThisRound;
 
     // flag to mark that the game was aborted due to unexpected disconnect
     private volatile boolean gameAborted = false;
@@ -122,7 +124,7 @@ public class Game implements Runnable {
 
     private String waitForUsername(Player player) {
         while (true) {
-            Message msg = player.getPlayerConnectionHandler().getMessageFromQueue();
+            Message msg = player.getMessageFromQueue();
 
             if (msg.getType() == MessageTypes.USERNAME) {
                 return (String) msg.getPayload();
@@ -165,9 +167,8 @@ public class Game implements Runnable {
         }
 
         // Send each player the questions for this round.
-        questionsForThisRound = questionRepo.getRandomQuestions(currentCategory, config.getTotalQuestionsPerRound());
+        List<QuizQuestion> questionsForThisRound = questionRepo.getRandomQuestions(currentCategory, config.getTotalQuestionsPerRound());
 
-        RoundResult rr = new RoundResult(round);
 
         // Play all questions for this round
         for (int i = 0; i < questionsForThisRound.size(); i++) {
@@ -192,8 +193,7 @@ public class Game implements Runnable {
 
     private QuizCategory receiveCategoryChoice(Player chooser) {
         while (true) {
-            Message msg = chooser.getPlayerConnectionHandler().getMessageFromQueue();
-
+            Message msg = chooser.getMessageFromQueue();
             if (msg.getType() == MessageTypes.CATEGORY_CHOICE) {
                 return (QuizCategory) msg.getPayload();
             } else if (msg.getType() == MessageTypes.DISCONNECTED_UNEXPECTEDLY) {
@@ -213,8 +213,8 @@ public class Game implements Runnable {
 
         ///  add RoundResult to later receive our results.
 
-        player1.getGameResult().addRoundResult(round);
-        player2.getGameResult().addRoundResult(round);
+        player1.addRoundResult(round);
+        player2.addRoundResult(round);
 
         // Send actual QUESTION messages to both clients
         broadcast(new Message(MessageTypes.QUESTION, question));
@@ -230,21 +230,21 @@ public class Game implements Runnable {
         }
 
         // add round result
-        if (player1Answer.equals(question.getCorrectAnswer())) {
-            player1.getGameResult().getRoundResult(round).addResult(true);
+        if (question.isCorrect(player1Answer)) {
+            player1.addResult(round, true);
         } else {
-            player1.getGameResult().getRoundResult(round).addResult(false);
+            player1.addResult(round, false);
         }
-        if (player2Answer.equals(question.getCorrectAnswer())) {
-            player2.getGameResult().getRoundResult(round).addResult(true);
+        if (question.isCorrect(player2Answer))  {
+            player2.addResult(round, true);
         } else {
-            player2.getGameResult().getRoundResult(round).addResult(false);
+            player2.addResult(round, false);
         }
     }
 
     private String collectAnswer(Player player) {
         while (true) {
-            Message msg = player.getPlayerConnectionHandler().getMessageFromQueue();
+            Message msg = player.getMessageFromQueue();
 
             if (msg.getType() == MessageTypes.ANSWER) {
                 if (msg.getPayload() instanceof QuizCategory) {
@@ -267,12 +267,12 @@ public class Game implements Runnable {
 
     private void sendRoundResult(int round) {
         List<RoundResult> roundResultsForPlayer1 = new ArrayList<RoundResult>();
-        roundResultsForPlayer1.add(player1.getGameResult().getRoundResult(round));
-        roundResultsForPlayer1.add(player2.getGameResult().getRoundResult(round));
+        roundResultsForPlayer1.add(player1.getRoundResult(round));
+        roundResultsForPlayer1.add(player2.getRoundResult(round));
 
         List<RoundResult> roundResultsForPlayer2 = new ArrayList<RoundResult>();
-        roundResultsForPlayer2.add(player2.getGameResult().getRoundResult(round));
-        roundResultsForPlayer2.add(player1.getGameResult().getRoundResult(round));
+        roundResultsForPlayer2.add(player2.getRoundResult(round));
+        roundResultsForPlayer2.add(player1.getRoundResult(round));
 
         player1.sendMessage(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer1));
         player2.sendMessage(new Message(MessageTypes.ROUND_RESULT, roundResultsForPlayer2));
@@ -283,8 +283,8 @@ public class Game implements Runnable {
      *
      */
     private void endGame() {
-        int player1Result = player1.getGameResult().getResult();
-        int player2Result = player2.getGameResult().getResult();
+        int player1Result = player1.getEndGameResult();
+        int player2Result = player2.getEndGameResult();
 
         String winner;
         if (player1Result > player2Result) {

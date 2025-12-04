@@ -19,10 +19,14 @@ public class CategoryPanel extends JFrame {
     private JButton cat1;
     private JButton cat2;
     private JButton cat3;
+    private JButton cat4;
+    private JButton cat5;
     private ClientBackpack backpack;
     private QuizCategory a1;
     private QuizCategory a2;
     private QuizCategory a3;
+    private QuizCategory a4;
+    private QuizCategory a5;
     private JLabel loadingLabel;
 
 
@@ -39,7 +43,7 @@ public class CategoryPanel extends JFrame {
         getContentPane().setBackground(Constants.DARK_BLUE);
 
         addGuiComponents();
-        ;
+
     }
 
     public void setCategories(CategoryPrompt categoryPrompt) {
@@ -55,6 +59,12 @@ public class CategoryPanel extends JFrame {
         cat3.setText(categoryPrompt.getCategories().get(2).getName());
         cat3.setVisible(true);
         a3 = categoryPrompt.getCategories().get(2);
+        cat4.setText(categoryPrompt.getCategories().get(3).getName());
+        cat4.setVisible(true);
+        a4 = categoryPrompt.getCategories().get(3);
+        cat5.setText(categoryPrompt.getCategories().get(4).getName());
+        cat5.setVisible(true);
+        a5 = categoryPrompt.getCategories().get(4);
 
         loadingLabel.setVisible(false);
     }
@@ -107,6 +117,32 @@ public class CategoryPanel extends JFrame {
             }
         });
         add(cat3);
+        //Category 4
+        cat4 = new JButton();
+        cat4.setFont(new java.awt.Font("Arial", Font.BOLD, 16));
+        cat4.setBounds(100, 500, 400, 43);
+        cat4.setForeground(Color.BLACK);
+        cat4.setBackground(Constants.LIGHT_GREEN);
+        cat4.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                backpack.getNetworkClient().sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, a3));
+            }
+        });
+        add(cat4);
+        //Category 5
+        cat5 = new JButton();
+        cat5.setFont(new java.awt.Font("Arial", Font.BOLD, 16));
+        cat5.setBounds(100, 600, 400, 43);
+        cat5.setForeground(Color.BLACK);
+        cat5.setBackground(Constants.LIGHT_GREEN);
+        cat5.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                backpack.getNetworkClient().sendMessage(new Message(MessageTypes.CATEGORY_CHOICE, a3));
+            }
+        });
+        add(cat5);
 
         URL loadingUrl = getClass().getResource("/loading-96.gif"); // put loading.gif in src/main/resources
         ImageIcon loading = new ImageIcon(loadingUrl);
@@ -127,5 +163,10 @@ public class CategoryPanel extends JFrame {
         cat2.setVisible(false);
         cat3.setText("");
         cat3.setVisible(false);
+        cat4.setText("");
+        cat4.setVisible(false);
+        cat5.setText("");
+        cat5.setVisible(false);
+
     }
 }
