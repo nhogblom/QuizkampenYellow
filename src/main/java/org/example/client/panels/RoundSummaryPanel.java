@@ -142,8 +142,9 @@ public class RoundSummaryPanel extends JFrame {
 
     private void createButtonCluster(int x, int y, RoundResult roundResult) {
         for (int i = 0; i < backpack.getGameConfig().getTotalQuestionsPerRound(); i++) {
-            ImageIcon correct = new ImageIcon(new ImageIcon("src/main/resources/images/right.png").getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-            ImageIcon wrong = new ImageIcon(new ImageIcon("src/main/resources/images/wrong.png").getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+
+            ImageIcon correct = new ImageIcon(new ImageIcon("src/main/resources/right.png").getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+            ImageIcon wrong = new ImageIcon(new ImageIcon("src/main/resources/wrong.png").getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
 
             JLabel label = new JLabel((roundResult.getResults().get(i) ? correct : wrong));
             label.setBounds(x + (i * 55), y, 50, 50);
