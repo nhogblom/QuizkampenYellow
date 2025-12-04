@@ -32,21 +32,10 @@ public class Player {
         this.playerConnectionHandler = new PlayerConnectionHandler(this, incomingMessages);
     }
 
-    public PlayerConnectionHandler getPlayerListener() {
+    public PlayerConnectionHandler getPlayerConnectionHandler() {
         return playerConnectionHandler;
     }
 
-    public void setPlayerListener(PlayerConnectionHandler playerConnectionHandler) {
-        this.playerConnectionHandler = playerConnectionHandler;
-    }
-
-    public synchronized Message getMessage() {
-        if (!incomingMessages.isEmpty()) {
-            return incomingMessages.removeFirst();
-        } else {
-            return null;
-        }
-    }
 
     public void sendMessage(Message object) {
         try {
@@ -64,8 +53,15 @@ public class Player {
         this.username = username;
     }
 
-    public ObjectInputStream getObjectInputStream() {
-        return objectInputStream;
+
+
+    public Message receiveMessage() throws IOException, ClassNotFoundException {
+        Object incoming = objectInputStream.readObject();
+        if (incoming instanceof Message) {
+            return (Message) incoming;
+        }else{
+            return null;
+        }
     }
 
     public GameResult getGameResult() {
@@ -88,9 +84,6 @@ public class Player {
         return playerQueue;
     }
 
-    public void setPlayerQueue(PlayerQueue playerQueue) {
-        this.playerQueue = playerQueue;
-    }
 
     public void resetValuesForNewGameAndAddToQueue() {
         this.opponent = null;

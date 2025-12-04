@@ -24,17 +24,10 @@ public class ServerListener extends Thread {
                 Socket socket = serverSocket.accept();
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 objectOutputStream.flush();
-
-
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-
-
                 Player player = new Player(socket, objectInputStream, objectOutputStream,playerQueue);
-
-
                 playerQueue.addPlayer(player);
                 System.out.println("Player created and added to queue.");
-
             }
         } catch (Exception e) {
             System.out.println("ServerListener Error: " + e.getMessage());

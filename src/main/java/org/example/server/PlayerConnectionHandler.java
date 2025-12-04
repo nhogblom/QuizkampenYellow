@@ -19,26 +19,23 @@ public class PlayerConnectionHandler extends Thread {
     public void run() {
         while (true) {
             try {
-                Object incoming = player.getObjectInputStream().readObject();
-                if (incoming instanceof Message msg) {
-                    // CHAT MESSAGES are held here
-                    if (msg.getType() == MessageTypes.CHAT) {
-                        System.out.println("CHAT message received: " + msg.getPayload());
-                        ChatRouter.relay(player, msg.getPayload().toString());
-                    } else if (msg.getType() == MessageTypes.PLAYAGAIN) {
-                        player.resetValuesForNewGameAndAddToQueue();
-                    } else {
-                        // All other messages go into queue
-                        synchronized (this) {
-                            incomingMessagesQueue.add(msg);
-                            notifyAll();
-                        }
+                Message msg = player.receiveMessage();
+                // CHAT MESSAGES are held here
+                if (msg.getType() == MessageTypes.CHAT) {
+                    System.out.println("CHAT message received: " + msg.getPayload());
+                    ChatRouter.relay(player, msg.getPayload().toString());
+                    // Cleanup & add to queue if message type play again.
+                } else if (msg.getType() == MessageTypes.PLAYAGAIN) {
+                    player.resetValuesForNewGameAndAddToQueue();
+                } else {
+                    // Other messages go into queue
+                    synchronized (this) {
+                        incomingMessagesQueue.add(msg);
+                        notifyAll();
                     }
-
                 }
             } catch (Exception e) {
                 System.out.println("Client disconnected.");
-
                 // Instead of just failing the game, we push a "synthetic" message
                 // so Game - server logic can handle it like a normal event.
                 synchronized (this) {
@@ -47,10 +44,8 @@ public class PlayerConnectionHandler extends Thread {
                     );
                     notifyAll();
                 }
-
                 // Still remove player from the waiting queue if present
                 player.getPlayerQueue().removePlayer(player);
-
                 this.interrupt();
                 break;
             }

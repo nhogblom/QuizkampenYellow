@@ -223,8 +223,4 @@ public class RoundSummaryPanel extends JFrame {
         // panel is visible
         this.setVisible(true);
     }
-
-    //  todo spelresultat från avslutad omgång., övergå till att nästa spelare får välja kategori
-    //  alternativt om alla rundor körts till game summary panel
-
 }

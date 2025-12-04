@@ -61,9 +61,6 @@ public class Game implements Runnable {
     private final Player player2;
     private final GameConfig config;
 
-    // score tracking for MVP
-    private int scorePlayer1 = 0;
-    private int scorePlayer2 = 0;
 
     // question repo and category types~
     private final QuestionRepository questionRepo = new QuestionRepository();
@@ -125,7 +122,7 @@ public class Game implements Runnable {
 
     private String waitForUsername(Player player) {
         while (true) {
-            Message msg = player.getPlayerListener().getMessageFromQueue();
+            Message msg = player.getPlayerConnectionHandler().getMessageFromQueue();
 
             if (msg.getType() == MessageTypes.USERNAME) {
                 return (String) msg.getPayload();
@@ -139,9 +136,6 @@ public class Game implements Runnable {
     }
 
     private void initGame() {
-        scorePlayer1 = 0;
-        scorePlayer2 = 0;
-
         // Let players know that the match has started and who the opponent is.
         player1.sendMessage(new Message(MessageTypes.MATCH_STARTED, player2.getUsername()));
         player2.sendMessage(new Message(MessageTypes.MATCH_STARTED, player1.getUsername()));
@@ -198,7 +192,7 @@ public class Game implements Runnable {
 
     private QuizCategory receiveCategoryChoice(Player chooser) {
         while (true) {
-            Message msg = chooser.getPlayerListener().getMessageFromQueue();
+            Message msg = chooser.getPlayerConnectionHandler().getMessageFromQueue();
 
             if (msg.getType() == MessageTypes.CATEGORY_CHOICE) {
                 return (QuizCategory) msg.getPayload();
@@ -250,7 +244,7 @@ public class Game implements Runnable {
 
     private String collectAnswer(Player player) {
         while (true) {
-            Message msg = player.getPlayerListener().getMessageFromQueue();
+            Message msg = player.getPlayerConnectionHandler().getMessageFromQueue();
 
             if (msg.getType() == MessageTypes.ANSWER) {
                 if (msg.getPayload() instanceof QuizCategory) {
