@@ -2,6 +2,8 @@ package org.example.client.panels;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import org.example.Message;
 import org.example.MessageTypes;
@@ -20,7 +22,7 @@ import org.example.server.QuizQuestion;
  * - Uses ClientBackpack only as shared context (stores a reference and
  *   registers itself, so NetworkClient can call updateQuestion(...)).
  */
-public class QuestionPanel extends JFrame {
+public class QuestionPanel extends JFrame implements ActionListener {
 
 
     private final ClientBackpack backpack;
@@ -108,20 +110,18 @@ public class QuestionPanel extends JFrame {
         chatInput.setBounds(100, 730, 320, 30);
         add(chatInput);
 
+        chatInput.addActionListener(this);
+
         // Send button
         sendChatButton = new JButton("Send");
         sendChatButton.setBounds(430, 730, 70, 30);
         add(sendChatButton);
 
         // Wire send button to NetworkClient via backpack
-        sendChatButton.addActionListener(e -> {
-            String text = chatInput.getText().trim();
-            if (!text.isEmpty()) {
-                backpack.getNetworkClient().sendChatMessage(text);
-                chatInput.setText("");
-            }
-        });
+        sendChatButton.addActionListener(this);
     }
+
+
 
     private void sendAnswerAndDoNecessaryStuff(JButton jb){
         backpack.getNetworkClient().sendMessage(new Message(MessageTypes.ANSWER,jb.getText()));
@@ -188,4 +188,18 @@ public class QuestionPanel extends JFrame {
      *
      * This keeps QuestionPanel completely GUI-only.
      */
+
+
+    public void setChatAreaText(String text) {
+        this.chatArea.setText(text);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String text = chatInput.getText().trim();
+        if (!text.isEmpty()) {
+            backpack.getNetworkClient().sendChatMessage(text);
+            chatInput.setText("");
+        }
+    }
 }

@@ -100,6 +100,8 @@ public class RoundSummaryPanel extends JFrame {
 
         // Yes: disconnect current client and start a new game (new WaitingPanel)
         playAgainYes.addActionListener(e -> {
+            // clear chatTextArea in preparation for the new game.
+            backpack.getQuestionPanel().setChatAreaText("");
             // Start a new game using same backpack / username
             WaitingPanel waitingPanel = new WaitingPanel(backpack);
             waitingPanel.setVisible(true);
