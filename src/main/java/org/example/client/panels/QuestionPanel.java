@@ -153,6 +153,7 @@ public class QuestionPanel extends JFrame implements ActionListener {
     // Update option buttons to apply html formatting outside of button text
     private void updateOptionButton(JButton button, String answer) {
         button.setText("<html><h1>" + answer + "</h1></html>");
+        button.setToolTipText("<html><h1>" + answer + "</h1></html>");
         button.setActionCommand(answer);
     }
 
