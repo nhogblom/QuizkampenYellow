@@ -1,6 +1,6 @@
 package org.example.client;
 
-import org.example.GameConfig;
+import org.example.shared.GameConfig;
 import org.example.client.panels.CategoryPanel;
 import org.example.client.panels.QuestionPanel;
 import org.example.client.panels.RoundSummaryPanel;

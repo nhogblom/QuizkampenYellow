@@ -1,7 +1,5 @@
-package org.example.server;
+package org.example.shared;
 import java.util.*;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 
 public class QuestionRepository {

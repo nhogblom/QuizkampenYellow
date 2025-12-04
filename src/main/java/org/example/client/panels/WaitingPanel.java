@@ -1,7 +1,7 @@
 package org.example.client.panels;
 
-import org.example.Message;
-import org.example.MessageTypes;
+import org.example.shared.Message;
+import org.example.shared.MessageTypes;
 import org.example.client.ClientBackpack;
 import org.example.client.NetworkClient;
 

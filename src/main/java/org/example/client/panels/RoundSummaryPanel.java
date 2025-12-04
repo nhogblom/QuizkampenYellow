@@ -1,15 +1,12 @@
 package org.example.client.panels;
 
-import org.example.RoundResult;
+import org.example.shared.RoundResult;
 import org.example.client.ClientBackpack;
 import org.example.client.NetworkClient;
 
-import java.awt.geom.*;
 import javax.swing.*;
 import java.awt.*;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 
 public class RoundSummaryPanel extends JFrame {
 

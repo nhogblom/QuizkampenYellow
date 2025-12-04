@@ -1,7 +1,7 @@
 package org.example.server;
 
-import org.example.Message;
-import org.example.MessageTypes;
+import org.example.shared.Message;
+import org.example.shared.MessageTypes;
 
 import java.util.List;
 

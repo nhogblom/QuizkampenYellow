@@ -1,4 +1,4 @@
-package org.example;
+package org.example.shared;
 
 public enum MessageTypes {
     MATCH_STARTED,

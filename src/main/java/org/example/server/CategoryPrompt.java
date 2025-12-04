@@ -1,5 +1,8 @@
 package org.example.server;
 
+import org.example.shared.QuestionRepository;
+import org.example.shared.QuizCategory;
+
 import java.io.Serializable;
 import java.util.List;
 

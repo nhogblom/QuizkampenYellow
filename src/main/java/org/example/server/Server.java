@@ -1,6 +1,6 @@
 package org.example.server;
 
-import org.example.GameConfig;
+import org.example.shared.GameConfig;
 
 public class Server {
 

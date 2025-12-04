@@ -1,10 +1,10 @@
 package org.example.client;
 
-import org.example.Message;
-import org.example.RoundResult;
+import org.example.shared.Message;
+import org.example.shared.RoundResult;
 import org.example.client.panels.QuestionPanel;
 import org.example.server.CategoryPrompt;
-import org.example.server.QuizQuestion;
+import org.example.shared.QuizQuestion;
 
 import javax.swing.*;
 import java.util.List;

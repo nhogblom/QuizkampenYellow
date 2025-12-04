@@ -1,8 +1,8 @@
 package org.example.client;
 
-import org.example.Message;
-import org.example.MessageTypes;
-import org.example.GameConfig;
+import org.example.shared.Message;
+import org.example.shared.MessageTypes;
+import org.example.shared.GameConfig;
 
 import java.io.*;
 import java.net.Socket;

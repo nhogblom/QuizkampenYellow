@@ -1,8 +1,8 @@
 package org.example.server;
 
-import org.example.GameResult;
-import org.example.Message;
-import org.example.RoundResult;
+import org.example.shared.GameResult;
+import org.example.shared.Message;
+import org.example.shared.RoundResult;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

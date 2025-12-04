@@ -1,12 +1,10 @@
 package org.example.client.panels;
 
-import org.example.Message;
-import org.example.MessageTypes;
-import org.example.client.Client;
+import org.example.shared.Message;
+import org.example.shared.MessageTypes;
 import org.example.client.ClientBackpack;
 import org.example.server.CategoryPrompt;
-import org.example.server.QuizCategory;
-import org.example.server.QuizQuestion;
+import org.example.shared.QuizCategory;
 
 import javax.swing.*;
 import java.awt.*;

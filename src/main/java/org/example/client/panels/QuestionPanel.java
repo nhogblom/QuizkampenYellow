@@ -5,10 +5,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.example.Message;
-import org.example.MessageTypes;
+import org.example.shared.Message;
+import org.example.shared.MessageTypes;
 import org.example.client.ClientBackpack;
-import org.example.server.QuizQuestion;
+import org.example.shared.QuizQuestion;
 
 /**
  * QuestionPanel

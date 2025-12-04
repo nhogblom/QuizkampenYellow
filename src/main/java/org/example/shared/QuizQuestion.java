@@ -1,4 +1,4 @@
-package org.example.server;
+package org.example.shared;
 
 import java.io.Serializable;
 import java.util.List;

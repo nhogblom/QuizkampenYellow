@@ -1,9 +1,6 @@
 package org.example.server;
 
-import org.example.GameConfig;
-import org.example.Message;
-import org.example.MessageTypes;
-import org.example.RoundResult;
+import org.example.shared.*;
 
 import java.util.ArrayList;
 import java.util.List;

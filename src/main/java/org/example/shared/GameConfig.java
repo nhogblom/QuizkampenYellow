@@ -1,4 +1,4 @@
-package org.example;
+package org.example.shared;
 
 import org.example.client.ClientBackpack;
 
