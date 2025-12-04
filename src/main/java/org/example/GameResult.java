@@ -26,7 +26,7 @@ public class GameResult implements Serializable {
         this.result.add(new RoundResult(round));
     }
 
-    public int getResult() {
+    public int getGameResult() {
         int score = 0;
         for (RoundResult roundResult : result) {
             for (int j = 0; j < roundResult.getRound().size(); j++) {

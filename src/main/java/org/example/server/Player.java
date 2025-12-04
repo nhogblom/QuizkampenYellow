@@ -2,6 +2,7 @@ package org.example.server;
 
 import org.example.GameResult;
 import org.example.Message;
+import org.example.RoundResult;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -34,6 +35,14 @@ public class Player {
 
     public PlayerConnectionHandler getPlayerConnectionHandler() {
         return playerConnectionHandler;
+    }
+
+    public Message getMessageFromQueue(){
+        return playerConnectionHandler.getMessageFromQueue();
+    }
+
+    public void addRoundResult(int round) {
+        gameResult.addRoundResult(round);
     }
 
 
@@ -70,6 +79,19 @@ public class Player {
     public GameResult getGameResult() {
         return gameResult;
     }
+    public void addResult(int round,boolean result) {
+        gameResult.getRoundResult(round).addResult(result);
+    }
+
+    public RoundResult getRoundResult(int round) {
+       return gameResult.getRoundResult(round);
+    }
+
+    public int getEndGameResult() {
+        return gameResult.getGameResult();
+    }
+
+
 
     /**
      * Opponent reference used for routing chat messages between players.
@@ -85,6 +107,10 @@ public class Player {
 
     public PlayerQueue getPlayerQueue() {
         return playerQueue;
+    }
+
+    public synchronized void removePlayerFromQueue(){
+        playerQueue.removePlayer(this);
     }
 
 

@@ -45,7 +45,7 @@ public class PlayerConnectionHandler extends Thread {
                     notifyAll();
                 }
                 // Still remove player from the waiting queue if present
-                player.getPlayerQueue().removePlayer(player);
+                player.removePlayerFromQueue();
                 this.interrupt();
                 break;
             }
