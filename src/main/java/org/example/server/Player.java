@@ -40,10 +40,13 @@ public class Player {
     public void sendMessage(Message object) {
         try {
             objectOutputStream.writeObject(object);
+            objectOutputStream.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Failed to send message to " + username + " — client probably disconnected.");
+            handleUnexpectedDisconnect();   // I hope this works...
         }
     }
+
 
     public String getUsername() {
         return username;
