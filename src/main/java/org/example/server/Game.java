@@ -320,16 +320,9 @@ public class Game implements Runnable {
 
         Player opponent = getOpponent(leaver);
 
-        String winner;
-        if (opponent != null && opponent.getUsername() != null && !opponent.getUsername().isBlank()) {
-            winner = opponent.getUsername();
-        } else {
-            winner = "DRAW"; // Safety if opponent is null or has no username yet
-        }
-
         // Only notify the opponent; leaver's socket is already inactive
         if (opponent != null) {
-            opponent.sendMessage(new Message(MessageTypes.GAME_RESULT, winner));
+            opponent.sendMessage(new Message(MessageTypes.DISCONNECTED_UNEXPECTEDLY, null));
         }
     }
 
