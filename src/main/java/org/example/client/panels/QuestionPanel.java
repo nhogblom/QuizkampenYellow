@@ -152,6 +152,7 @@ public class QuestionPanel extends JFrame implements ActionListener {
 
     // Update option buttons to apply html formatting outside of button text
     private void updateOptionButton(JButton button, String answer) {
+
         button.setText("<html><body style='width: 120px; text-align: center'>" + answer + "</h1></html>");
         button.setActionCommand(answer);
     }
