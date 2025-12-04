@@ -54,7 +54,7 @@ public class ClientProtocol {
                 break;
 
             case GAME_RESULT:
-                handleGameresult(msg.getPayload());
+                handleGameResult(msg.getPayload());
                 break;
 
             case CHAT:
@@ -121,7 +121,7 @@ public class ClientProtocol {
     /**
      * Handle message that tells us the final game result.
      */
-    private void handleGameresult(Object payload) {
+    private void handleGameResult(Object payload) {
         String winnerName = (String) payload;
         String localUsername = backpack.getUsername();
 

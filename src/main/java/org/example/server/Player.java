@@ -1,7 +1,7 @@
 package org.example.server;
 
-import org.example.Message;
 import org.example.GameResult;
+import org.example.Message;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,26 +16,28 @@ public class Player {
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
     private List<Message> incomingMessages = new LinkedList<>();
-    private PlayerListener playerListener;
+    private PlayerConnectionHandler playerConnectionHandler;
     private GameResult gameResult = new GameResult();
     private Player opponent;
     private PlayerQueue playerQueue;
 
+    // flag so we don't try to disconnect / clean up multiple times
+    private boolean disconnected = false;
 
     public Player(Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, PlayerQueue playerQueue) {
         this.socket = socket;
         this.objectInputStream = objectInputStream;
         this.objectOutputStream = objectOutputStream;
         this.playerQueue = playerQueue;
-        this.playerListener = new PlayerListener(this,incomingMessages);
+        this.playerConnectionHandler = new PlayerConnectionHandler(this, incomingMessages);
     }
 
-    public PlayerListener getPlayerListener() {
-        return playerListener;
+    public PlayerConnectionHandler getPlayerListener() {
+        return playerConnectionHandler;
     }
 
-    public void setPlayerListener(PlayerListener playerListener) {
-        this.playerListener = playerListener;
+    public void setPlayerListener(PlayerConnectionHandler playerConnectionHandler) {
+        this.playerConnectionHandler = playerConnectionHandler;
     }
 
     public synchronized Message getMessage() {
@@ -46,7 +48,6 @@ public class Player {
         }
     }
 
-
     public void sendMessage(Message object) {
         try {
             objectOutputStream.writeObject(object);
@@ -55,11 +56,9 @@ public class Player {
         }
     }
 
-
     public String getUsername() {
         return username;
     }
-
 
     public void setUsername(String username) {
         this.username = username;
@@ -91,5 +90,53 @@ public class Player {
 
     public void setPlayerQueue(PlayerQueue playerQueue) {
         this.playerQueue = playerQueue;
+    }
+
+    public void resetValuesForNewGameAndAddToQueue() {
+        this.opponent = null;
+        this.gameResult = new GameResult();
+        this.getPlayerQueue().addPlayer(this);
+    }
+
+    /**
+     * Called when the server detects that this player has unexpectedly disconnected.
+     * Responsible for cleaning up resources and removing the player from any queues.
+     */
+    public synchronized void handleUnexpectedDisconnect() {
+        if (disconnected) {
+            return;
+        }
+        disconnected = true;
+
+        System.out.println("Handling unexpected disconnect for player: " + username);
+
+        // Remove from the matchmaking queue if present
+        if (playerQueue != null) {
+            playerQueue.removePlayer(this);
+        }
+
+        // Here is where we later notify Game.java if we store a reference there.
+
+        // Clean up network resources on the server side
+        try {
+            if (objectInputStream != null) {
+                objectInputStream.close();
+            }
+        } catch (IOException ignored) {
+        }
+
+        try {
+            if (objectOutputStream != null) {
+                objectOutputStream.close();
+            }
+        } catch (IOException ignored) {
+        }
+
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException ignored) {
+        }
     }
 }

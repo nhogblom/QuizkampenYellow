@@ -6,13 +6,12 @@ import java.util.List;
 public class PlayerQueue {
     private final List<Player> playerQueue = new ArrayList<>();
 
-    public synchronized void add(Player player) {
+    public synchronized void addPlayer(Player player) {
         playerQueue.add(player);
-
         notifyAll();
     }
 
-    public synchronized void remove(Player player) {
+    public synchronized void removePlayer(Player player) {
         if  (playerQueue.contains(player)) {
         playerQueue.remove(player);
         notifyAll();

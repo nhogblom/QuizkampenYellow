@@ -1,12 +1,12 @@
 package org.example.client;
 
-import org.example.Answer;
 import org.example.Message;
 import org.example.MessageTypes;
 import org.example.GameConfig;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * NetworkClient
@@ -28,15 +28,13 @@ public class NetworkClient {
     private final String SERVER_IP;
     private final int SERVER_PORT;
 
-
     private final ClientBackpack backpack;
 
     // This is where we delegate message handling logic
     private final ClientProtocol protocol;
 
     /**
-     *  playerName  - The name of the player (username)
-     *  backpack  -  Shared state passed in from the GUI (WaitingPanel)
+     *  backpack  - Shared state passed in from the GUI (WaitingPanel etc.)
      */
     public NetworkClient(ClientBackpack backpack) {
         GameConfig gameConfig = new GameConfig();
@@ -111,8 +109,12 @@ public class NetworkClient {
                         break;
                 }
             }
-        } catch (Exception e) {
-            System.out.println("Connection closed or error in listen()");
+        } catch (SocketException | EOFException e) {
+            // This is expected to happen when the user clicks "No" (don't play again)
+            // and we close the socket.
+            System.out.println("Connection closed, stopping listener thread.");
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Unexpected error in listen()");
             e.printStackTrace();
         }
     }
@@ -129,7 +131,6 @@ public class NetworkClient {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Sending a chat message to the server.
@@ -161,7 +162,7 @@ public class NetworkClient {
             if (socket != null) socket.close();
             System.out.println("Disconnected from server");
         } catch (IOException e) {
-            e.printStackTrace();
+            // ignore, we're closing anyway
         }
     }
 }
