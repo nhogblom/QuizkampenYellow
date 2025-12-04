@@ -68,10 +68,36 @@ public class ClientProtocol {
             case GIVE_UP:
                 handleGiveUp(msg.getPayload());
                 break;
+            case DISCONNECTED_UNEXPECTEDLY:
+                handleOpponentDisconnected();
+                break;
 
             default:
                 System.out.println("Unknown message type in ClientProtocol: " + msg.getType());
         }
+    }
+
+    // opponent lost connection or closed down the game prematurely.
+    private void handleOpponentDisconnected() {
+        String opponent = backpack.getOpponentUsername();
+        // Get the shared RoundSummaryPanel from the backpack
+        var rsp = backpack.getRoundSummaryPanel();
+        if (rsp == null) {
+            // Fallback if something is wrong
+            JOptionPane.showMessageDialog(null, opponent+" has left the game.");
+            return;
+        }
+
+        // Hide question + category panels if they are visible
+        if (backpack.getQuestionPanel() != null) {
+            backpack.getQuestionPanel().setVisible(false);
+        }
+        if (backpack.getCategoryPanel() != null) {
+            backpack.getCategoryPanel().setVisible(false);
+        }
+
+        // Show the "X won! Congrats! Play again? Yes / No" UI
+        rsp.showOpponentLeft(opponent);
     }
 
     /**
