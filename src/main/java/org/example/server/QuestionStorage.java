@@ -15,13 +15,13 @@ import java.util.Objects;
 public class QuestionStorage {
 
     private final String fileName = "/data/Questions.json";
-
+    private final String path = "src/main/resources";
     private final Gson gson = new Gson();
 
 
     //Save all question to file
     public void saveQuestion(Map<String, List<QuizQuestion>> questions) {
-        try (FileWriter fw = new FileWriter(Paths.get(Objects.requireNonNull(this.getClass().getResource("/")).getPath()) + fileName, StandardCharsets.UTF_8)) {
+        try (FileWriter fw = new FileWriter(path+fileName, StandardCharsets.UTF_8)) {
             gson.toJson(questions, fw);
             System.out.println("Questions.json saved to file.");
         } catch (Exception e) {

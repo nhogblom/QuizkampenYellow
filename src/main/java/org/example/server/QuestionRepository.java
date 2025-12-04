@@ -13,8 +13,8 @@ public class QuestionRepository {
         Map<String, List<QuizQuestion>> loadedFile = questionStorage.loadQuestions();
         if (loadedFile.isEmpty()) {
             System.out.println("No saved questions found, loading hardcode.");
-//            loadHardcodedQuestions();
-//            questionStorage.saveQuestion(categoryQuestions);
+            loadHardcodedQuestions();
+            questionStorage.saveQuestion(categoryQuestions);
         } else {
             categoryQuestions = loadedFile;
             System.out.println("Questions.json loaded successfully from file.");
@@ -44,8 +44,202 @@ public class QuestionRepository {
     }
 
     private void loadHardcodedQuestions() {
+
+        categoryQuestions.put("Java", new ArrayList<>(List.of(
+                // 1
+                new QuizQuestion(
+                        "Which keyword is used to inherit a class in Java?",
+                        List.of("extends", "implements", "import", "super"),
+                        "extends"),
+
+                // 2
+                new QuizQuestion(
+                        "Which of the following is NOT a primitive type in Java?",
+                        List.of("int", "boolean", "String", "double"),
+                        "String"),
+
+                // 3
+                new QuizQuestion(
+                        "What is the size of an int in Java?",
+                        List.of("8 bits", "16 bits", "32 bits", "64 bits"),
+                        "32 bits"),
+
+                // 4
+                new QuizQuestion(
+                        "Which collection type does NOT allow duplicate elements?",
+                        List.of("List", "Set", "ArrayList", "LinkedList"),
+                        "Set"),
+
+                // 5
+                new QuizQuestion(
+                        "Which main interface does java.util.ArrayList implement?",
+                        List.of("List", "Set", "Map", "Deque"),
+                        "List"),
+
+                // 6
+                new QuizQuestion(
+                        "What does JVM stand for?",
+                        List.of("Java Visual Machine", "Java Virtual Machine", "Java Variable Manager", "Java Version Manager"),
+                        "Java Virtual Machine"),
+
+                // 7
+                new QuizQuestion(
+                        "Which block is always executed if it is present in a try-catch structure?",
+                        List.of("try", "catch", "finally", "throw"),
+                        "finally"),
+
+                // 8
+                new QuizQuestion(
+                        "Which keyword is used to prevent a class from being subclassed?",
+                        List.of("static", "final", "const", "sealed"),
+                        "final"),
+
+                // 9
+                new QuizQuestion(
+                        "In which package are the List and Map interfaces found?",
+                        List.of("java.io", "java.lang", "java.util", "java.net"),
+                        "java.util"),
+
+                // 10
+                new QuizQuestion(
+                        "What is the default value of a boolean instance field in Java?",
+                        List.of("true", "false", "null", "0"),
+                        "false"),
+
+                // 11
+                new QuizQuestion(
+                        "Which statement about '==' and equals() for objects in Java is TRUE?",
+                        List.of(
+                                "'==' compares object references, equals() can compare contents if overridden",
+                                "'==' and equals() always do exactly the same",
+                                "'==' compares contents, equals() compares references",
+                                "equals() can only be used on Strings"
+                        ),
+                        "'==' compares object references, equals() can compare contents if overridden"),
+
+                // 12
+                new QuizQuestion(
+                        "Which functional interface represents a task that takes no arguments and returns no result?",
+                        List.of("Runnable", "Callable", "Supplier", "Function"),
+                        "Runnable"),
+
+                // 13
+                new QuizQuestion(
+                        "Which feature, introduced in Java 8, is most closely associated with functional programming?",
+                        List.of("Lambda expressions", "Templates", "Macros", "Delegates"),
+                        "Lambda expressions"),
+
+                // 14
+                new QuizQuestion(
+                        "Which keyword is used to create a new object in Java?",
+                        List.of("create", "make", "new", "object"),
+                        "new"),
+
+                // 15
+                new QuizQuestion(
+                        "Which of the following is a terminal operation on a Java Stream?",
+                        List.of("filter()", "map()", "collect()", "peek()"),
+                        "collect()"),
+
+                // 16
+                new QuizQuestion(
+                        "Which of these is a checked exception in Java?",
+                        List.of("NullPointerException", "RuntimeException", "IOException", "ArithmeticException"),
+                        "IOException"),
+
+                // 17
+                new QuizQuestion(
+                        "What happens if you divide an int by zero in Java?",
+                        List.of("It returns 0", "It returns Infinity", "It throws an ArithmeticException", "It causes a compile-time error"),
+                        "It throws an ArithmeticException"),
+
+                // 18
+                new QuizQuestion(
+                        "Which method is used to pause the current thread for a given time?",
+                        List.of("Thread.wait()", "Thread.pause()", "Thread.sleep()", "Thread.stop()"),
+                        "Thread.sleep()"),
+
+                // 19
+                new QuizQuestion(
+                        "Which of the following collections is synchronized (thread-safe) by default?",
+                        List.of("ArrayList", "HashMap", "Vector", "HashSet"),
+                        "Vector"),
+
+                // 20
+                new QuizQuestion(
+                        "What is it called when a class has multiple methods with the same name but different parameter lists?",
+                        List.of("Inheritance", "Method overloading", "Method overriding", "Polymorphism"),
+                        "Method overloading"),
+
+                // 21
+                new QuizQuestion(
+                        "Which keyword inside an instance method refers to the current object?",
+                        List.of("self", "this", "current", "object"),
+                        "this"),
+
+                // 22
+                new QuizQuestion(
+                        "Which keyword is used in a subclass constructor to call the superclass constructor?",
+                        List.of("base", "parent", "super", "this"),
+                        "super"),
+
+                // 23
+                new QuizQuestion(
+                        "Which file extension do compiled Java bytecode files have?",
+                        List.of(".java", ".class", ".jar", ".byte"),
+                        ".class"),
+
+                // 24
+                new QuizQuestion(
+                        "Which command-line tool is used to compile Java source code?",
+                        List.of("java", "javac", "jar", "jlink"),
+                        "javac"),
+
+                // 25
+                new QuizQuestion(
+                        "Which access modifier makes a member visible to classes in the same package and to subclasses?",
+                        List.of("private", "public", "protected", "default (no modifier)"),
+                        "protected"),
+
+                // 26
+                new QuizQuestion(
+                        "What is the direct superclass of every class in Java (if no other superclass is specified)?",
+                        List.of("java.lang.Class", "java.lang.Object", "java.lang.Base", "java.lang.Root"),
+                        "java.lang.Object"),
+
+                // 27
+                new QuizQuestion(
+                        "What will this code print?\nSystem.out.println(3 + 4 + \"5\");",
+                        List.of("\"345\"", "\"75\"", "\"12\"", "It does not compile"),
+                        "\"75\""),
+
+                // 28
+                new QuizQuestion(
+                        "Which of the following is a valid main method signature in Java?",
+                        List.of(
+                                "public void main(String[] args)",
+                                "public static void main(String[] args)",
+                                "static void main(String args)",
+                                "public static int main(String[] args)"
+                        ),
+                        "public static void main(String[] args)"),
+
+                // 29
+                new QuizQuestion(
+                        "Which keyword is used to throw an exception explicitly in Java?",
+                        List.of("throws", "throw", "raise", "error"),
+                        "throw"),
+
+                // 30
+                new QuizQuestion(
+                        "Which interface must a class implement to be used in a try-with-resources statement?",
+                        List.of("Serializable", "Runnable", "AutoCloseable", "Cloneable"),
+                        "AutoCloseable")
+        )));
+
+
         // Teknik – 30 questions, English (Technology & Computers)
-        categoryQuestions.put("Teknik", new ArrayList<>(List.of(
+        categoryQuestions.put("Technology & Computers", new ArrayList<>(List.of(
                 // 1
                 new QuizQuestion("What does the acronym 'CPU' stand for?",
                         List.of("Central Processing Unit", "Core Programming Unit", "Central Peripheral Unit", "Computer Processing Utility"),
@@ -170,7 +364,7 @@ public class QuestionRepository {
 
 
 // Gaming – 30 questions, English (Video Games)
-        categoryQuestions.put("Gaming", new ArrayList<>(List.of(
+        categoryQuestions.put("Video Games", new ArrayList<>(List.of(
                 // 1
                 new QuizQuestion("Which company created the video game character Mario?",
                         List.of("Sega", "Sony", "Nintendo", "Microsoft"),
@@ -295,7 +489,7 @@ public class QuestionRepository {
 
 
 // Litteratur – 30 questions, English (Literature & Books)
-        categoryQuestions.put("Litteratur", new ArrayList<>(List.of(
+        categoryQuestions.put("Literature & Books", new ArrayList<>(List.of(
                 // 1
                 new QuizQuestion("Who wrote the play 'Romeo and Juliet'?",
                         List.of("William Shakespeare", "Charles Dickens", "Jane Austen", "Oscar Wilde"),
@@ -420,7 +614,7 @@ public class QuestionRepository {
 
 
 // Natur & Miljö – 30 questions, English (Nature & Environment)
-        categoryQuestions.put("Natur & Miljö", new ArrayList<>(List.of(
+        categoryQuestions.put("Nature & Environment", new ArrayList<>(List.of(
                 // 1
                 new QuizQuestion("What is the term for an area where all living things interact with each other and their non-living environment?",
                         List.of("Population", "Habitat", "Ecosystem", "Biome"),
@@ -545,7 +739,7 @@ public class QuestionRepository {
 
 
 // Allmänbildning – 30 questions, English (General Knowledge)
-        categoryQuestions.put("Allmänbildning", new ArrayList<>(List.of(
+        categoryQuestions.put("General Knowledge", new ArrayList<>(List.of(
                 // 1
                 new QuizQuestion("How many degrees are there in a full circle?",
                         List.of("90", "180", "270", "360"),
@@ -764,7 +958,7 @@ public class QuestionRepository {
 
 
 // History – 30 questions, English
-        categoryQuestions.put("Historia", new ArrayList<>(List.of(
+        categoryQuestions.put("History", new ArrayList<>(List.of(
                 // 1
                 new QuizQuestion("In which year did the French Revolution begin?",
                         List.of("1776", "1789", "1815", "1848"), "1789"),
@@ -954,7 +1148,7 @@ public class QuestionRepository {
 
 
 // Geography – 30 questions, English
-        categoryQuestions.put("Geografi", new ArrayList<>(List.of(
+        categoryQuestions.put("Geography", new ArrayList<>(List.of(
                 new QuizQuestion("What is the largest country in the world by land area?",
                         List.of("Canada", "China", "Russia", "United States"), "Russia"),
                 new QuizQuestion("Which river is the longest in the world by most modern measurements?",
@@ -1017,7 +1211,7 @@ public class QuestionRepository {
 
 
 // Music – 30 questions, English
-        categoryQuestions.put("Musik", new ArrayList<>(List.of(
+        categoryQuestions.put("Music", new ArrayList<>(List.of(
                 new QuizQuestion("Which Swedish band won the Eurovision Song Contest in 1974 with the song 'Waterloo'?",
                         List.of("ABBA", "Roxette", "Ace of Base", "The Ark"), "ABBA"),
                 new QuizQuestion("Which instrument typically has 88 keys?",
@@ -1080,7 +1274,7 @@ public class QuestionRepository {
 
 
 // Science – 30 questions, English
-        categoryQuestions.put("Vetenskap", new ArrayList<>(List.of(
+        categoryQuestions.put("Science", new ArrayList<>(List.of(
                 new QuizQuestion("Which chemical element has the symbol O?",
                         List.of("Gold", "Silver", "Oxygen", "Hydrogen"), "Oxygen"),
                 new QuizQuestion("How many planets are currently recognised in our solar system?",
@@ -1143,7 +1337,7 @@ public class QuestionRepository {
 
 
 // Animals – 30 questions, English
-        categoryQuestions.put("Djur", new ArrayList<>(List.of(
+        categoryQuestions.put("Animals", new ArrayList<>(List.of(
                 new QuizQuestion("What is the largest animal on Earth?",
                         List.of("African elephant", "Blue whale", "Giraffe", "Hippopotamus"), "Blue whale"),
                 new QuizQuestion("Which animal is often called 'the king of the jungle'?",
@@ -1206,7 +1400,7 @@ public class QuestionRepository {
 
 
 // Food & Drink – 30 questions, English
-        categoryQuestions.put("Mat & Dryck", new ArrayList<>(List.of(
+        categoryQuestions.put("Food & Drink", new ArrayList<>(List.of(
                 new QuizQuestion("From which country did pizza originally become popular in its modern form?",
                         List.of("United States", "Spain", "Italy", "Portugal"), "Italy"),
                 new QuizQuestion("What is the main ingredient in guacamole?",
