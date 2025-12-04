@@ -124,7 +124,7 @@ public class QuestionPanel extends JFrame {
     }
 
     private void sendAnswerAndDoNecessaryStuff(JButton jb){
-        backpack.getNetworkClient().sendMessage(new Message(MessageTypes.ANSWER,jb.getText()));
+        backpack.getNetworkClient().sendMessage(new Message(MessageTypes.ANSWER,jb.getActionCommand()));
         setButtonState(false);
     }
 
@@ -142,11 +142,18 @@ public class QuestionPanel extends JFrame {
     /** Helper for styling of all answer buttons */
     private JButton makeOptionButton(int x, int y) {
         JButton b = new JButton("option");
+        b.setActionCommand("option");
         b.setFont(new Font("Arial", Font.BOLD, 16));
         b.setBounds(x, y, 180, 150);
         b.setBackground(Color.WHITE);
         b.setForeground(Color.BLACK);
         return b;
+    }
+
+    // Update option buttons to apply html formatting outside of button text
+    private void updateOptionButton(JButton button, String answer) {
+        button.setText("<html><h1>" + answer + "</h1></html>");
+        button.setActionCommand(answer);
     }
 
     /**
@@ -162,11 +169,10 @@ public class QuestionPanel extends JFrame {
 
         questionLabel.setText("<html><h1>"+question.getQuestion()+"</h1></html>");
         // todo remove hard corded buttons to make it work with more questions per round etc~
-        optionButton1.setText(question.getAnswers().get(0));
-        optionButton2.setText(question.getAnswers().get(1));
-        optionButton3.setText(question.getAnswers().get(2));
-        optionButton4.setText(question.getAnswers().get(3));
-
+        updateOptionButton(optionButton1, question.getAnswers().get(0));
+        updateOptionButton(optionButton2, question.getAnswers().get(1));
+        updateOptionButton(optionButton3, question.getAnswers().get(2));
+        updateOptionButton(optionButton4, question.getAnswers().get(3));
 
     }
 
