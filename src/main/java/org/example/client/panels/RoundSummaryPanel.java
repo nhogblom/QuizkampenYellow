@@ -15,6 +15,8 @@ public class RoundSummaryPanel extends JFrame {
     JButton Player2;
     JLabel countDown;
     private JLabel playAgainLabel;
+    private JLabel avatar;
+    private JLabel opponentAvatar;
 
     // Game over UI
     private JButton gameOverBackground;
@@ -54,6 +56,23 @@ public class RoundSummaryPanel extends JFrame {
         Player2.setBackground(new Color(0, 0, 0, 0.2f));
         Player2.setEnabled(false);
         add(Player2);
+
+        // avatar
+
+        ImageIcon avatarImg = new ImageIcon(new ImageIcon(backpack.getAvatar()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        ImageIcon opponentAvatarImg = new ImageIcon(new ImageIcon(backpack.getOpponentAvatar()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+
+
+        avatar = new JLabel(avatarImg);
+        avatar.setBounds(1, 51, 100, 100);
+        add(avatar);
+
+        opponentAvatar = new JLabel(opponentAvatarImg);
+        opponentAvatar.setBounds(330, 51, 100, 100);
+        add(opponentAvatar);
+        revalidate();
+        repaint();
+
 
         // Countdown label (used between rounds)
         countDown = new JLabel();

@@ -17,6 +17,8 @@ public class ClientBackpack {
     private QuestionPanel questionPanel;
     private RoundSummaryPanel roundSummaryPanel;
     private GameConfig gameConfig;
+    private String avatar;
+    private String opponentAvatar;
 
     public QuestionPanel getQuestionPanel() {
         return questionPanel;
@@ -92,5 +94,21 @@ public class ClientBackpack {
 
     public void setGameConfig(GameConfig gameConfig) {
         this.gameConfig = gameConfig;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setOpponentAvatar(String avatar) {
+        this.opponentAvatar = avatar;
+    }
+
+    public String getOpponentAvatar() {
+        return opponentAvatar;
     }
 }

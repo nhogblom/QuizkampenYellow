@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 
 import org.example.shared.Message;
 import org.example.shared.MessageTypes;
@@ -33,6 +34,11 @@ public class QuestionPanel extends JFrame implements ActionListener {
     private JButton optionButton2;
     private JButton optionButton3;
     private JButton optionButton4;
+    private JLabel avatar;
+    private JLabel opponentAvatar;
+
+
+
 
     /** Chat GUI components */
     private JTextArea chatArea;
@@ -44,6 +50,8 @@ public class QuestionPanel extends JFrame implements ActionListener {
         super("Quizkampen - Question");
         this.backpack = backpack;
         backpack.setQuestionPanel(this);
+
+
 
         // Register this panel in the shared state so NetworkClient can find it
         backpack.setQuestionPanel(this);
@@ -69,6 +77,20 @@ public class QuestionPanel extends JFrame implements ActionListener {
         questionLabel.setForeground(Color.WHITE);
         questionLabel.setHorizontalAlignment(JLabel.CENTER);
         add(questionLabel);
+
+        ImageIcon avatarImg = new ImageIcon(new ImageIcon(backpack.getAvatar()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        ImageIcon opponentAvatarImg = new ImageIcon(new ImageIcon(backpack.getOpponentAvatar()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+
+
+        avatar = new JLabel(avatarImg);
+        avatar.setBounds(20, 10, 100, 100);
+        add(avatar);
+
+        opponentAvatar = new JLabel(opponentAvatarImg);
+        opponentAvatar.setBounds(500, 10, 100, 100);
+        add(opponentAvatar);
+        revalidate();
+        repaint();
 
         // Option 1
         optionButton1 = makeOptionButton(100, 240);

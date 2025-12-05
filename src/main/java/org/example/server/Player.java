@@ -21,6 +21,7 @@ public class Player {
     private GameResult gameResult = new GameResult();
     private Player opponent;
     private PlayerQueue playerQueue;
+    private String avatar;
 
     // flag so we don't try to disconnect / clean up multiple times
     private boolean disconnected = false;
@@ -160,5 +161,13 @@ public class Player {
             }
         } catch (IOException ignored) {
         }
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getAvatar() {
+        return avatar;
     }
 }

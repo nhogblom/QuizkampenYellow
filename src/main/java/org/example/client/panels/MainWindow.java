@@ -3,12 +3,19 @@ package org.example.client.panels;
 import org.example.client.ClientBackpack;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainWindow extends JFrame {
 
     private JTextField usernameField;
+    private String avatar;
+    private JLabel avatar1label;
+    private JLabel avatar2label;
+    private JLabel avatar3label;
     private final ClientBackpack backpack;
 
     public MainWindow(ClientBackpack backpack) {
@@ -23,6 +30,7 @@ public class MainWindow extends JFrame {
         addGuiComponents();
     }
 
+
     private void addGuiComponents() {
         JLabel title = new JLabel("Quizkampen");
         title.setFont(new java.awt.Font("Arial", Font.BOLD, 36));
@@ -30,6 +38,58 @@ public class MainWindow extends JFrame {
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setForeground(Constants.LIGHT_YELLOW);
         add(title);
+
+        //avatar
+        ImageIcon avatar1img = new ImageIcon(new ImageIcon("src/main/resources/images/avatar1.png").getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        ImageIcon avatar2img = new ImageIcon(new ImageIcon("src/main/resources/images/avatar2.png").getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        ImageIcon avatar3img = new ImageIcon(new ImageIcon("src/main/resources/images/avatar3.png").getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+
+        // border
+        Border selectedBorder = BorderFactory.createLineBorder(Constants.LIGHT_YELLOW, 3);
+
+        avatar1label = new JLabel(avatar1img);
+        avatar1label.setBounds(100, 90, 100, 100);
+        add(avatar1label);
+        avatar1label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                avatar = "C:\\Users\\nhogb\\Documents\\GitProjects\\grupparbete\\QuizkampenYellow\\src\\main\\resources\\images\\avatar1.png";
+                avatar1label.setBorder(selectedBorder);
+                avatar2label.setBorder(null);
+                avatar3label.setBorder(null);
+            }
+        });
+        avatar2label = new JLabel(avatar2img);
+        avatar2label.setBounds(250, 90, 100, 100);
+        add(avatar2label);
+        avatar2label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                avatar = "C:\\Users\\nhogb\\Documents\\GitProjects\\grupparbete\\QuizkampenYellow\\src\\main\\resources\\images\\avatar2.png";
+                avatar2label.setBorder(selectedBorder);
+                avatar3label.setBorder(null);
+                avatar1label.setBorder(null);
+            }
+        });
+
+        avatar3label = new JLabel(avatar3img);
+        avatar3label.setBounds(390, 90, 100, 100);
+        add(avatar3label);
+        avatar3label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                avatar = "C:\\Users\\nhogb\\Documents\\GitProjects\\grupparbete\\QuizkampenYellow\\src\\main\\resources\\images\\avatar3.png";
+                avatar3label.setBorder(selectedBorder);
+                avatar2label.setBorder(null);
+                avatar1label.setBorder(null);
+            }
+        });
+
+
+        add(avatar1label);
+        add(avatar2label);
+        add(avatar3label);
+
 
         //subtitle for username textfield
         JLabel usernameSubtitle = new JLabel("Username:");
@@ -59,15 +119,21 @@ public class MainWindow extends JFrame {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 backpack.setUsername(usernameField.getText());
-                if (backpack.getUsername().equals("") || backpack.getUsername().isEmpty()) {
-                    JOptionPane.showMessageDialog(MainWindow.this, "Please enter a username!");
+                backpack.setAvatar(avatar);
+                if (avatar == null || avatar.isEmpty()) {
+                    JOptionPane.showMessageDialog(MainWindow.this, "Please select an avatar!");
                 } else {
-                    WaitingPanel waiting = new WaitingPanel(backpack);
-                    waiting.setLocationRelativeTo(MainWindow.this);
-                    MainWindow.this.dispose();
-                    waiting.setVisible(true);
-                }
 
+
+                    if (backpack.getUsername().equals("") || backpack.getUsername().isEmpty()) {
+                        JOptionPane.showMessageDialog(MainWindow.this, "Please enter a username!");
+                    } else {
+                        WaitingPanel waiting = new WaitingPanel(backpack);
+                        waiting.setLocationRelativeTo(MainWindow.this);
+                        MainWindow.this.dispose();
+                        waiting.setVisible(true);
+                    }
+                }
             }
         });
 
@@ -91,6 +157,8 @@ public class MainWindow extends JFrame {
         add(exitButton);
 
     }
+
+
 }
 // TODO Login screen, användaren promtas  för användarnamn & spelläge
 

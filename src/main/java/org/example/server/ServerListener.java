@@ -18,14 +18,14 @@ public class ServerListener extends Thread {
     @Override
     public void run() {
         // Continuously receives new connections from players and adds them to playerQueue.
-        try (ServerSocket serverSocket = new ServerSocket(port)){
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {
                 System.out.println("ServerListener: Waiting for connection...");
                 Socket socket = serverSocket.accept();
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 objectOutputStream.flush();
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-                Player player = new Player(socket, objectInputStream, objectOutputStream,playerQueue);
+                Player player = new Player(socket, objectInputStream, objectOutputStream, playerQueue);
                 playerQueue.addPlayer(player);
                 System.out.println("Player created and added to queue.");
             }

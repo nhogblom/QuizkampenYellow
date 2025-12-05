@@ -25,4 +25,5 @@ public class CategoryPrompt implements Serializable {
     public void setCategories(List<QuizCategory> categories) {
         this.categories = categories;
     }
+
 }
