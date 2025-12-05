@@ -1,34 +1,35 @@
 package org.example.client.panels;
 
+import org.example.client.ClientBackpack;
+import org.example.shared.Message;
+import org.example.shared.MessageTypes;
+import org.example.shared.QuizQuestion;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-
-import org.example.shared.Message;
-import org.example.shared.MessageTypes;
-import org.example.client.ClientBackpack;
-import org.example.shared.QuizQuestion;
 
 /**
  * QuestionPanel
- *
+ * <p>
  * This panel displays a single quiz question + 4 answer buttons.
- *
+ * <p>
  * DESIGN:
  * - GUI-only: no networking, no socket logic.
  * - Communicates via QuestionAnsweredListener, provided from outside
- *   (WaitingPanel -> NetworkClient).
+ * (WaitingPanel -> NetworkClient).
  * - Uses ClientBackpack only as shared context (stores a reference and
- *   registers itself, so NetworkClient can call updateQuestion(...)).
+ * registers itself, so NetworkClient can call updateQuestion(...)).
  */
 public class QuestionPanel extends JFrame implements ActionListener {
 
 
     private final ClientBackpack backpack;
 
-    /** GUI components updated when new questions arrive */
+    /**
+     * GUI components updated when new questions arrive
+     */
     private JLabel questionLabel;
     private JButton optionButton1;
     private JButton optionButton2;
@@ -36,11 +37,14 @@ public class QuestionPanel extends JFrame implements ActionListener {
     private JButton optionButton4;
     private JLabel avatar;
     private JLabel opponentAvatar;
+    private JLabel vsLabel;
+    private JLabel username;
+    private JLabel opponentUsername;
 
 
-
-
-    /** Chat GUI components */
+    /**
+     * Chat GUI components
+     */
     private JTextArea chatArea;
     private JTextField chatInput;
     private JButton sendChatButton;
@@ -50,7 +54,6 @@ public class QuestionPanel extends JFrame implements ActionListener {
         super("Quizkampen - Question");
         this.backpack = backpack;
         backpack.setQuestionPanel(this);
-
 
 
         // Register this panel in the shared state so NetworkClient can find it
@@ -66,8 +69,9 @@ public class QuestionPanel extends JFrame implements ActionListener {
     }
 
 
-
-    /** Creates and places all GUI components */
+    /**
+     * Creates and places all GUI components
+     */
     private void addGuiComponents() {
         // Main question box
         questionLabel = new JLabel("QUESTION");
@@ -78,19 +82,6 @@ public class QuestionPanel extends JFrame implements ActionListener {
         questionLabel.setHorizontalAlignment(JLabel.CENTER);
         add(questionLabel);
 
-        ImageIcon avatarImg = new ImageIcon(new ImageIcon(backpack.getAvatar()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-        ImageIcon opponentAvatarImg = new ImageIcon(new ImageIcon(backpack.getOpponentAvatar()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-
-
-        avatar = new JLabel(avatarImg);
-        avatar.setBounds(20, 10, 100, 100);
-        add(avatar);
-
-        opponentAvatar = new JLabel(opponentAvatarImg);
-        opponentAvatar.setBounds(500, 10, 100, 100);
-        add(opponentAvatar);
-        revalidate();
-        repaint();
 
         // Option 1
         optionButton1 = makeOptionButton(100, 240);
@@ -99,20 +90,21 @@ public class QuestionPanel extends JFrame implements ActionListener {
 
         // Option 2
         optionButton2 = makeOptionButton(320, 240);
-        optionButton2.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton2));
+        optionButton2.addActionListener(e -> sendAnswerAndDoNecessaryStuff(this.optionButton2));
         add(optionButton2);
 
         // Option 3
         optionButton3 = makeOptionButton(100, 400);
-        optionButton3.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton3));
+        optionButton3.addActionListener(e -> sendAnswerAndDoNecessaryStuff(this.optionButton3));
         add(optionButton3);
 
         // Option 4
         optionButton4 = makeOptionButton(320, 400);
-        optionButton4.addActionListener(e ->  sendAnswerAndDoNecessaryStuff(this.optionButton4));
+        optionButton4.addActionListener(e -> sendAnswerAndDoNecessaryStuff(this.optionButton4));
         add(optionButton4);
 
-
+        //avatars
+        addAvatars();
 
         // Chat area
         chatArea = new JTextArea();
@@ -144,9 +136,43 @@ public class QuestionPanel extends JFrame implements ActionListener {
     }
 
 
+    public void addAvatars() {
+        username = new JLabel("");
+        username.setBounds(150,150,50,50);
+        username.setFont(new Font("Arial", Font.PLAIN, 30));
+        add(username);
+        opponentUsername = new JLabel("");
+        opponentUsername.setFont(new Font("Arial", Font.PLAIN, 30));
+        opponentUsername.setBounds(550,150,50,50);
+        add(opponentUsername);
+        vsLabel = new JLabel("<html><h1>VS</h1></html>");
+        vsLabel.setBounds(300, 30, 400, 60);
+        add(vsLabel);
+        avatar = new JLabel();
+        avatar.setBounds(20, 10, 100, 100);
+        add(avatar);
+        opponentAvatar = new JLabel();
+        opponentAvatar.setBounds(500, 10, 100, 100);
+        add(opponentAvatar);
+        revalidate();
+        repaint();
+    }
 
-    private void sendAnswerAndDoNecessaryStuff(JButton jb){
-        backpack.getNetworkClient().sendMessage(new Message(MessageTypes.ANSWER,jb.getActionCommand()));
+    public void setAvatarAndUsernames() {
+        username.setText(backpack.getUsername());
+        opponentUsername.setText(backpack.getOpponentUsername());
+        ImageIcon avatarImg = new ImageIcon(new ImageIcon(backpack.getAvatar().getPathToAvatarImage()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        ImageIcon opponentAvatarImg = new ImageIcon(new ImageIcon(backpack.getOpponentAvatar().getPathToAvatarImage()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        avatar.setIcon(avatarImg);
+        opponentAvatar.setIcon(opponentAvatarImg);
+        vsLabel.setText("<html><h1><font size='30'>VS</font></h1></html>");
+        revalidate();
+        repaint();
+
+    }
+
+    private void sendAnswerAndDoNecessaryStuff(JButton jb) {
+        backpack.getNetworkClient().sendMessage(new Message(MessageTypes.ANSWER, jb.getActionCommand()));
         setButtonState(false);
     }
 
@@ -161,7 +187,9 @@ public class QuestionPanel extends JFrame implements ActionListener {
         }
     }
 
-    /** Helper for styling of all answer buttons */
+    /**
+     * Helper for styling of all answer buttons
+     */
     private JButton makeOptionButton(int x, int y) {
         JButton b = new JButton("option");
         b.setActionCommand("option");
@@ -191,7 +219,7 @@ public class QuestionPanel extends JFrame implements ActionListener {
 
         setButtonState(true);
 
-        questionLabel.setText("<html><h1>"+question.getQuestion()+"</h1></html>");
+        questionLabel.setText("<html><h1>" + question.getQuestion() + "</h1></html>");
         // todo remove hard corded buttons to make it work with more questions per round etc~
         updateOptionButton(optionButton1, question.getAnswers().get(0));
         updateOptionButton(optionButton2, question.getAnswers().get(1));
@@ -213,9 +241,9 @@ public class QuestionPanel extends JFrame implements ActionListener {
     /**
      * Listener interface
      * Implemented in WaitingPanel like:
-     *
-     *      optionIndex -> client.sendAnswer(optionIndex)
-     *
+     * <p>
+     * optionIndex -> client.sendAnswer(optionIndex)
+     * <p>
      * This keeps QuestionPanel completely GUI-only.
      */
 

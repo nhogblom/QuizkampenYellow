@@ -57,22 +57,8 @@ public class RoundSummaryPanel extends JFrame {
         Player2.setEnabled(false);
         add(Player2);
 
-        // avatar
-
-        ImageIcon avatarImg = new ImageIcon(new ImageIcon(backpack.getAvatar()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-        ImageIcon opponentAvatarImg = new ImageIcon(new ImageIcon(backpack.getOpponentAvatar()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-
-
-        avatar = new JLabel(avatarImg);
-        avatar.setBounds(1, 51, 100, 100);
-        add(avatar);
-
-        opponentAvatar = new JLabel(opponentAvatarImg);
-        opponentAvatar.setBounds(330, 51, 100, 100);
-        add(opponentAvatar);
-        revalidate();
-        repaint();
-
+        // avatars
+        addAvatars();
 
         // Countdown label (used between rounds)
         countDown = new JLabel();
@@ -151,6 +137,31 @@ public class RoundSummaryPanel extends JFrame {
 //        addAnswerRow(480);
 //        addAnswerRow(540);
 //    }
+
+    public void addAvatars(){
+
+
+
+        avatar = new JLabel();
+        avatar.setBounds(20, 10, 100, 100);
+        add(avatar);
+
+        opponentAvatar = new JLabel();
+        opponentAvatar.setBounds(500, 10, 100, 100);
+        add(opponentAvatar);
+        revalidate();
+        repaint();
+    }
+
+    public void setAvatar() {
+        ImageIcon avatarImg = new ImageIcon(new ImageIcon(backpack.getAvatar().getPathToAvatarImage()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        ImageIcon opponentAvatarImg = new ImageIcon(new ImageIcon(backpack.getOpponentAvatar().getPathToAvatarImage()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        avatar.setIcon(avatarImg);
+        opponentAvatar.setIcon(opponentAvatarImg);
+        revalidate();
+        repaint();
+
+    }
 
     public void addAnswerRow(int y, List<RoundResult> roundResult) {
         createButtonCluster(70, y, roundResult.get(0));

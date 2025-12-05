@@ -1,6 +1,7 @@
 package org.example.client.panels;
 
 import org.example.client.ClientBackpack;
+import org.example.shared.Avatars;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -12,7 +13,7 @@ import java.awt.event.MouseEvent;
 public class MainWindow extends JFrame {
 
     private JTextField usernameField;
-    private String avatar;
+    private Avatars avatar;
     private JLabel avatar1label;
     private JLabel avatar2label;
     private JLabel avatar3label;
@@ -40,9 +41,9 @@ public class MainWindow extends JFrame {
         add(title);
 
         //avatar
-        ImageIcon avatar1img = new ImageIcon(new ImageIcon("src/main/resources/images/avatar1.png").getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-        ImageIcon avatar2img = new ImageIcon(new ImageIcon("src/main/resources/images/avatar2.png").getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-        ImageIcon avatar3img = new ImageIcon(new ImageIcon("src/main/resources/images/avatar3.png").getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        ImageIcon avatar1img = new ImageIcon(new ImageIcon(Avatars.DUCK.getPathToAvatarImage()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        ImageIcon avatar2img = new ImageIcon(new ImageIcon(Avatars.FOX.getPathToAvatarImage()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        ImageIcon avatar3img = new ImageIcon(new ImageIcon(Avatars.PIKACHU.getPathToAvatarImage()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
 
         // border
         Border selectedBorder = BorderFactory.createLineBorder(Constants.LIGHT_YELLOW, 3);
@@ -53,7 +54,7 @@ public class MainWindow extends JFrame {
         avatar1label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                avatar = "C:\\Users\\nhogb\\Documents\\GitProjects\\grupparbete\\QuizkampenYellow\\src\\main\\resources\\images\\avatar1.png";
+                avatar = Avatars.DUCK;
                 avatar1label.setBorder(selectedBorder);
                 avatar2label.setBorder(null);
                 avatar3label.setBorder(null);
@@ -65,7 +66,7 @@ public class MainWindow extends JFrame {
         avatar2label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                avatar = "C:\\Users\\nhogb\\Documents\\GitProjects\\grupparbete\\QuizkampenYellow\\src\\main\\resources\\images\\avatar2.png";
+                avatar = Avatars.DUCK;
                 avatar2label.setBorder(selectedBorder);
                 avatar3label.setBorder(null);
                 avatar1label.setBorder(null);
@@ -78,7 +79,7 @@ public class MainWindow extends JFrame {
         avatar3label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                avatar = "C:\\Users\\nhogb\\Documents\\GitProjects\\grupparbete\\QuizkampenYellow\\src\\main\\resources\\images\\avatar3.png";
+                avatar = Avatars.PIKACHU;
                 avatar3label.setBorder(selectedBorder);
                 avatar2label.setBorder(null);
                 avatar1label.setBorder(null);
@@ -120,7 +121,7 @@ public class MainWindow extends JFrame {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 backpack.setUsername(usernameField.getText());
                 backpack.setAvatar(avatar);
-                if (avatar == null || avatar.isEmpty()) {
+                if (avatar == null) {
                     JOptionPane.showMessageDialog(MainWindow.this, "Please select an avatar!");
                 } else {
 

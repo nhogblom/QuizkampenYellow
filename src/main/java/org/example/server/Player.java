@@ -1,5 +1,6 @@
 package org.example.server;
 
+import org.example.shared.Avatars;
 import org.example.shared.GameResult;
 import org.example.shared.Message;
 import org.example.shared.RoundResult;
@@ -21,7 +22,7 @@ public class Player {
     private GameResult gameResult = new GameResult();
     private Player opponent;
     private PlayerQueue playerQueue;
-    private String avatar;
+    private Avatars avatar;
 
     // flag so we don't try to disconnect / clean up multiple times
     private boolean disconnected = false;
@@ -163,11 +164,11 @@ public class Player {
         }
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(Avatars avatar) {
         this.avatar = avatar;
     }
 
-    public String getAvatar() {
+    public Avatars getAvatar() {
         return avatar;
     }
 }

@@ -95,6 +95,9 @@ public class NetworkClient {
                         backpack.setGoToNextScreen(true);
                         backpack.setOpponentUsername(((Introduction) msg.getPayload()).getUsername());
                         backpack.setOpponentAvatar(((Introduction) msg.getPayload()).getAvatar());
+                        backpack.getQuestionPanel().setAvatarAndUsernames();
+
+                        backpack.getRoundSummaryPanel().setAvatar();
                         System.out.println("Match started, you are playing against " + backpack.getOpponentUsername());
                         break;
 

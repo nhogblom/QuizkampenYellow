@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public class Introduction implements Serializable {
     private String username;
-    private String avatar;
+    private Avatars avatar;
 
-    public Introduction(String username, String avatar) {
+    public Introduction(String username, Avatars avatar) {
         this.username = username;
         this.avatar = avatar;
     }
@@ -19,11 +19,11 @@ public class Introduction implements Serializable {
         this.username = username;
     }
 
-    public String getAvatar() {
+    public Avatars getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(Avatars avatar) {
         this.avatar = avatar;
     }
 }
