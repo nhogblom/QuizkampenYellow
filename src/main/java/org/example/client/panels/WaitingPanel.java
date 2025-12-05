@@ -49,7 +49,7 @@ public class WaitingPanel extends JFrame {
             this.client = new NetworkClient(backpack);
             if (client.connect()) {
                 // Connection OK then show message and then wait for MATCH_STARTED from server
-                connectingLabel.setText("<html><h1>" + "Connected as " + backpack.getUsername() + " waiting for opponent..." + "<html><h1>");
+                connectingLabel.setText("<html><h1>" + "Connected as " + backpack.getUsername() + " - waiting for opponent..." + "<html><h1>");
             } else {
                 connectingLabel.setText("Connection failed");
             }
@@ -110,19 +110,12 @@ public class WaitingPanel extends JFrame {
         connectingLabel.setForeground(Color.DARK_GRAY);
         add(connectingLabel);
 
-        JLabel title = new JLabel("Waiting for opponent");
-        title.setFont(new Font("Arial", Font.BOLD, 36));
-        title.setBounds(50, 300, 500, 60);
-        title.setHorizontalAlignment(SwingConstants.CENTER);
-        title.setForeground(Color.DARK_GRAY);
-        add(title);
-
         URL loadingUrl = getClass().getResource("/loading-96.gif");
         ImageIcon loading = new ImageIcon(loadingUrl);
-        loading.setImage(loading.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT));
+        loading.setImage(loading.getImage().getScaledInstance(80, 80, Image.SCALE_DEFAULT));
 
         JLabel loadingLabel = new JLabel(loading);
-        loadingLabel.setBounds(150, 300, 300, 300);
+        loadingLabel.setBounds(150, 200, 300, 300);
         add(loadingLabel);
     }
 }
