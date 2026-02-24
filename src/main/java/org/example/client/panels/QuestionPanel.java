@@ -137,23 +137,37 @@ public class QuestionPanel extends JFrame implements ActionListener {
 
 
     public void addAvatars() {
+        JPanel avatarPanel = new JPanel();
+        avatarPanel.setLayout(new GridLayout(1,4));
+        avatarPanel.setSize(600, 100);
+        avatarPanel.setBackground(Constants.DARK_BLUE);
+        avatarPanel.setVisible(true);
+        avatarPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(avatarPanel);
+
+        avatar = new JLabel();
+//        avatar.setBounds(20, 10, 100, 100);
+        avatarPanel.add(avatar);
+
         username = new JLabel("");
-        username.setBounds(150,150,50,50);
+//        username.setBounds(150,150,50,50);
         username.setFont(new Font("Arial", Font.PLAIN, 30));
-        add(username);
+        avatarPanel.add(username);
+
+        vsLabel = new JLabel("<html><h1> VS</h1></html>");
+//        vsLabel.setBounds(300, 30, 400, 60);
+        avatarPanel.add(vsLabel);
+
         opponentUsername = new JLabel("");
         opponentUsername.setFont(new Font("Arial", Font.PLAIN, 30));
-        opponentUsername.setBounds(550,150,50,50);
-        add(opponentUsername);
-        vsLabel = new JLabel("<html><h1>VS</h1></html>");
-        vsLabel.setBounds(300, 30, 400, 60);
-        add(vsLabel);
-        avatar = new JLabel();
-        avatar.setBounds(20, 10, 100, 100);
-        add(avatar);
+//        opponentUsername.setBounds(550,150,50,50);
+        avatarPanel.add(opponentUsername);
+
+
         opponentAvatar = new JLabel();
-        opponentAvatar.setBounds(500, 10, 100, 100);
-        add(opponentAvatar);
+//        opponentAvatar.setBounds(500, 10, 100, 100);
+        avatarPanel.add(opponentAvatar);
+
         revalidate();
         repaint();
     }
