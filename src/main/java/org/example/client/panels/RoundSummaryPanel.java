@@ -15,6 +15,8 @@ public class RoundSummaryPanel extends JFrame {
     JButton Player2;
     JLabel countDown;
     private JLabel playAgainLabel;
+    private JLabel avatar;
+    private JLabel opponentAvatar;
 
     // Game over UI
     private JButton gameOverBackground;
@@ -54,6 +56,9 @@ public class RoundSummaryPanel extends JFrame {
         Player2.setBackground(new Color(0, 0, 0, 0.2f));
         Player2.setEnabled(false);
         add(Player2);
+
+        // avatars
+        addAvatars();
 
         // Countdown label (used between rounds)
         countDown = new JLabel();
@@ -132,6 +137,31 @@ public class RoundSummaryPanel extends JFrame {
 //        addAnswerRow(480);
 //        addAnswerRow(540);
 //    }
+
+    public void addAvatars(){
+
+
+
+        avatar = new JLabel();
+        avatar.setBounds(20, 10, 100, 100);
+        add(avatar);
+
+        opponentAvatar = new JLabel();
+        opponentAvatar.setBounds(500, 10, 100, 100);
+        add(opponentAvatar);
+        revalidate();
+        repaint();
+    }
+
+    public void setAvatar() {
+        ImageIcon avatarImg = new ImageIcon(new ImageIcon(backpack.getAvatar().getPathToAvatarImage()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        ImageIcon opponentAvatarImg = new ImageIcon(new ImageIcon(backpack.getOpponentAvatar().getPathToAvatarImage()).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+        avatar.setIcon(avatarImg);
+        opponentAvatar.setIcon(opponentAvatarImg);
+        revalidate();
+        repaint();
+
+    }
 
     public void addAnswerRow(int y, List<RoundResult> roundResult) {
         createButtonCluster(70, y, roundResult.get(0));

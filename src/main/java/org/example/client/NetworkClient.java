@@ -1,5 +1,6 @@
 package org.example.client;
 
+import org.example.shared.Introduction;
 import org.example.shared.Message;
 import org.example.shared.MessageTypes;
 import org.example.shared.GameConfig;
@@ -64,7 +65,7 @@ public class NetworkClient {
             System.out.println("Connected to server: " + SERVER_IP + ":" + SERVER_PORT);
 
             // Tell server our username first
-            sendMessage(new Message(MessageTypes.USERNAME, backpack.getUsername()));
+            sendMessage(new Message(MessageTypes.INTRODUCTION, new Introduction(backpack.getUsername(),backpack.getAvatar())));
 
             // Start the listener thread
             new Thread(this::listen).start();
@@ -92,7 +93,11 @@ public class NetworkClient {
                     case MATCH_STARTED:
                         // Server says: the match has started and gives opponent's username
                         backpack.setGoToNextScreen(true);
-                        backpack.setOpponentUsername((String) msg.getPayload());
+                        backpack.setOpponentUsername(((Introduction) msg.getPayload()).getUsername());
+                        backpack.setOpponentAvatar(((Introduction) msg.getPayload()).getAvatar());
+                        backpack.getQuestionPanel().setAvatarAndUsernames();
+
+                        backpack.getRoundSummaryPanel().setAvatar();
                         System.out.println("Match started, you are playing against " + backpack.getOpponentUsername());
                         break;
 

@@ -106,25 +106,28 @@ public class Game implements Runnable {
     }
 
     private void receiveUsernames() {
-        String username1 = waitForUsername(player1);
-        if (gameAborted || username1 == null) {
+        Introduction introPlayer1 = waitForIntroduction(player1);
+        if (gameAborted) {
             return;
         }
-        player1.setUsername(username1);
+        player1.setUsername(introPlayer1.getUsername());
+        player1.setAvatar(introPlayer1.getAvatar());
 
-        String username2 = waitForUsername(player2);
-        if (gameAborted || username2 == null) {
+
+        Introduction introPlayer2 = waitForIntroduction(player2);
+        if (gameAborted) {
             return;
         }
-        player2.setUsername(username2);
+        player2.setUsername(introPlayer2.getUsername());
+        player2.setAvatar(introPlayer2.getAvatar());
     }
 
-    private String waitForUsername(Player player) {
+    private Introduction waitForIntroduction(Player player) {
         while (true) {
             Message msg = player.getMessageFromQueue();
 
-            if (msg.getType() == MessageTypes.USERNAME) {
-                return (String) msg.getPayload();
+            if (msg.getType() == MessageTypes.INTRODUCTION) {
+                return (Introduction) msg.getPayload();
             } else if (msg.getType() == MessageTypes.DISCONNECTED_UNEXPECTEDLY) {
                 handleUnexpectedDisconnect(player);
                 return null;
@@ -136,8 +139,8 @@ public class Game implements Runnable {
 
     private void initGame() {
         // Let players know that the match has started and who the opponent is.
-        player1.sendMessage(new Message(MessageTypes.MATCH_STARTED, player2.getUsername()));
-        player2.sendMessage(new Message(MessageTypes.MATCH_STARTED, player1.getUsername()));
+        player1.sendMessage(new Message(MessageTypes.MATCH_STARTED,new Introduction(player2.getUsername(),player2.getAvatar())));
+        player2.sendMessage(new Message(MessageTypes.MATCH_STARTED, new Introduction(player1.getUsername(), player1.getAvatar())));
     }
 
 

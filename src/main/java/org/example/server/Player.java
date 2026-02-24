@@ -1,5 +1,6 @@
 package org.example.server;
 
+import org.example.shared.Avatars;
 import org.example.shared.GameResult;
 import org.example.shared.Message;
 import org.example.shared.RoundResult;
@@ -21,6 +22,7 @@ public class Player {
     private GameResult gameResult = new GameResult();
     private Player opponent;
     private PlayerQueue playerQueue;
+    private Avatars avatar;
 
     // flag so we don't try to disconnect / clean up multiple times
     private boolean disconnected = false;
@@ -160,5 +162,13 @@ public class Player {
             }
         } catch (IOException ignored) {
         }
+    }
+
+    public void setAvatar(Avatars avatar) {
+        this.avatar = avatar;
+    }
+
+    public Avatars getAvatar() {
+        return avatar;
     }
 }

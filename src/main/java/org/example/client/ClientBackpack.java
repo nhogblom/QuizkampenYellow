@@ -1,5 +1,6 @@
 package org.example.client;
 
+import org.example.shared.Avatars;
 import org.example.shared.GameConfig;
 import org.example.client.panels.CategoryPanel;
 import org.example.client.panels.QuestionPanel;
@@ -17,6 +18,8 @@ public class ClientBackpack {
     private QuestionPanel questionPanel;
     private RoundSummaryPanel roundSummaryPanel;
     private GameConfig gameConfig;
+    private Avatars avatar;
+    private Avatars opponentAvatar;
 
     public QuestionPanel getQuestionPanel() {
         return questionPanel;
@@ -92,5 +95,21 @@ public class ClientBackpack {
 
     public void setGameConfig(GameConfig gameConfig) {
         this.gameConfig = gameConfig;
+    }
+
+    public void setAvatar(Avatars avatar) {
+        this.avatar = avatar;
+    }
+
+    public Avatars getAvatar() {
+        return avatar;
+    }
+
+    public void setOpponentAvatar(Avatars avatar) {
+        this.opponentAvatar = avatar;
+    }
+
+    public Avatars getOpponentAvatar() {
+        return opponentAvatar;
     }
 }
